@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.command;
+package com.github.sirblobman.combatlogx.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -7,13 +7,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
-import org.samo_lego.antilogout.AntiLogout;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 
 import java.util.Collections;
 
 import static net.minecraft.commands.Commands.literal;
-import static org.samo_lego.antilogout.AntiLogout.config;
+import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
 
 public class AfkCommand {
@@ -68,7 +68,7 @@ public class AfkCommand {
         for (var player : players) {
             long disconnectAt = timeLimit == -1 ? -1 : System.currentTimeMillis() + Math.round(timeLimit * 1000);
             ((ILogoutRules) player).al$setAllowDisconnectAt(disconnectAt);
-            player.connection.disconnect(AntiLogout.AFK_MESSAGE);
+            player.connection.disconnect(CombatLogX.AFK_MESSAGE);
         }
         return players.iterator().hasNext() ? 0 : 1;
     }

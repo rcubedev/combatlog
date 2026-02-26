@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.datatracker;
+package com.github.sirblobman.combatlogx.datatracker;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,7 +7,7 @@ import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerialize
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.jetbrains.annotations.ApiStatus;
-import org.samo_lego.antilogout.config.GetBars;
+import com.github.sirblobman.combatlogx.configuration.GetBars;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.LongConsumer;
 
-import static org.samo_lego.antilogout.AntiLogout.config;
+import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
 public interface ILogoutRules {
 

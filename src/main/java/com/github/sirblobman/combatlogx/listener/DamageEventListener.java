@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.listener;
+package com.github.sirblobman.combatlogx.listener;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -19,12 +19,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
-import org.samo_lego.antilogout.util.EntityHelper;
-import org.samo_lego.antilogout.util.TagReason;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.api.utility.EntityHelper;
+import com.github.sirblobman.combatlogx.util.TagReason;
 
-import static org.samo_lego.antilogout.AntiLogout.config;
-import static org.samo_lego.antilogout.AntiLogout.debugInfo;
+import static com.github.sirblobman.combatlogx.CombatLogX.config;
+import static com.github.sirblobman.combatlogx.CombatLogX.debugInfo;
 
 /**
  * Takes care of events.

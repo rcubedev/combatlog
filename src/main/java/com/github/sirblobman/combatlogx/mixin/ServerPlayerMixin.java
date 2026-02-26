@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.mixin;
+package com.github.sirblobman.combatlogx.mixin;
 
 import java.util.function.LongConsumer;
 
@@ -12,8 +12,8 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.GameRules;
 
-import org.samo_lego.antilogout.AntiLogout;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -120,7 +120,7 @@ public abstract class ServerPlayerMixin implements ILogoutRules {
 
     @Override
     public boolean al$allowDisconnect() {
-        return this.al$allowDisconnectTime != -1 && this.al$allowDisconnectTime <= System.currentTimeMillis() && !AntiLogout.config.disableAllLogouts;
+        return this.al$allowDisconnectTime != -1 && this.al$allowDisconnectTime <= System.currentTimeMillis() && !CombatLogX.config.disableAllLogouts;
     }
 
     @Override

@@ -1,9 +1,9 @@
-package org.samo_lego.antilogout.mixin;
+package com.github.sirblobman.combatlogx.mixin;
 
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

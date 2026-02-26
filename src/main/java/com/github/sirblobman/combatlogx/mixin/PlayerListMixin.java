@@ -1,11 +1,11 @@
-package org.samo_lego.antilogout.mixin;
+package com.github.sirblobman.combatlogx.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

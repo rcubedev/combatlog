@@ -1,15 +1,16 @@
 {
   "required": true,
-  "package": "org.samo_lego.antilogout.mixin",
+  "package": "com.github.sirblobman.combatlogx.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CLogoutRulesPlayer",
-    "MConnection",
-    "MPlayerList",
-    "MServerCommonPacketListenerImpl",
-    "MServerConnectionListener",
-    "MServerGamePacketListenerImpl",
-    "MServerPlayer_DeathMsgSaver"
+    "ConnectionMixin",
+    "FishingHookMixin",
+    "LivingEntityMixin",
+    "PlayerListMixin",
+    "ServerCommonPacketListenerImplMixin",
+    "ServerConnectionListenerMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

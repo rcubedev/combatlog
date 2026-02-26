@@ -1,16 +1,16 @@
-package org.samo_lego.antilogout.command;
+package com.github.sirblobman.combatlogx.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import org.samo_lego.antilogout.AntiLogout;
-import org.samo_lego.antilogout.config.LogoutConfig;
+import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.configuration.OldConfiguration;
 
 import static net.minecraft.commands.Commands.literal;
-import static org.samo_lego.antilogout.AntiLogout.config;
+import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
 public class AntiLogoutCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        config.generateReloadableConfigCommand(AntiLogout.MOD_ID, dispatcher, LogoutConfig::readConfigFile);
+        config.generateReloadableConfigCommand(CombatLogX.MOD_ID, dispatcher, OldConfiguration::readConfigFile);
 
         var rootNode = dispatcher.getRoot().getChild("antilogout");
         dispatcher.register(literal("al").redirect(rootNode));

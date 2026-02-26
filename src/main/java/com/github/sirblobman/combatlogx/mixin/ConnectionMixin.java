@@ -1,10 +1,10 @@
-package org.samo_lego.antilogout.mixin;
+package com.github.sirblobman.combatlogx.mixin;
 
 import io.netty.channel.Channel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"server": [
-			"org.samo_lego.antilogout.AntiLogout"
+          "com.github.sirblobman.combatlogx.CombatLogX"
 		]
 	},
 	"mixins": [

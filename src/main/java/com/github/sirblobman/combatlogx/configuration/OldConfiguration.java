@@ -8,11 +8,11 @@ import org.samo_lego.config2brigadier.common.annotation.BrigadierDescription;
 import java.io.File;
 import java.util.List;
 
-public class Configuration implements IBrigadierConfigurator {
+public class OldConfiguration implements IBrigadierConfigurator {
     public static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("antilogout.json").toFile();
 
-    public static Configuration readConfigFile() {
-        return IBrigadierConfigurator.loadConfigFile(CONFIG_FILE, Configuration.class, Configuration::new);
+    public static OldConfiguration readConfigFile() {
+        return IBrigadierConfigurator.loadConfigFile(CONFIG_FILE, OldConfiguration.class, OldConfiguration::new);
     }
 
     @Override

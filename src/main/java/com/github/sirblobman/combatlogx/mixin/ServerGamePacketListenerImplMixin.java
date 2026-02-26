@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.mixin;
+package com.github.sirblobman.combatlogx.mixin;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.DisconnectionDetails;
@@ -7,8 +7,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.samo_lego.antilogout.AntiLogout;
-import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,7 +36,7 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
     @Inject(method = "onDisconnect", at = @At("HEAD"), cancellable = true)
     private void al$onDisconnect(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
         // Generic disconnect is handled by MConnection#al_handleDisconnection
-        if (!((ILogoutRules) this.getPlayer()).al$allowDisconnect() && disconnectionDetails.reason() == AntiLogout.AFK_MESSAGE) {
+        if (!((ILogoutRules) this.getPlayer()).al$allowDisconnect() && disconnectionDetails.reason() == CombatLogX.AFK_MESSAGE) {
             ((ILogoutRules) this.player).al$onRealDisconnect();
 
             // Disable disconnecting in this case

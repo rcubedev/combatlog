@@ -1,4 +1,4 @@
-package com.github.sirblobman.combatlogx.config;
+package com.github.sirblobman.combatlogx.configuration;
 
 import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
