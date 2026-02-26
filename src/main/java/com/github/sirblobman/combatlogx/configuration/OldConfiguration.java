@@ -1,4 +1,4 @@
-package org.samo_lego.antilogout.config;
+package com.github.sirblobman.combatlogx.configuration;
 
 import com.google.gson.annotations.SerializedName;
 import net.fabricmc.loader.api.FabricLoader;
@@ -6,12 +6,13 @@ import org.samo_lego.config2brigadier.common.IBrigadierConfigurator;
 import org.samo_lego.config2brigadier.common.annotation.BrigadierDescription;
 
 import java.io.File;
+import java.util.List;
 
-public class LogoutConfig implements IBrigadierConfigurator {
+public class Configuration implements IBrigadierConfigurator {
     public static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("antilogout.json").toFile();
 
-    public static LogoutConfig readConfigFile() {
-        return IBrigadierConfigurator.loadConfigFile(CONFIG_FILE, LogoutConfig.class, LogoutConfig::new);
+    public static Configuration readConfigFile() {
+        return IBrigadierConfigurator.loadConfigFile(CONFIG_FILE, Configuration.class, Configuration::new);
     }
 
     @Override
@@ -73,15 +74,43 @@ public class LogoutConfig implements IBrigadierConfigurator {
         @BrigadierDescription(defaultOption = "4")
         public int bypassPermissionLevel = 4;
 
+        @SerializedName("link_tnt")
+        @BrigadierDescription(defaultOption = "true")
+        public boolean linkTnt = true;
+
+        @SerializedName("link_pets")
+        @BrigadierDescription(defaultOption = "true")
+        public boolean linkPets = true;
+
+        @SerializedName("link_projectiles")
+        @BrigadierDescription(defaultOption = "true")
+        public boolean linkProjectiles = true;
+
+        @SerializedName("link_fishing_rod")
+        @BrigadierDescription(defaultOption = "true")
+        public boolean linkFishingRod = true; // TODO :: impl
 
         @SerializedName("// If true, player will be notified when combat starts / ends.")
         public final String _comment_notifyOnCombat = "";
         @SerializedName("notify_combat")
         public boolean notifyInCombat = true;
 
+        @SerializedName("bar_count")
+        @BrigadierDescription(defaultOption = "30")
+        public int barCount = 30;
+
+        @SerializedName("left_bars_symbol")
+        public String barLeftSymbol = "<green>|";
+
+        @SerializedName("right_bars_symbol")
+        public String barRightSymbol = "<red>|";
+
         @SerializedName("combat_mode_message")
-        public String combatEnterMessage = "<dark_red>[AL] <red>Combat mode active (<duration> seconds).";
+        public String combatEnterMessage = "<dark_red>[AL] <red>Combat <white><bars><duration>s";
         @SerializedName("safe_disconnect_message")
         public String combatEndMessage = "<dark_green>[AL] <green>You can now disconnect safely.";
+
+        @SerializedName("ignored_projectiles")
+        public List<String> ignoredProjectiles = List.of("minecraft:egg", "minecraft:ender_pearl", "minecraft:snowball");
     }
 }

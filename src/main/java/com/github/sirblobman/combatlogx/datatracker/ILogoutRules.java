@@ -7,6 +7,7 @@ import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerialize
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.jetbrains.annotations.ApiStatus;
+import org.samo_lego.antilogout.config.GetBars;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.LongConsumer;
-import java.util.function.LongUnaryOperator;
 
 import static org.samo_lego.antilogout.AntiLogout.config;
 
@@ -59,16 +59,17 @@ public interface ILogoutRules {
         this.al$setAllowDisconnectAt(endTime);
 
         if (config.combatLog.notifyInCombat) {
-            LongUnaryOperator timeLeftOp = (timeAtRun) -> (long) Math.ceil((endTime - timeAtRun) / 1000.0D);
             // Inform player
             long currentTime = System.currentTimeMillis();
-            long timeLeft = timeLeftOp.applyAsLong(currentTime);
-
-            ((ServerPlayer) this).displayClientMessage(this.al$getInCombatMessage(timeLeft), true);
-            this.al$tickInCombat((endTime - 1), (timeAtRun) ->
-                    ((ServerPlayer) this).displayClientMessage(this.al$getInCombatMessage(timeLeftOp.applyAsLong(timeAtRun)), true));
-            this.al$delay(endTime, () ->
-                    ((ServerPlayer) this).displayClientMessage(this.al$getEndCombatMessage(timeLeft), true));
+            if (currentTime < endTime) {
+                ((ServerPlayer) this).displayClientMessage(this.al$getInCombatMessage(endTime - currentTime), true);
+                this.al$tickInCombat((endTime - 1), (timeAtRun) ->
+                        ((ServerPlayer) this).displayClientMessage(this.al$getInCombatMessage(endTime - timeAtRun), true));
+                this.al$delay(endTime, () ->
+                        ((ServerPlayer) this).displayClientMessage(this.al$getEndCombatMessage(0), true));
+            } else {
+                ((ServerPlayer) this).displayClientMessage(this.al$getEndCombatMessage(0), true);
+            }
         }
     }
 
@@ -95,19 +96,19 @@ public interface ILogoutRules {
     /**
      * Gets the combat message.
      *
-     * @param timeLeft duration of combat state in seconds
+     * @param timeLeftMillis duration of combat state in seconds
      * @return combat message
      */
     @ApiStatus.Internal
-    default Component al$getInCombatMessage(long timeLeft) {
-
-        return NonWrappingComponentSerializer.INSTANCE.serialize(MiniMessage.miniMessage().deserialize(config.combatLog.combatEnterMessage, Placeholder.unparsed("duration", String.valueOf(timeLeft))));
+    default Component al$getInCombatMessage(long timeLeftMillis) {
+        long timeLeft = (long) Math.ceil(timeLeftMillis / 1000.0D);
+        return NonWrappingComponentSerializer.INSTANCE.serialize(MiniMessage.miniMessage().deserialize(config.combatLog.combatEnterMessage, Placeholder.unparsed("duration", String.valueOf(timeLeft)), Placeholder.parsed("bars", GetBars.getBars(timeLeftMillis))));
     }
 
     @ApiStatus.Internal
-    default Component al$getEndCombatMessage(long duration) {
-
-        return NonWrappingComponentSerializer.INSTANCE.serialize(MiniMessage.miniMessage().deserialize(config.combatLog.combatEndMessage, Placeholder.unparsed("duration", String.valueOf(duration))));
+    default Component al$getEndCombatMessage(long timeLeftMillis) {
+        long timeLeft = (long) Math.ceil(timeLeftMillis / 1000.0D);
+        return NonWrappingComponentSerializer.INSTANCE.serialize(MiniMessage.miniMessage().deserialize(config.combatLog.combatEndMessage, Placeholder.unparsed("duration", String.valueOf(timeLeft)), Placeholder.parsed("bars", GetBars.getBars(timeLeftMillis))));
     }
 
     /**
@@ -116,7 +117,6 @@ public interface ILogoutRules {
      * @return true if fake, false otherwise
      */
     boolean al$isFake();
-
 
     /**
      * Called when the player disconnects.

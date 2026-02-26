@@ -1,7 +1,9 @@
-package org.samo_lego.antilogout.event;
+package org.samo_lego.antilogout.listener;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
@@ -14,13 +16,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.samo_lego.antilogout.datatracker.ILogoutRules;
+import org.samo_lego.antilogout.util.EntityHelper;
+import org.samo_lego.antilogout.util.TagReason;
 
 import static org.samo_lego.antilogout.AntiLogout.config;
+import static org.samo_lego.antilogout.AntiLogout.debugInfo;
 
 /**
  * Takes care of events.
@@ -29,7 +33,7 @@ import static org.samo_lego.antilogout.AntiLogout.config;
  * since we want configurable combat timeout, we
  * have to use fabric events.
  */
-public class EventHandler {
+public class DamageEventListener {
 
 
     /**
@@ -63,12 +67,16 @@ public class EventHandler {
      * Disconnects afk player on death.
      *
      * @param deadEntity    entity that died
-     * @param _damageSource damage source of death
+     * @param damageSource damage source of death
      */
-    public static void onDeath(LivingEntity deadEntity, DamageSource _damageSource) {
-        if (deadEntity instanceof ILogoutRules player && player.al$isFake()) {
-            // Remove player from online players
-            ((ServerPlayer) player).connection.onDisconnect(new DisconnectionDetails(Component.empty()));
+    public static void onDeath(LivingEntity deadEntity, DamageSource damageSource) {
+        if (deadEntity instanceof ILogoutRules player) {
+            if (player.al$isFake()) {
+                // Remove player from online players
+                ((ServerPlayer) player).connection.onDisconnect(new DisconnectionDetails(Component.empty()));
+            } else if (damageSource.getEntity() instanceof ILogoutRules attacker) {
+                // attacker.al$setInCombatUntil(0); // FIXME :: Not safe as if player is killing two players and one dies, the player can logout in fight w/ the other
+            }
         }
     }
 
@@ -82,8 +90,25 @@ public class EventHandler {
      * @param damageSource damage source
      */
     public static void onHurt(ServerPlayer target, DamageSource damageSource) {
+        debugInfo("Detected player hurt.");
+
+        Entity damager = damageSource.getEntity();
+        if (damager == null) {
+            debugInfo("Damager is null, ignoring.");
+            return;
+        }
+
+        // TODO :: optimize by caching the registry keys so it doesn't have to be looked up every time
+        debugInfo("Damager Name + Type: " + damager.getName().getString() + " " + BuiltInRegistries.ENTITY_TYPE.getKey(damager.getType()).toString());
+        debugInfo("Damaged Name + Type: " + target.getName().getString() + " " + BuiltInRegistries.ENTITY_TYPE.getKey(damager.getType()).toString());
+
+        if (config.combatLog.linkPets) damager = EntityHelper.linkPet(damager);
+        if (config.combatLog.linkProjectiles) damager = EntityHelper.linkProjectile(damager);
+        if (config.combatLog.linkTnt) damager = EntityHelper.linkTNT(damager);
+
         long allowedDc = System.currentTimeMillis() + Math.round(config.combatLog.combatTimeout * 1000);
-        if (damageSource.getEntity() instanceof Projectile p && p.getOwner() instanceof ServerPlayer attacker) {
+
+        if (damager instanceof ServerPlayer attacker) {
             if (!Permissions.check(attacker, "antilogout.bypass.combat", config.combatLog.bypassPermissionLevel)) {
                 ((ILogoutRules) attacker).al$setInCombatUntil(allowedDc);
             }
@@ -95,6 +120,14 @@ public class EventHandler {
             ((ILogoutRules) target).al$setInCombatUntil(allowedDc);
         }
     }
+
+    /**
+     * Fishing
+     *
+     * @param player the player that cast the fishing rod
+     * @param caughtEntity the entity caught by the fishing line
+     */
+    public static void onFishEntity(Player player, Entity caughtEntity) {}
 
     /**
      * Sends death message to player if they died while disconnected,
@@ -111,5 +144,26 @@ public class EventHandler {
             listener.send(new ClientboundPlayerCombatKillPacket(listener.player.getId(), deathMessage));
             ILogoutRules.SKIPPED_DEATH_MESSAGES.remove(listener.player.getUUID());
         }
+    }
+
+    private void tag(Entity entity, Entity enemy, TagReason tagReason) {
+        debugInfo("Checking if the entity '" + entity.getName().getString() + "' should be tagged " +
+                "for reason '" + tagReason + "' by enemy '" + enemy.getName().getString() + "'.");
+
+        if (!(entity instanceof Player playerEntity)) {
+            debugInfo("Entity was not a player.");
+            return;
+        }
+
+        if (!(enemy instanceof Player playerEnemy)) {
+            debugInfo("Enemy was not a player.");
+            return;
+        }
+
+        debugInfo("Triggering tag for player " + playerEntity.getName().getString() + " with enemy "
+                + playerEnemy.getName().getString() + "...");
+        boolean tag = combatManager.tag(playerEntity, playerEnemy, TagType.PLAYER, tagReason);
+        debugInfo("CombatTag Status: " + tag);
+    }
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * when player with same UUID joins.
  */
 @Mixin(PlayerList.class)
-public abstract class MPlayerList {
+public abstract class PlayerListMixin {
 
     @Shadow
     @Final

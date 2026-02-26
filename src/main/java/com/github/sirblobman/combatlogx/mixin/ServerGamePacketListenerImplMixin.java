@@ -16,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerGamePacketListenerImpl.class)
-public abstract class MServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl {
+public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListenerImpl {
     @Shadow
     public ServerPlayer player;
 
-    public MServerGamePacketListenerImpl(MinecraftServer minecraftServer, Connection connection, CommonListenerCookie commonListenerCookie) {
+    public ServerGamePacketListenerImplMixin(MinecraftServer minecraftServer, Connection connection, CommonListenerCookie commonListenerCookie) {
         super(minecraftServer, connection, commonListenerCookie);
     }
 

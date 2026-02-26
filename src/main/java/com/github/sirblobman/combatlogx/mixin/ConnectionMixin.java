@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin(Connection.class)
-public abstract class MConnection {
+public abstract class ConnectionMixin {
 
     @Shadow
     private Channel channel;
@@ -27,7 +27,7 @@ public abstract class MConnection {
      * @param ci
      */
     @Inject(method = "handleDisconnection", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketListener;onDisconnect(Lnet/minecraft/network/DisconnectionDetails;)V"), cancellable = true)
-    private void al$handleDisconnection(CallbackInfo ci) {
+    private void handleDisconnection(CallbackInfo ci) {
         if (this.getPacketListener() instanceof ServerGamePacketListenerImpl listener) {
             if (!((ILogoutRules) listener.getPlayer()).al$allowDisconnect()) {
                 this.channel.close();

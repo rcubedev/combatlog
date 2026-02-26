@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerCommonPacketListenerImpl.class)
-public class MServerCommonPacketListenerImpl {
+public class ServerCommonPacketListenerImplMixin {
     @Inject(method = "disconnect(Lnet/minecraft/network/DisconnectionDetails;)V", at = @At("TAIL"))
-    private void al$disconnect(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
+    private void disconnect(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
         if (((Object) this) instanceof ServerGamePacketListenerImpl serverGamePacketListener) {
             if (((ILogoutRules) serverGamePacketListener.player).al$isFake()) {
                 serverGamePacketListener.onDisconnect(disconnectionDetails);
