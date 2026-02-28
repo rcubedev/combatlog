@@ -1,0 +1,19 @@
+package com.github.rcubedev.example.event.api;
+
+public abstract class EventHandler<E extends Event<E>> {
+
+    /**
+     * Register a listener to the event ({@link E}), in the normal {@link Priority}.
+     *
+     * @param listener the desired listener.
+     */
+    public abstract void register(Priority priority, EventProcessor<E> listener);
+
+    /**
+     * Register a listener to the event ({@link E}), for the specified priority.
+     *
+     * @param listener the desired listener.
+     */
+    public abstract void register(EventProcessor<E> listener);
+    public abstract EventProcessor<E> invoker();
+}
