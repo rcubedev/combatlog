@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class ArrayBackedEventHandler<E extends Event<E>> extends EventHandler<E> {
+public class ArrayBackedEventHandler<E extends Event> extends EventHandler<E> {
 
     private final Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory;
     private final Object lock = new Object();
@@ -48,7 +47,6 @@ public class ArrayBackedEventHandler<E extends Event<E>> extends EventHandler<E>
             getOrCreatePhase(priority, true).addListener(listener);
             rebuildInvoker(listeners.length + 1);
         }
-        update();
     }
 
     @SuppressWarnings("unchecked")
@@ -61,7 +59,8 @@ public class ArrayBackedEventHandler<E extends Event<E>> extends EventHandler<E>
             sortedPhases.add(phase);
 
             if (sortIfCreate) {
-                NodeSorting.sort(sortedPhases, "event phases", Comparator.comparing(data -> data.priority));
+                // NodeSorting.sort(sortedPhases, "event phases", Comparator.comparing(data -> data.priority));
+                sortedPhases.sort(Comparator.comparing(data -> data.priority));
             }
         }
 

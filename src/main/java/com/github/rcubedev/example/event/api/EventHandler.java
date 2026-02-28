@@ -1,6 +1,6 @@
 package com.github.rcubedev.example.event.api;
 
-public abstract class EventHandler<E extends Event<E>> {
+public abstract class EventHandler<E extends Event> {
 
     /**
      * Register a listener to the event ({@link E}), in the normal {@link Priority}.

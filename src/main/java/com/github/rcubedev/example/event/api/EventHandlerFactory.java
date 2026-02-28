@@ -1,12 +1,14 @@
 package com.github.rcubedev.example.event.api;
 
 import com.github.rcubedev.example.event.impl.EventHandlerFactoryImpl;
+import net.fabricmc.fabric.api.event.EventFactory;
 
 import java.util.function.Function;
 
 public final class EventHandlerFactory {
 
     private EventHandlerFactory() {}
+
 
     /**
      * Create an "array-backed" {@link EventHandler}.
@@ -20,12 +22,12 @@ public final class EventHandlerFactory {
      * @param <E>            The event type.
      * @return The {@link EventHandler}.
      */
-    public static <E extends Event<E>> EventHandler<E> createArrayBacked(Class<EventProcessor<E>> type, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
-        return EventHandlerFactoryImpl.createArrayBacked(type, invokerFactory);
+    public static <E extends Event> EventHandler<E> createArrayBacked(Class<E> type, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+        return EventHandlerFactoryImpl.createArrayBacked(invokerFactory);
     }
 
-    public static <E extends Event<E>> EventHandler<E> createArrayBacked(Class<EventProcessor<E>> type) {
-        return EventHandlerFactory.createArrayBacked(type, listeners -> event -> {
+    public static <E extends Event> EventHandler<E> createArrayBacked(Class<E> type) {
+        return EventHandlerFactory.createArrayBacked(type, e -> {}, listeners -> event -> {
             for (EventProcessor<E> eventProcessor : listeners) {
                 eventProcessor.process(event);
             }
@@ -52,7 +54,7 @@ public final class EventHandlerFactory {
      * @param <E>            The event type.
      * @return The {@link EventHandler} instance.
      */
-    public static <E extends Event<E>> EventHandler<E> createArrayBacked(Class<EventProcessor<E>> type, EventProcessor<E> emptyInvoker, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+    public static <E extends Event> EventHandler<E> createArrayBacked(Class<E> type, EventProcessor<E> emptyInvoker, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
         return createArrayBacked(type, listeners -> {
             if (listeners.length == 0) {
                 return emptyInvoker;

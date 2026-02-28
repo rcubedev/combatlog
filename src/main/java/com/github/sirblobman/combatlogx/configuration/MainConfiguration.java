@@ -139,7 +139,7 @@ public class Configuration extends WrappedConfig {
     // TODO: remove?
     @Comment("What is the minimum server TPS to allow tagging?")
     @FloatRange(min = 0, max = 20)
-    public float minimumServerTPS = 15;
+    public float minimumServerTPS = 15; // fixme make a double for parity w/ CLX?
 
     @Comment({"Which tag reasons are allowed?",
             "You can see a full list here:",

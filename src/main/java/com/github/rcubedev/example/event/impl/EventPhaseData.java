@@ -10,7 +10,7 @@ import com.github.rcubedev.example.event.api.Priority;
 /**
  * Data of an {@link ArrayBackedEventHandler} phase.
  */
-class EventPhaseData<E extends Event<E>> extends SortableNode<EventPhaseData<E>> {
+class EventPhaseData<E extends Event> {
 	final Priority priority;
 	EventProcessor<E>[] listeners;
 
@@ -24,10 +24,5 @@ class EventPhaseData<E extends Event<E>> extends SortableNode<EventPhaseData<E>>
 		int oldLength = listeners.length;
 		listeners = Arrays.copyOf(listeners, oldLength + 1);
 		listeners[oldLength] = listener;
-	}
-
-	@Override
-	protected String getDescription() {
-		return priority.toString();
 	}
 }

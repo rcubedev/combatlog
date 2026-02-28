@@ -25,8 +25,9 @@ public final class EventHandlerFactoryImpl {
     /**
      * Create an array-backed event handler instance.
      */
-    public static <E extends Event<E>> EventHandler<E> createArrayBacked(Class<EventProcessor<E>> type, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
-        ArrayBackedEventHandler<E> handler = new ArrayBackedEventHandler<>(type, invokerFactory);
+    public static <E extends Event> EventHandler<E> createArrayBacked(Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+        @SuppressWarnings("unchecked")
+        ArrayBackedEventHandler<E> handler = new ArrayBackedEventHandler<>((Class<EventProcessor<E>>) (Class<?>) EventProcessor.class, invokerFactory);
         EVENT_HANDLERS.add(handler);
         return handler;
     }
