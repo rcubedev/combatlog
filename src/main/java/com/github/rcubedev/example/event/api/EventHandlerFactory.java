@@ -1,7 +1,6 @@
 package com.github.rcubedev.example.event.api;
 
 import com.github.rcubedev.example.event.impl.EventHandlerFactoryImpl;
-import net.fabricmc.fabric.api.event.EventFactory;
 
 import java.util.function.Function;
 
@@ -23,9 +22,10 @@ public final class EventHandlerFactory {
      * @return The {@link EventHandler}.
      */
     public static <E extends Event> EventHandler<E> createArrayBacked(Class<E> type, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
-        return EventHandlerFactoryImpl.createArrayBacked(invokerFactory);
+        return EventHandlerFactoryImpl.createArrayBacked(type, invokerFactory);
     }
 
+    // default to empty invoker if no listeners
     public static <E extends Event> EventHandler<E> createArrayBacked(Class<E> type) {
         return EventHandlerFactory.createArrayBacked(type, e -> {}, listeners -> event -> {
             for (EventProcessor<E> eventProcessor : listeners) {

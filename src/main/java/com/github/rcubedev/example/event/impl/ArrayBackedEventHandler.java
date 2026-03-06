@@ -15,18 +15,31 @@ import java.util.function.Function;
 public class ArrayBackedEventHandler<E extends Event> extends EventHandler<E> {
 
     private final Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory;
+    private final Class<E> eventType;
     private final Object lock = new Object();
     private EventProcessor<E>[] listeners;
     private final Map<Priority, EventPhaseData<E>> phases = new EnumMap<>(Priority.class);
     private final List<EventPhaseData<E>> sortedPhases = new ArrayList<>();
 
     private volatile EventProcessor<E> invoker;
+    // Child handlers that should receive this handler's events
+    private final List<ArrayBackedEventHandler<? extends E>> childHandlers = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    public ArrayBackedEventHandler(Class<EventProcessor<E>> type, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+    public ArrayBackedEventHandler(Class<E> eventType, Class<EventProcessor<E>> processorType, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+        this.eventType = eventType;
         this.invokerFactory = invokerFactory;
-        this.listeners = (EventProcessor<E>[]) Array.newInstance(type, 0);
+        this.listeners = (EventProcessor<E>[]) Array.newInstance(processorType, 0);
         update();
+    }
+
+    /**
+     * Register a child handler. Called when a subtype handler is created.
+     */
+    void registerChildHandler(ArrayBackedEventHandler<? extends E> childHandler) {
+        synchronized (lock) {
+            childHandlers.add(childHandler);
+        }
     }
 
     public void update() {
@@ -59,7 +72,6 @@ public class ArrayBackedEventHandler<E extends Event> extends EventHandler<E> {
             sortedPhases.add(phase);
 
             if (sortIfCreate) {
-                // NodeSorting.sort(sortedPhases, "event phases", Comparator.comparing(data -> data.priority));
                 sortedPhases.sort(Comparator.comparing(data -> data.priority));
             }
         }
@@ -93,5 +105,21 @@ public class ArrayBackedEventHandler<E extends Event> extends EventHandler<E> {
     @Override
     public EventProcessor<E> invoker() {
         return invoker;
+    }
+
+    /**
+     * Get the event type this handler manages.
+     */
+    public Class<E> getEventType() {
+        return eventType;
+    }
+
+    /**
+     * Get all child handlers registered with this handler.
+     */
+    public List<ArrayBackedEventHandler<? extends E>> getChildHandlers() {
+        synchronized (lock) {
+            return new ArrayList<>(childHandlers);
+        }
     }
 }
