@@ -15,9 +15,7 @@ public class LivingEntityMixin {
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;actuallyHurt(Lnet/minecraft/world/damagesource/DamageSource;F)V"))
     private void onHurt(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ServerPlayer player) {
-            // todo :: maybe use after hurt event instead but that isnt called on death; is that wanted though?
-            DamageEventListener.onHurt(player, damageSource);
-        }
+        // todo :: maybe use after hurt event instead but that isnt called on death; is that wanted though? PaperMC calls on death too
+        DamageEventListener.onHurt((LivingEntity) (Object) this, damageSource);
     }
 }

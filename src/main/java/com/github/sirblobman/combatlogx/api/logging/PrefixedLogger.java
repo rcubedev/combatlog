@@ -12,6 +12,12 @@ public class PrefixedLogger extends FormattableLogger {
         this.prefix = prefix;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param message the original log message to be formatted
+     * @return the formatted log message that will be logged.
+     */
     @Override
     public String formatMessage(String message) {
         return String.format("[%s] %s", prefix, message);

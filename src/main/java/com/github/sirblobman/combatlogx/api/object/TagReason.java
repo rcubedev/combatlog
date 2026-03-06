@@ -1,9 +1,11 @@
 package com.github.sirblobman.combatlogx.api.object;
 
+import com.github.rcubedev.example.ISerializableEnum;
+
 /**
  * The reason for putting a player into combat.
  */
-public enum TagReason {
+public enum TagReason implements ISerializableEnum<TagReason> {
     /**
      * Unknown reason for being tagged. Usually occurs from the tag command.
      * This can also occur from the Damage Tagger expansion.

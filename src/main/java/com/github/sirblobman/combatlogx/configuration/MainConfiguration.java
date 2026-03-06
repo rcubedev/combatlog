@@ -3,13 +3,17 @@ package com.github.sirblobman.combatlogx.configuration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ServerLevelData;
 
+import com.github.rcubedev.example.EnumOrList;
+import com.github.rcubedev.example.StringOrList;
+import com.github.rcubedev.example.reflect.TypedClass;
 import com.github.sirblobman.combatlogx.api.object.TagReason;
 import com.github.sirblobman.combatlogx.api.object.TimerType;
-import com.github.sirblobman.combatlogx.api.utility.ConfigurationHelper;
 import folk.sisby.kaleido.api.WrappedConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.DisplayNameConvention;
@@ -23,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 @DisplayNameConvention(NamingSchemes.SPACE_SEPARATED_LOWER_CASE_INITIAL_UPPER_CASE)
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
-public class Configuration extends WrappedConfig {
+public class MainConfiguration extends WrappedConfig {
 
     @Comment({"Should debug messages be sent to the console?", "This option should be enabled if you are reporting an error or bug."})
     public boolean debugMode = false;
@@ -49,6 +53,7 @@ public class Configuration extends WrappedConfig {
             "\"disabled_world_1\" = \"*\" <-- CombatLogX is disabled for all dimensions in disabled_world_1",
             "\"DiSaBlEd_WoRlD_2\" = [\"minecraft:overworld\", \"example:custom_dimension\"] <-- CombatLogX is disabled for the overworld and a custom dimension in DiSaBlEd_WoRlD_2"
     })
+    // fixme change to a StringOrSet when created.
     public Map<String, StringOrList> disabledWorlds = ValueMap.builder(new StringOrList("")).build();
 
     @Comment({"This option changes the 'disabled_worlds' to a list of enabled dimensions.",
@@ -110,7 +115,7 @@ public class Configuration extends WrappedConfig {
         public int defaultTimer = 10;
     }
 
-    // TODO: will this require a restart to re-register the permissions?
+    // TODO: will this require a restart to re-register the permissions? maybe use context instead?
     @Comment({"Which permission will prevent players from being tagged into combat?",
             "You must add this permission manually.",
             "OPs do not have this permission by default.",
@@ -154,24 +159,33 @@ public class Configuration extends WrappedConfig {
             "All enabled example",
             "enabled_tag_reasons = \"*\""
     })
-    // TODO: string or list?
-    public StringOrList enabledTagReasons = new StringOrList("*");
+    // fixme change to a EnumOrSet when created.
+    public EnumOrList<TagReason> enabledTagReasons = EnumOrList.of("*", new TypedClass<>(){}, new TypedClass<>(){});
 
-    public static class ConfigReader {
-        private final Configuration configuration;
-
-        public ConfigReader(Configuration configuration) {
-            this.configuration = configuration;
-        }
+    public record ConfigReader(MainConfiguration config) {
 
         public boolean isProjectileIgnored(EntityType<?> type) {
-            return configuration.ignoredProjectiles.contains(EntityType.getKey(type).toString());
+            return config.ignoredProjectiles.contains(EntityType.getKey(type).toString());
         }
 
-        // todo: cache?
-        public @NotNull Set<TagReason> getEnabledTagReasons() {
-            Set<TagReason> enabledTagReasons = ConfigurationHelper.parseEnums(configuration.enabledTagReasons, TagReason.class);
-            return Collections.unmodifiableSet(enabledTagReasons);
+        public boolean isDisabled(@NotNull Level level) {
+            if (!(level instanceof ServerLevel)) return false; // fallback to disabled for non server levels
+
+            String worldName = ((ServerLevelData) level.getLevelData()).getLevelName();
+            List<String> dimensions = config.disabledWorlds.get(worldName).toList();
+
+            boolean inverted = config.disabledWorldsInverted;
+
+            boolean contains = (dimensions != null && (dimensions.contains("all") || dimensions.contains(level.dimension().location().toString())));
+            return (inverted != contains);
+        }
+
+        // todo: cache? idk.
+        public @NotNull List<TagReason> getEnabledTagReasons() {
+            // List<TagReason> enabledTagReasons = ConfigurationHelper.parseEnums(mainConfiguration.enabledTagReasons, TagReason.class);
+            // return Collections.unmodifiableSet(enabledTagReasons);
+            List<TagReason> enabledTagReasons = config.enabledTagReasons.toList();
+            return Collections.unmodifiableList(enabledTagReasons);
         }
     }
 }

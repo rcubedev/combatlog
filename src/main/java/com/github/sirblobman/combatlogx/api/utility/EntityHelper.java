@@ -1,6 +1,5 @@
 package com.github.sirblobman.combatlogx.api.utility;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -8,6 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.projectile.Projectile;
+
+import com.github.sirblobman.combatlogx.api.ICombatLogX;
 
 import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
@@ -35,9 +36,12 @@ public class EntityHelper {
      * @param entity entity to check
      * @return projectile if owned by player, otherwise the entity itself
      */
-    public static Entity linkProjectile(Entity entity) {
-        if (!(entity instanceof Projectile projectile) || !(projectile.getOwner() instanceof ServerPlayer shooter)) return entity;
-        if (projectileIgnored(projectile)) return entity;
+    public static Entity linkProjectile(ICombatLogX mod, Entity entity) {
+        if (!(entity instanceof Projectile projectile)) return entity;
+        if (isProjectileIgnored(mod, projectile)) return entity;
+
+        Entity shooter = projectile.getOwner();
+        if (shooter == null) return entity;
         return shooter;
     }
 
@@ -53,9 +57,9 @@ public class EntityHelper {
         return source;
     }
 
-    private static boolean projectileIgnored(Projectile projectile) {
+    private static boolean isProjectileIgnored(ICombatLogX mod, Projectile projectile) {
         // TODO :: optimize by caching the registry keys so it doesn't have to be looked up every time
         EntityType<?> type = projectile.getType();
-        return config.combatLog.ignoredProjectiles.contains(EntityType.getKey(type).toString());
+        return config.combatLog.ignoredProjectiles.contains(EntityType.getKey(type).toString()); // fixme use the plugin?
     }
 }

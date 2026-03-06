@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import com.github.sirblobman.combatlogx.api.utility.Validate;
-import com.github.sirblobman.combatlogx.util.CombatTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ public final class TagInformation {
     private final UUID playerId;
     private final List<CombatTag> tagList;
 
-    // TODO :: pass in player into the constructor instead.
+    // TODO :: pass in player into the constructor instead?
     public TagInformation(@NotNull OfflinePlayer player) {
         this(player.getUniqueId());
     }

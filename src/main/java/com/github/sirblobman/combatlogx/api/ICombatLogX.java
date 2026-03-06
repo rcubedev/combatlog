@@ -1,14 +1,5 @@
 package com.github.sirblobman.combatlogx.api;
 
-import com.github.sirblobman.api.configuration.IResourceHolder;
-import com.github.sirblobman.api.configuration.PlayerDataManager;
-import com.github.sirblobman.api.language.LanguageManager;
-import com.github.sirblobman.api.plugin.ConfigurablePlugin;
-import com.github.sirblobman.api.plugin.IMultiVersionPlugin;
-import com.github.sirblobman.combatlogx.api.configuration.CommandConfiguration;
-import com.github.sirblobman.combatlogx.api.configuration.MainConfiguration;
-import com.github.sirblobman.combatlogx.api.configuration.PunishConfiguration;
-import com.github.sirblobman.combatlogx.api.expansion.ExpansionManager;
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.manager.ICrystalManager;
 import com.github.sirblobman.combatlogx.api.manager.IDeathManager;
@@ -16,6 +7,7 @@ import com.github.sirblobman.combatlogx.api.manager.IForgiveManager;
 import com.github.sirblobman.combatlogx.api.manager.IPlaceholderManager;
 import com.github.sirblobman.combatlogx.api.manager.IPunishManager;
 import com.github.sirblobman.combatlogx.api.manager.ITimerManager;
+import com.github.sirblobman.combatlogx.configuration.MainConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 public interface ICombatLogX extends ILoggingProvider {
@@ -79,10 +71,10 @@ public interface ICombatLogX extends ILoggingProvider {
      */
     void printDebug(@NotNull Throwable ex);
 
-    // /**
-    //  * @return The configuration reader for 'config.yml'.
-    //  */
-    // @NotNull MainConfiguration getConfiguration();
+    /**
+     * @return The main configuration
+     */
+    @NotNull MainConfiguration getConfiguration();
     //
     // /**
     //  * @return The configuration reader for 'commands.yml'

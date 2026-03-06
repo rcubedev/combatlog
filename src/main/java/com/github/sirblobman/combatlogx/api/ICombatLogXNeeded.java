@@ -1,47 +1,24 @@
 package com.github.sirblobman.combatlogx.api;
 
-import com.github.sirblobman.combatlogx.api.manager.IDeathManager;
-import com.github.sirblobman.combatlogx.api.manager.IForgiveManager;
-import com.github.sirblobman.combatlogx.api.manager.IPlaceholderManager;
-import com.github.sirblobman.combatlogx.api.manager.IPunishManager;
-import com.github.sirblobman.combatlogx.api.manager.ITimerManager;
+import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
-import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
+import org.slf4j.Logger;
+
+import static com.github.sirblobman.combatlogx.CombatLogX.config;
 
 public interface ICombatLogXNeeded extends ILoggingProvider {
 
-    /**
-     * Called when the configuration files should be reloaded.
-     */
-    void onReload();
+    @NotNull ICombatLogX getCombatLogX();
 
-    /**
-     * @return The combat manager for this mod.
-     */
-    @NotNull ICombatManager getCombatManager();
+    @Override
+    default @NotNull Logger getLogger() {
+        ICombatLogX combatLogX = getCombatLogX();
+        return combatLogX.getLogger();
+    }
 
-    /**
-     * @return The timer and notification manager for this mod.
-     */
-    @NotNull ITimerManager getTimerManager();
-
-    /**
-     * @return The punishment manager for this mod.
-     */
-    @NotNull IPunishManager getPunishManager();
-
-    /**
-     * @return The death manager for this mod.
-     */
-    @NotNull IDeathManager getDeathManager();
-
-    /**
-     * @return The placeholder hook manager for this mod.
-     */
-    @NotNull IPlaceholderManager getPlaceholderManager();
-
-    /**
-     * @return The combat forgiveness manager for this mod.
-     */
-    @NotNull IForgiveManager getForgiveManager();
+    @Override
+    default boolean isDebugMode() {
+        ICombatLogX combatLogX = getCombatLogX();
+        return FabricLoader.getInstance().isDevelopmentEnvironment() || config.debugMode);
+    }
 }

@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import com.github.sirblobman.combatlogx.configuration.MainConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;

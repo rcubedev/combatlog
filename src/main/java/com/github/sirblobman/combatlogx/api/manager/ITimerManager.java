@@ -2,6 +2,8 @@ package com.github.sirblobman.combatlogx.api.manager;
 
 import java.util.Set;
 
+import net.minecraft.world.entity.player.Player;
+
 import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import com.github.sirblobman.combatlogx.api.object.TimerUpdater;
 import org.bukkit.entity.Player;

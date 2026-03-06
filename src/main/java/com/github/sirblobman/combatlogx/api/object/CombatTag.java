@@ -3,7 +3,8 @@ package com.github.sirblobman.combatlogx.api.object;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
-import org.bukkit.entity.Entity;
+import net.minecraft.world.entity.Entity;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +18,7 @@ public final class CombatTag implements Comparable<CombatTag> {
     public CombatTag(@Nullable Entity enemy, @NotNull TagType tagType, @NotNull TagReason tagReason,
                      long expireMillis) {
         if (enemy != null) {
-            this.enemyId = enemy.getUniqueId();
+            this.enemyId = enemy.getUUID();
             this.enemyReference = new WeakReference<>(enemy);
         } else {
             this.enemyId = null;

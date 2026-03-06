@@ -1,6 +1,7 @@
 package com.github.sirblobman.combatlogx;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.configuration.MainConfiguration;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -10,8 +11,9 @@ import net.minecraft.network.chat.Component;
 
 import com.github.sirblobman.combatlogx.command.AfkCommand;
 import com.github.sirblobman.combatlogx.command.AntiLogoutCommand;
-import com.github.sirblobman.combatlogx.configuration.OldConfiguration;
 import com.github.sirblobman.combatlogx.listener.DamageEventListener;
+import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +21,12 @@ import org.slf4j.LoggerFactory;
 public class CombatLogX implements ICombatLogX, DedicatedServerModInitializer {
     public static final String MOD_ID = "antilogout";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
-    public static final OldConfiguration config;
+    public static final MainConfiguration.ConfigReader CONFIG_READER = new MainConfiguration.ConfigReader(MainConfiguration.createToml(FabricLoader.getInstance().getConfigDir(), "CombatLogX", "config", MainConfiguration.class));
     public static final Component AFK_MESSAGE;
-
     static {
-        config = OldConfiguration.readConfigFile();
+        // config = OldConfiguration.readConfigFile();
 
-        AFK_MESSAGE = Component.translatable(config.afk.afkMessage);
+        AFK_MESSAGE = Component.translatable(CONFIG_READER.config().afk.afkMessage);
     }
 
     @Override
@@ -49,5 +49,13 @@ public class CombatLogX implements ICombatLogX, DedicatedServerModInitializer {
     // FIXME :: add a thread safe singleton logger thingy
     public static void debugInfo(String msg) {
         if (isDebugMode()) LOGGER.info(msg);
+    }
+
+    /**
+     * @return The main configuration
+     */
+    @Override
+    public @NotNull MainConfiguration getConfiguration() {
+        return CONFIG_READER.config();
     }
 }

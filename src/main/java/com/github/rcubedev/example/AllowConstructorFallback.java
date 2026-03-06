@@ -1,4 +1,4 @@
-package com.github.sirblobman.combatlogx.configuration;
+package com.github.rcubedev.example;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-public class FormattableLogger implements Logger, ICustomLogger {
+public abstract class FormattableLogger implements Logger, ICustomLogger {
 
     private final Logger logger;
 
@@ -25,13 +25,11 @@ public class FormattableLogger implements Logger, ICustomLogger {
      * logic (e.g., adding prefixes, suffixes, or any other modifications).
      * <p>
      * The formatted message will be passed to the wrapped SLF4J logger for actual logging.
-     * </p>
+     *
      * @param message the original log message to be formatted
      * @return the formatted log message that will be logged.
      */
-    public String formatMessage(String message) {
-        return message;
-    }
+    public abstract String formatMessage(String message);
 
     // Wrapped methods
     @Override

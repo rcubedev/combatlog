@@ -2,12 +2,15 @@ package com.github.sirblobman.combatlogx.api.manager;
 
 import java.util.UUID;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+
+import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.github.sirblobman.combatlogx.api.IAntiLogoutNeeded;
 
-public interface ICrystalManager extends IAntiLogoutNeeded {
-    @Nullable Player getPlacer(@NotNull Entity crystal);
+public interface ICrystalManager extends ICombatLogXNeeded {
+    @Nullable Player getPlacer(Entity crystal);
 
     void setPlacer(@NotNull Entity crystal, @NotNull Player player);
 

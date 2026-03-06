@@ -65,7 +65,7 @@ public final class ConfigurationHelper {
             return EnumSet.noneOf(enumClass);
         }
 
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         Collection<String> items = (Collection<String>) representation; // safe as StringOrList stores as <String>
 
         if (items.isEmpty()) {
