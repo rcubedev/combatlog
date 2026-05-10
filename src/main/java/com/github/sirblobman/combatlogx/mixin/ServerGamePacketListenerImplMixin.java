@@ -33,14 +33,15 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
      * @param disconnectionDetails
      * @param ci
      */
+    // fixme is this needed? theoretically the flow should go ServerCommonPacketListenerImpl#disconnect -> Connection#handleDisconnect (which does end up calling PacketListener#onDisconnect, which would call this method), theoretically handling this case already
     @Inject(method = "onDisconnect", at = @At("HEAD"), cancellable = true)
-    private void al$onDisconnect(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
-        // Generic disconnect is handled by MConnection#al_handleDisconnection
-        if (!((ILogoutRules) this.getPlayer()).al$allowDisconnect() && disconnectionDetails.reason() == CombatLogX.AFK_MESSAGE) {
-            ((ILogoutRules) this.player).al$onRealDisconnect();
-
-            // Disable disconnecting in this case
-            ci.cancel();
-        }
+    private void onDisconnect(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
+        // // Generic disconnect is handled by ConnectionMixin#handleDisconnection
+        // if (!((ILogoutRules) this.getPlayer()).al$allowDisconnect() && disconnectionDetails.reason() == CombatLogX.AFK_MESSAGE) {
+        //     ((ILogoutRules) this.player).al$onRealDisconnect();
+        //
+        //     // Disable disconnecting in this case
+        //     ci.cancel();
+        // }
     }
 }

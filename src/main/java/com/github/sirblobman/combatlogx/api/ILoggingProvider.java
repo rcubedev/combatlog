@@ -12,9 +12,22 @@ public interface ILoggingProvider {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    default void printDebug(@NotNull String message) {
-        if (isDebugMode()) {
-            getLogger().info("[Debug] {}", message);
+    default void printDebug(String @NotNull ... messages) {
+        if (!isDebugMode()) return;
+        Logger logger = getLogger();
+        for (String message : messages) {
+            String prependedMessage = "[Debug] " + message;
+            logger.info(prependedMessage);
         }
+    }
+
+    default void printDebug(@NotNull String message) {
+        if (!isDebugMode()) return;
+        getLogger().info("[Debug] {}", message);
+    }
+
+    default void printDebug(@NotNull Throwable ex) {
+        if (!isDebugMode()) return;
+        getLogger().warn("[Debug] Full Error Details: ", ex);
     }
 }

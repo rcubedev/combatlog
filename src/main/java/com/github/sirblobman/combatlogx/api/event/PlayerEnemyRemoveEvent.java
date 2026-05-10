@@ -1,10 +1,8 @@
 package com.github.sirblobman.combatlogx.api.event;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
-import com.github.rcubedev.example.event.api.EventHandler;
-import com.github.rcubedev.example.event.api.EventHandlerFactory;
 import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,11 +15,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PlayerEnemyRemoveEvent extends CustomPlayerEvent {
 
-    public static EventHandler<PlayerEnemyRemoveEvent> EVENT = EventHandlerFactory.createArrayBacked(PlayerEnemyRemoveEvent.class);
     private final UntagReason untagReason;
     private final Entity enemy;
 
-    public PlayerEnemyRemoveEvent(@NotNull Player player, @NotNull UntagReason untagReason, @NotNull Entity enemy) {
+    public PlayerEnemyRemoveEvent(@NotNull ServerPlayer player, @NotNull UntagReason untagReason, @NotNull Entity enemy) {
         super(player);
         this.untagReason = untagReason;
         this.enemy = enemy;
@@ -40,15 +37,5 @@ public final class PlayerEnemyRemoveEvent extends CustomPlayerEvent {
      */
     public @NotNull Entity getEnemy() {
         return this.enemy;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return The handler instance.
-     */
-    @Override
-    public EventHandler<PlayerEnemyRemoveEvent> handler() {
-        return EVENT;
     }
 }

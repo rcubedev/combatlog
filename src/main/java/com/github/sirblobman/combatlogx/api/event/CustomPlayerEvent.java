@@ -1,34 +1,13 @@
 package com.github.sirblobman.combatlogx.api.event;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
-import com.github.rcubedev.example.event.api.Event;
-import com.github.rcubedev.example.event.api.EventHandler;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class CustomPlayerEvent extends Event {
+public abstract class CustomPlayerEvent extends PlayerEvent {
 
-    protected Player player;
-
-    public CustomPlayerEvent(@NotNull Player player) {
-        this.player = player;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return The handler instance.
-     */
-    @Override
-    public abstract EventHandler<? extends CustomPlayerEvent> handler();
-
-    /**
-     * Returns the player involved in this event
-     *
-     * @return the player who is involved in this event
-     */
-    @NotNull
-    public final Player getPlayer() {
-        return player;
+    public CustomPlayerEvent(@NotNull ServerPlayer player) {
+        super(player);
     }
 }

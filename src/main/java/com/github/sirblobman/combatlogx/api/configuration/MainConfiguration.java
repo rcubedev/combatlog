@@ -1,5 +1,7 @@
-package com.github.sirblobman.combatlogx.configuration;
+package com.github.sirblobman.combatlogx.api.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ServerLevelData;
 
+import com.github.rcubedev.example.ElementOrList;
 import com.github.rcubedev.example.EnumOrList;
 import com.github.rcubedev.example.StringOrList;
 import com.github.rcubedev.example.reflect.TypedClass;
@@ -32,14 +35,21 @@ public class MainConfiguration extends WrappedConfig {
     @Comment({"Should debug messages be sent to the console?", "This option should be enabled if you are reporting an error or bug."})
     public boolean debugMode = false;
 
-    // small section, don't make a subclass
-    // todo :: maybe remove, seems useless
-    @Comment("These are toggles for the different broadcast messages")
-    public Map<String, Boolean> broadcast = ValueMap.builder(false)
-            .put("on-load", true)
-            .put("on-enable", true)
-            .put("on-disable", true) // todo :: needed? is there a disable event?
-            .build();
+    // todo maybe bring back for parity but for now its gone.
+    // // small section, don't make a subclass: made it a subclass as users may change the map entries.
+    // // todo: maybe remove, seems useless
+    // @Comment("These are toggles for the different broadcast messages")
+    // public BroadcastSection broadcast = new BroadcastSection();
+    // public static class BroadcastSection implements Section {
+    //     public boolean onLoad = true;
+    //     public boolean onEnable = true; // todo: needed? whats the diff between load & enable on fabric?
+    //     public boolean onDisable = true; // todo: needed? is there a disable event?
+    // }
+    // // public Map<String, Boolean> broadcast = ValueMap.builder(false)
+    // //         .put("on-load", true)
+    // //         .put("on-enable", true) // todo: needed? whats the diff between load & enable on fabric?
+    // //         .put("on-disable", true) // todo: needed? is there a disable event?
+    // //         .build();
 
     @Comment({"This is a list of ignored dimensions for each world that CombatLogX will follow when tagging players.",
             "World names are case-sensitive. \"world\" is not the same as \"WoRlD\"",
@@ -93,9 +103,14 @@ public class MainConfiguration extends WrappedConfig {
     })
     public boolean linkTNT = true;
 
+    @Comment({"CombatLogX can detect when players place end crystals.",
+            "This will only link the end crystal as an attacker when it explodes, not as a defender."
+    })
+    public boolean linkEndCrystal = true;
+
     public TimerSection timer = new TimerSection();
     public static class TimerSection implements Section {
-        // TODO: maybe remove
+        // todo: i think will use meta instead of permission but dk about bukkit/spigot/paper platforms
         @Comment({"CombatLogX has two different types of timers that you can select.",
                 "GLOBAL:",
                 "Every player will be tagged for the length of the 'default_timer' value.",
@@ -142,8 +157,10 @@ public class MainConfiguration extends WrappedConfig {
     public int forgiveRequestCooldown = 30;
 
     // TODO: remove?
-    @Comment("What is the minimum server TPS to allow tagging?")
-    @FloatRange(min = 0, max = 20)
+    @Comment({"What is the minimum server TPS to allow tagging?",
+            "Set to -1 to disable."
+    })
+    @FloatRange(min = -1, max = 20)
     public float minimumServerTPS = 15; // fixme make a double for parity w/ CLX?
 
     @Comment({"Which tag reasons are allowed?",
@@ -160,34 +177,35 @@ public class MainConfiguration extends WrappedConfig {
             "enabled_tag_reasons = \"*\""
     })
     // fixme change to a EnumOrSet when created.
-    public EnumOrList<TagReason> enabledTagReasons = EnumOrList.of("*", new TypedClass<>(){}, new TypedClass<>(){});
+    // public StringOrList enabledTagReasons = new StringOrList(List.of("a", "b", "c"));
+    // public ElementOrList<String> enabledTagReasons = new ElementOrList<>(List.of("a", "b", "c"), new TypedClass<String>() {}, new TypedClass<List<String>>() {});
+    // public ElementOrList<TagReason> enabledTagReasons = new ElementOrList<>(ValueList.create(TagReason.ATTACKED, TagReason.values()), new TypedClass<TagReason>() {}, new TypedClass<List<TagReason>>() {});
+    // public EnumOrList<TagReason> enabledTagReasons = new EnumOrList<>(TagReason.ATTACKED, new TypedClass<TagReason>(){}, new TypedClass<List<TagReason>>(){});
+    public EnumOrList<TagReason> enabledTagReasons = EnumOrList.of("*", new TypedClass<TagReason>(){}, new TypedClass<List<TagReason>>(){});
 
-    // fixme maybe merge with MainConfiguration
-    public record ConfigReader(MainConfiguration config) {
+    public boolean isProjectileIgnored(EntityType<?> type) {
+        return this.ignoredProjectiles.contains(EntityType.getKey(type).toString());
+    }
 
-        public boolean isProjectileIgnored(EntityType<?> type) {
-            return config.ignoredProjectiles.contains(EntityType.getKey(type).toString());
-        }
+    public boolean isDisabled(@NotNull Level level) {
+        if (!(level instanceof ServerLevel)) return true; // fallback to disabled for non server levels
 
-        public boolean isDisabled(@NotNull Level level) {
-            if (!(level instanceof ServerLevel)) return false; // fallback to disabled for non server levels
+        String worldName = ((ServerLevelData) level.getLevelData()).getLevelName();
+        StringOrList disabled = this.disabledWorlds.get(worldName);
+        List<String> dimensions = disabled != null ? disabled.toList() : List.of();
 
-            String worldName = ((ServerLevelData) level.getLevelData()).getLevelName();
-            List<String> dimensions = config.disabledWorlds.get(worldName).toList();
+        boolean inverted = this.disabledWorldsInverted;
 
-            boolean inverted = config.disabledWorldsInverted;
+        boolean contains = (dimensions != null && (dimensions.contains("all") || dimensions.contains(level.dimension().location().toString())));
+        return (inverted != contains);
+    }
 
-            boolean contains = (dimensions != null && (dimensions.contains("all") || dimensions.contains(level.dimension().location().toString())));
-            return (inverted != contains);
-        }
-
-        // todo: cache? idk.
-        // todo: in future maybe make a serializable set?
-        public @NotNull List<TagReason> getEnabledTagReasons() {
-            // List<TagReason> enabledTagReasons = ConfigurationHelper.parseEnums(mainConfiguration.enabledTagReasons, TagReason.class);
-            // return Collections.unmodifiableSet(enabledTagReasons);
-            List<TagReason> enabledTagReasons = config.enabledTagReasons.toList();
-            return Collections.unmodifiableList(enabledTagReasons);
-        }
+    // todo: cache? idk.
+    // todo: in future maybe make a serializable set?
+    public @NotNull List<TagReason> getEnabledTagReasons() {
+        // List<TagReason> enabledTagReasons = ConfigurationHelper.parseEnums(mainConfiguration.enabledTagReasons, TagReason.class);
+        // return Collections.unmodifiableSet(enabledTagReasons);
+        List<TagReason> enabledTagReasons = this.enabledTagReasons.toList();
+        return Collections.unmodifiableList(enabledTagReasons);
     }
 }

@@ -97,8 +97,8 @@ public abstract class TypedClass<T> extends TypeReference<T> {
 
     private static Class<?> getRawType(Type type) {
         if (type instanceof Class<?> c) return c;
-        if (type instanceof ParameterizedType pt) return (Class<?>) pt.getRawType();
-        if (type instanceof TypeVariable<?> tv) return getRawType(tv.getBounds()[0]);
+        if (type instanceof ParameterizedType pt) return getRawType(pt.getRawType());
+        if (type instanceof TypeVariable<?> tv) return getRawType(tv.getBounds()[0]); // todo we should ensure all bounds conform
         if (type instanceof WildcardType wt) return getRawType(wt.getUpperBounds()[0]);
         if (type instanceof GenericArrayType gat) {
             return Array.newInstance(getRawType(gat.getGenericComponentType()), 0).getClass();

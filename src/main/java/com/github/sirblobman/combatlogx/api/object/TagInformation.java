@@ -1,14 +1,15 @@
 package com.github.sirblobman.combatlogx.api.object;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
-import com.github.sirblobman.combatlogx.api.utility.Validate;
+import com.github.sirblobman.combatlogx.CombatLogX;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,9 +17,8 @@ public final class TagInformation {
     private final UUID playerId;
     private final List<CombatTag> tagList;
 
-    // TODO :: pass in player into the constructor instead?
-    public TagInformation(@NotNull OfflinePlayer player) {
-        this(player.getUniqueId());
+    public TagInformation(@NotNull ServerPlayer player) {
+        this(player.getUUID());
     }
 
     public TagInformation(@NotNull UUID playerId) {
@@ -33,25 +33,8 @@ public final class TagInformation {
         return this.playerId;
     }
 
-    /**
-     * @return The {@link OfflinePlayer} that is tagged.
-     * Can be null if the server cache is removed or the player doesn't exist.
-     * @see #getPlayerId()
-     */
-    public @Nullable OfflinePlayer getOfflinePlayer() {
-        UUID playerId = getPlayerId();
-        return Bukkit.getOfflinePlayer(playerId);
-    }
-
-
-    /**
-     * @return The {@link Player} that is tagged.
-     * Can be null if the player is offline.
-     * @see #getPlayerId()
-     */
-    public @Nullable Player getPlayer() {
-        UUID playerId = getPlayerId();
-        return Bukkit.getPlayer(playerId);
+    public @NotNull List<CombatTag> getTagList() {
+        return this.tagList;
     }
 
     /**
@@ -103,24 +86,18 @@ public final class TagInformation {
     public boolean isEnemy(@NotNull Entity entity) {
         List<CombatTag> tagList = getTags();
         for (CombatTag combatTag : tagList) {
-            if (combatTag.doesEnemyMatch(entity)) {
-                return true;
-            }
+            if (combatTag.doesEnemyMatch(entity)) return true;
         }
 
         return false;
     }
 
     public void addTag(@NotNull CombatTag combatTag) {
-        if (combatTag.isExpired()) {
-            throw new IllegalArgumentException("combatTag is already expired!");
-        }
+        if (combatTag.isExpired()) throw new IllegalArgumentException("combatTag is already expired!");
 
-        if (this.tagList.contains(combatTag)) {
-            throw new IllegalArgumentException("The player already has that combat tag.");
-        }
+        if (this.tagList.contains(combatTag)) throw new IllegalArgumentException("The player already has that combat tag.");
 
-        this.tagList.removeIf(otherTag -> otherTag.doesEnemyMatch(combatTag.getEnemy()));
+        this.tagList.removeIf(otherTag -> otherTag.doesEnemyMatch(combatTag.getEnemy())); //fixme enemy may be null
         this.tagList.add(combatTag);
     }
 
@@ -134,7 +111,7 @@ public final class TagInformation {
             return 0L;
         }
 
-        CombatTag latestTag = tagList.get(0);
+        CombatTag latestTag = tagList.getFirst();
         return latestTag.getExpireMillis();
     }
 
@@ -172,20 +149,18 @@ public final class TagInformation {
             return TagType.UNKNOWN;
         }
 
-        return tagTypeList.get(0);
+        return tagTypeList.getFirst();
     }
 
     public @Nullable Entity getCurrentEnemy() {
         List<Entity> enemyList = getEnemies();
-        if (enemyList.isEmpty()) {
-            return null;
-        }
+        if (enemyList.isEmpty()) return null;
 
-        return enemyList.get(0);
+        return enemyList.getFirst();
     }
 
     public @Nullable CombatTag getTagForEnemy(Entity entity) {
-        Validate.notNull(entity, "entity must not be null!");
+        if (entity == null) throw new IllegalArgumentException("entity must not be null!");
 
         List<CombatTag> tagList = getTags();
         for (CombatTag combatTag : tagList) {

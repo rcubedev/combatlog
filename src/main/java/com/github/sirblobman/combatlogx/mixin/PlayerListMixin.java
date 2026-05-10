@@ -1,49 +1,55 @@
 package com.github.sirblobman.combatlogx.mixin;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ClientInformation;
+import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
-import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
-import org.spongepowered.asm.mixin.Final;
+
+import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.listener.UntagEventListener;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
- * Kicks same players that are in {@link ILogoutRules#DISCONNECTED_PLAYERS} list
+ * Kicks same players that are in {@link UntagEventListener#DISCONNECTED} list
  * when player with same UUID joins.
  */
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin {
 
-    @Shadow
-    @Final
-    private MinecraftServer server;
+    // swapped back to replacing NPC instead of hijacking.
+    @Inject(method = "placeNewPlayer", at = @At("HEAD"))
+    private void captureIsNpc(Connection connection, ServerPlayer serverPlayer, CommonListenerCookie cookie, CallbackInfo ci, @Share("isNpc") LocalBooleanRef isNpc) {
+        isNpc.set(UntagEventListener.DISCONNECTED.contains(serverPlayer));
+        CombatLogX.LOGGER.info("Is NPC: {}", isNpc.get());
+    }
 
-    @Shadow public abstract List<ServerPlayer> getPlayers();
+    // // todo in future we can hijack this & instead send our own join msg
+    // @WrapOperation(
+    //         method = "placeNewPlayer",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V")
+    // )
+    // private void skipJoinBroadcast(PlayerList instance, Component component, boolean overlay, Operation<Void> original, @Share("isNpc") LocalBooleanRef isNpc) {
+    //     if (isNpc.get()) return;
+    //     original.call(instance, component, overlay);
+    // }
 
-    /**
-     * When a player wants to connect but is still online,
-     * we allow players with same uuid to be disconnected.
-     */
-    @Inject(method = "getPlayerForLogin", at = @At("HEAD"))
-    private void onPlayerLogin(GameProfile gameProfile, ClientInformation clientInformation, CallbackInfoReturnable<ServerPlayer> cir) {
-        var matchingPlayers = getPlayers().stream().filter(player -> player.getUUID().equals(gameProfile.getId())).toList();
-
-        for (ServerPlayer player : matchingPlayers) {
-            // Allows disconnect
-            ((ILogoutRules) player).al$setAllowDisconnect(true);
-
-            // Removes player so that the internal finite state machine in ServerLoginPacketListenerImpl can continue
-            this.server.getPlayerList().remove(player);
-
-            ILogoutRules.DISCONNECTED_PLAYERS.remove(player);
-        }
+    @WrapOperation(
+            method = "placeNewPlayer",
+            at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    )
+    private Object skipPutByUUID(Map<UUID, ServerPlayer> instance, Object uuid, Object player, Operation<Object> original, @Share("isNpc") LocalBooleanRef isNpc) {
+        if (isNpc.get()) return instance.get(uuid);
+        return original.call(instance, uuid, player);
     }
 }

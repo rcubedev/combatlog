@@ -9,8 +9,8 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.projectile.Projectile;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
-
-import static com.github.sirblobman.combatlogx.CombatLogX.config;
+import com.github.sirblobman.combatlogx.api.configuration.MainConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityHelper {
 
@@ -21,7 +21,7 @@ public class EntityHelper {
      * @param entity entity to check
      * @return owner if pet, otherwise the entity itself
      */
-    public static Entity linkPet(Entity entity) {
+    public static @NotNull Entity linkPet(@NotNull Entity entity) {
         if (!(entity instanceof TamableAnimal tamableAnimal)) return entity;
 
         LivingEntity animalTamer = tamableAnimal.getOwner();
@@ -36,7 +36,7 @@ public class EntityHelper {
      * @param entity entity to check
      * @return projectile if owned by player, otherwise the entity itself
      */
-    public static Entity linkProjectile(ICombatLogX mod, Entity entity) {
+    public static @NotNull Entity linkProjectile(@NotNull ICombatLogX mod, @NotNull Entity entity) {
         if (!(entity instanceof Projectile projectile)) return entity;
         if (isProjectileIgnored(mod, projectile)) return entity;
 
@@ -52,14 +52,15 @@ public class EntityHelper {
      * @param entity entity to check
      * @return player if TNT is primed by player, otherwise the entity itself
      */
-    public static Entity linkTNT(Entity entity) {
+    public static @NotNull Entity linkTNT(@NotNull Entity entity) {
         if (!(entity instanceof PrimedTnt tnt) || !(tnt.getOwner() instanceof ServerPlayer source)) return entity;
         return source;
     }
 
-    private static boolean isProjectileIgnored(ICombatLogX mod, Projectile projectile) {
-        // TODO :: optimize by caching the registry keys so it doesn't have to be looked up every time
+    private static boolean isProjectileIgnored(@NotNull ICombatLogX mod, @NotNull Projectile projectile) {
+        // TODO: maybe optimize by caching the registry keys so it doesn't have to be looked up every time
         EntityType<?> type = projectile.getType();
-        return config.combatLog.ignoredProjectiles.contains(EntityType.getKey(type).toString()); // fixme use the plugin?
+        MainConfiguration configuration = mod.getConfiguration();
+        return configuration.ignoredProjectiles.contains(EntityType.getKey(type).toString()); // fixme use the mod?
     }
 }

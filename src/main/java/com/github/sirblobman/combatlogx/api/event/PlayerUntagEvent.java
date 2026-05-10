@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
-import com.github.rcubedev.example.event.api.EventHandler;
-import com.github.rcubedev.example.event.api.EventHandlerFactory;
 import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +17,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PlayerUntagEvent extends CustomPlayerEvent {
 
-    public static final EventHandler<PlayerUntagEvent> EVENT = EventHandlerFactory.createArrayBacked(PlayerUntagEvent.class);
     private final UntagReason untagReason;
     private final List<Entity> previousEnemyList;
 
-    public PlayerUntagEvent(@NotNull Player player, @NotNull UntagReason untagReason,
+    public PlayerUntagEvent(@NotNull ServerPlayer player, @NotNull UntagReason untagReason,
                             @NotNull List<Entity> previousEnemyList) {
         super(player);
         this.untagReason = untagReason;
@@ -40,15 +37,5 @@ public final class PlayerUntagEvent extends CustomPlayerEvent {
 
     public @NotNull List<Entity> getPreviousEnemies() {
         return Collections.unmodifiableList(this.previousEnemyList);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return The handler instance.
-     */
-    @Override
-    public EventHandler<PlayerUntagEvent> handler() {
-        return EVENT;
     }
 }

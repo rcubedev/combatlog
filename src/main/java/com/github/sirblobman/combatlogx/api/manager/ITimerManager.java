@@ -2,11 +2,11 @@ package com.github.sirblobman.combatlogx.api.manager;
 
 import java.util.Set;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import com.github.sirblobman.combatlogx.api.object.TimerUpdater;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public interface ITimerManager extends ICombatLogXNeeded {
@@ -25,9 +25,9 @@ public interface ITimerManager extends ICombatLogXNeeded {
     /**
      * Remove all timers in this manager from the player.
      *
-     * @param player The {@link Player} to remove the timers from.
+     * @param player The {@link ServerPlayer} to remove the timers from.
      */
-    void remove(@NotNull Player player);
+    void remove(@NotNull ServerPlayer player);
 
     /**
      * Register the manager

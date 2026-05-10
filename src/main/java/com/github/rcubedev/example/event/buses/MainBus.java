@@ -29,7 +29,7 @@ import com.github.rcubedev.example.event.api.IEventBus;
 public final class MainBus extends EventBus<Event> {
 
     /** Singleton instance of the main event bus. */
-    public static final MainBus INSTANCE = new MainBus();
+    private static final MainBus INSTANCE = new MainBus();
 
     /** Convenience alias for {@link #INSTANCE}. */
     public static final IEventBus<Event> BUS = INSTANCE;

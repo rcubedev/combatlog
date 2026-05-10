@@ -6,7 +6,7 @@ public final class EventDispatcher {
     private EventDispatcher() {}
 
     /**
-     * Dispatches an event to all registered {@link EventBus} instances.
+     * Dispatches an event to all registered {@link IEventBus} instances.
      * Each bus fires its listeners independently in priority order,
      * skipping buses whose base type the event is not an instance of.
      * <p>

@@ -3,16 +3,13 @@ package com.github.rcubedev.example;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.github.rcubedev.example.reflect.Argument;
-import com.github.rcubedev.example.reflect.IArgument;
-import com.github.rcubedev.example.reflect.JlsReflectionHelper;
 import com.github.rcubedev.example.reflect.TypedClass;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ConfigSerializableObject;
 import org.jetbrains.annotations.NotNull;
 
+@AllowConstructorFallback
 public class EnumOrList<T extends Enum<T> & ISerializableEnum<T>> extends ElementOrList<T> implements ConfigSerializableObject<Object> {
 
     public EnumOrList(T value, TypedClass<T> typedEnum, TypedClass<List<T>> typedList) {

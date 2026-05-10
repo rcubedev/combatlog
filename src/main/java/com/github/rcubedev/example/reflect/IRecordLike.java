@@ -17,8 +17,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IRecordLike {
 
-    @ApiStatus.Internal
-    Map<IRecordLike, Component[]> CACHE = new MapMaker().weakKeys().makeMap();
+    // @ApiStatus.Internal
+    // Map<IRecordLike, Component[]> CACHE = new MapMaker().weakKeys().makeMap();
 
     /**
      * Returns the "record components" of this object.
@@ -31,9 +31,9 @@ public interface IRecordLike {
     @ApiStatus.OverrideOnly
     @NotNull Component @NotNull [] recordComponents();
 
-    default Component[] getCachedComponents() {
-        return CACHE.computeIfAbsent(this, key -> recordComponents());
-    }
+    // default Component[] getCachedComponents() {
+    //     return CACHE.computeIfAbsent(this, key -> recordComponents());
+    // }
 
     /**
      * Default equals implementation mirroring Java Record equality.
@@ -42,8 +42,8 @@ public interface IRecordLike {
         if (this == obj) return true;
         if (obj == null || this.getClass() != obj.getClass()) return false;
 
-        Object[] thisValues = Arrays.stream(getCachedComponents()).map(Component::value).toArray();
-        Object[] otherValues = Arrays.stream(((IRecordLike) obj).getCachedComponents()).map(Component::value).toArray();
+        Object[] thisValues = Arrays.stream(recordComponents()).map(Component::value).toArray();
+        Object[] otherValues = Arrays.stream(((IRecordLike) obj).recordComponents()).map(Component::value).toArray();
 
         if (thisValues.length != otherValues.length) return false;
 
@@ -58,7 +58,7 @@ public interface IRecordLike {
      */
     default int recordHashCode() {
         return Arrays.hashCode(
-                Arrays.stream(getCachedComponents())
+                Arrays.stream(recordComponents())
                         .map(Component::value)
                         .toArray()
         );
@@ -69,7 +69,7 @@ public interface IRecordLike {
      */
     default String recordToString() {
         return getClass().getSimpleName() + "[" +
-                Arrays.stream(getCachedComponents())
+                Arrays.stream(recordComponents())
                         .map(c -> c.name() + "=" + c.value())
                         .collect(Collectors.joining(", ")) +
                 "]";

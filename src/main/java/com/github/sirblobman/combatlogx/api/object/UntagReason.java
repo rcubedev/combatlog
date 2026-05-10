@@ -30,7 +30,7 @@ public enum UntagReason {
     QUIT,
 
     /**
-     * The player was kicked by a plugin or timed out
+     * The player was kicked or timed out
      */
     KICK;
 

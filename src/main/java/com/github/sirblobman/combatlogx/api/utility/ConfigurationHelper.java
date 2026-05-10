@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-import com.github.sirblobman.combatlogx.configuration.StringOrList;
+import com.github.rcubedev.example.StringOrList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

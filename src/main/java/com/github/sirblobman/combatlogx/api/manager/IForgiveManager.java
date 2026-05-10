@@ -1,19 +1,20 @@
 package com.github.sirblobman.combatlogx.api.manager;
 
+import net.minecraft.server.level.ServerPlayer;
+
 import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import com.github.sirblobman.combatlogx.api.object.CombatTag;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgiveManager extends ICombatLogXNeeded {
-    boolean getToggleValue(@NotNull OfflinePlayer player);
+    boolean getToggleValue(@NotNull ServerPlayer player);
 
-    void setToggle(@NotNull OfflinePlayer player, boolean value);
+    void setToggle(@NotNull ServerPlayer player, boolean value);
 
-    @Nullable CombatTag getActiveRequest(@NotNull OfflinePlayer player);
+    @Nullable CombatTag getActiveRequest(@NotNull ServerPlayer player);
 
-    void setRequest(@NotNull OfflinePlayer player, @NotNull CombatTag request);
+    void setRequest(@NotNull ServerPlayer player, @NotNull CombatTag request);
 
-    void removeRequest(@NotNull OfflinePlayer player);
+    void removeRequest(@NotNull ServerPlayer player);
 }

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * This class ensures that primitive arguments cannot be null and provides
  * a way to create instances of {@link Argument} with various types via {@link Builder} and its nested classes
  */
+// todo just wrap an internal record ArgumentImpl
 public final class Argument<T> implements IArgument<T>, IRecordLike {
 
     private final @Nullable T value;

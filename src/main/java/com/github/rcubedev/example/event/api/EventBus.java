@@ -1,18 +1,18 @@
 package com.github.rcubedev.example.event.api;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.github.rcubedev.example.event.impl.ArrayBackedEventHandler;
 import com.github.rcubedev.example.event.impl.EventBusRegistry;
 import com.github.rcubedev.example.event.impl.EventHandlerInheritanceRegistry;
 import com.github.rcubedev.example.event.impl.EventSubscriberHandler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of {@link IEventBus}.
@@ -40,6 +40,9 @@ import org.jetbrains.annotations.NotNull;
  * @param <B> The base event type this bus accepts
  */
 // todo optimize posting by merging all handlers for event type into one EventProcessor to remove inst checks
+// todo add unregistration via an AutoCloseable Subscription interface
+// todo make type safe with GenericEvent<T> for example.
+// todo guard stackoverflowerror by using a ThreadLocal<Integer> and counting depth
 public abstract class EventBus<B extends Event> implements IEventBus<B> {
 
     private final Class<B> busType;
@@ -53,6 +56,9 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
 
     // Flat dispatch array and family metadata; rebuilt at registration, read-only at dispatch
     private volatile DispatchTable dispatchTable = DispatchTable.EMPTY;
+
+    private final ThreadLocal<Integer> depth = ThreadLocal.withInitial(() -> 0);
+    private static final int MAX_DEPTH = 128;
 
     private final Object rebuildLock = new Object();
 
@@ -68,12 +74,27 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
 
     @Override
     public <E extends B> void post(E event) {
-        dispatchTable.dispatch(event);
+        int currentDepth = depth.get();
+
+        if (currentDepth > MAX_DEPTH) throw new IllegalStateException(
+                "Stack Overflow Guard: Event recursion too deep. " +
+                        "Check for circular posts (e.g., A posts B, B posts A).");
+        try {
+            depth.set(currentDepth + 1);
+            dispatchTable.dispatch(event);
+        } finally {
+            if (currentDepth == 0) depth.remove();
+            else depth.set(currentDepth);
+        }
     }
 
     @Override
-    public <E extends B> void register(Class<E> eventType, EventProcessor<E> listener) {
-        register(eventType, Priority.NORMAL, listener);
+    public RecursionBypass openBypassTo(int extraBudget) {
+        if (extraBudget < 0) throw new IllegalArgumentException("extraBudget must be positive");
+        int previousDepth = depth.get();
+        depth.set(-extraBudget);
+
+        return () -> depth.set(previousDepth);
     }
 
     @Override
@@ -104,18 +125,9 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
         }
     }
 
+    // todo private this and use a functional interface that consumes the args and runs this that gets passed to the EventSubscriberHandler.
     /**
-     * Internal. Post without compile-time check. Used by {@link EventBusRegistry#dispatch(Event)}.
-     * Only fires if the event is an instance of this bus's base type.
-     */
-    @ApiStatus.Internal
-    public final void postUnchecked(Event event) {
-        if (!busType.isInstance(event)) return;
-        dispatchTable.dispatch(event);
-    }
-
-    /**
-     * Register a processor directly without triggering a rebuild.
+     * Register a processor directly without triggering a rebuild.<br>
      * Used by {@link EventSubscriberHandler} to batch multiple
      * {@link SubscribeEvent @SubscribeEvent} registrations before a single rebuild.
      * Must be called inside {@code rebuildLock}.
@@ -141,7 +153,7 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
     }
 
     /**
-     * Record parent→child relationship for family building.
+     * Record parent -> child relationship for family building.
      * Called the first time an event type is seen. Must be called inside {@code rebuildLock}.
      */
     @SuppressWarnings("unchecked")
@@ -171,9 +183,9 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
     }
 
     /**
-     * Rebuild the flat dispatch array from all stored {@link ArrayBackedEventHandler}s.
-     * Re adds each handler's {@link ArrayBackedEventHandler#eventType()},
-     * {@link ArrayBackedEventHandler#priority()}, and {@link ArrayBackedEventHandler#invoker()}.
+     * Rebuild the flat dispatch array from all stored {@link ArrayBackedEventHandler}s.<br>
+     * Re-adds each handler's {@link ArrayBackedEventHandler#eventType()},
+     * {@link ArrayBackedEventHandler#priority()}, and {@link ArrayBackedEventHandler#invoker()}.<br>
      * Called after every registration. Must be called inside {@code rebuildLock}.
      */
     private void rebuild() {
@@ -270,7 +282,7 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
 
     /**
      * Build families from event types sorted by hierarchy depth.
-     * A family is a linear chain — a new family starts at a branch point.
+     * A family is a linear chain; a new family starts at a branch point.
      */
     @SuppressWarnings("unchecked")
     private List<List<Class<? extends B>>> buildFamilies(List<Class<? extends B>> sortedTypes) {
@@ -316,7 +328,7 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
         return families;
     }
 
-    /** Hierarchy depth — used to sort types shallowest (superclass) first.
+    /** Hierarchy depth; used to sort types shallowest (superclass) first.
      * {@code [PlayerLoginEvent, PlayerEvent, Event]}
      * 1 -> Event
      * 2 -> 2nd least specific (PlayerEvent)
@@ -327,7 +339,6 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
         // System.out.println("hierarchyDepth: " + hierarchy.length + " event type: " + type + " pos: " + List.of(hierarchy).indexOf(type) + " list: " + Arrays.toString(hierarchy));
         return hierarchy.length;
     }
-
 
     /**
      * Immutable snapshot of the flat dispatch array and family metadata.
@@ -351,24 +362,12 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
          */
         private final Class<?>[] flatTypes;
 
-        // /** Start index of each family in {@link #flat}. */
-        // private final int[] familyOffsets;
-        //
-        // /** Number of processors in each family. */
-        // private final int[] familyLengths;
         /** Start index for segment (p, f), stored at p*numFamilies+f. */
         private final int[] segmentOffsets;
 
         /** Entry count for segment (p, f), stored at p*numFamilies+f. */
         private final int[] segmentLengths;
 
-        // DispatchTable(EventProcessor<?>[] flat, Class<?>[] flatTypes,
-        //               int[] familyOffsets, int[] familyLengths) {
-        //     this.flat = flat;
-        //     this.flatTypes = flatTypes;
-        //     this.familyOffsets = familyOffsets;
-        //     this.familyLengths = familyLengths;
-        // }
         DispatchTable(EventProcessor<?>[] flat, Class<?>[] flatTypes,
                       int[] segmentOffsets, int[] segmentLengths) {
             this.flat = flat;
@@ -388,16 +387,5 @@ public abstract class EventBus<B extends Event> implements IEventBus<B> {
                 }
             }
         }
-        // @SuppressWarnings("unchecked")
-        // <E extends Event> void dispatch(E event) {
-        //     for (int f = 0; f < familyOffsets.length; f++) {
-        //         int start = familyOffsets[f];
-        //         int end = start + familyLengths[f];
-        //         for (int i = start; i < end; i++) {
-        //             if (!flatTypes[i].isInstance(event)) break; // not an instance; skip rest of family
-        //             ((EventProcessor<E>) flat[i]).process(event);
-        //         }
-        //     }
-        // }
     }
 }

@@ -2,15 +2,19 @@
   "required": true,
   "package": "com.github.sirblobman.combatlogx.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
+  "server": [
     "ConnectionMixin",
+    "ExplosionMixin",
     "FishingHookMixin",
     "LivingEntityMixin",
     "PlayerListMixin",
     "ServerCommonPacketListenerImplMixin",
+    "ServerConfigurationPacketListenerImplLoginMixin",
     "ServerConnectionListenerMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerPlayerMixin"
+    "ServerLoginPacketListenerImplMixin",
+    "ServerPlayerMixin",
+    "WrappedConfigAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
