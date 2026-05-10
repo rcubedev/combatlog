@@ -1,125 +1,89 @@
 package com.github.rcubedev.example.event.impl;
 
-import com.github.rcubedev.example.event.api.*;
-import org.jetbrains.annotations.NotNull;
+import com.github.rcubedev.example.event.api.Event;
+import com.github.rcubedev.example.event.api.EventProcessor;
+import com.github.rcubedev.example.event.api.Priority;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+/**
+ * Holds all registered listeners for a single event type at a single priority,
+ * merged into one pre-computed {@link EventProcessor} invoker.
+ * <p>
+ * The bus reads {@link #eventType()}, {@link #priority()}, and {@link #invoker()}
+ * when rebuilding the flat dispatch array. The internal {@code listeners} array
+ * is never accessed by the bus directly.
+ *
+ * @param <E> The event type
+ */
+// fixme add pub api
+// todo maybe add the invokerFactory stuff again which gives a EventProcessor<E>[] and returns EventProcessor<E>; merges them
+public final class ArrayBackedEventHandler<E extends Event> {
 
-public class ArrayBackedEventHandler<E extends Event> extends EventHandler<E> {
-
-    private final Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory;
     private final Class<E> eventType;
+    private final Priority priority;
     private final Object lock = new Object();
-    private EventProcessor<E>[] listeners;
-    private final Map<Priority, EventPhaseData<E>> phases = new EnumMap<>(Priority.class);
-    private final List<EventPhaseData<E>> sortedPhases = new ArrayList<>();
-
-    private volatile EventProcessor<E> invoker;
-    // Child handlers that should receive this handler's events
-    private final List<ArrayBackedEventHandler<? extends E>> childHandlers = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    public ArrayBackedEventHandler(Class<E> eventType, Class<EventProcessor<E>> processorType, Function<EventProcessor<E>[], EventProcessor<E>> invokerFactory) {
+    private EventProcessor<E>[] listeners = (EventProcessor<E>[]) new EventProcessor[0];
+
+    private volatile EventProcessor<E> invoker = event -> {};
+
+    public ArrayBackedEventHandler(Class<E> eventType, Priority priority) {
         this.eventType = eventType;
-        this.invokerFactory = invokerFactory;
-        this.listeners = (EventProcessor<E>[]) Array.newInstance(processorType, 0);
-        update();
+        this.priority = priority;
     }
 
     /**
-     * Register a child handler. Called when a subtype handler is created.
+     * Add a listener and rebuild the merged invoker.
      */
-    void registerChildHandler(ArrayBackedEventHandler<? extends E> childHandler) {
+    public void addListener(EventProcessor<E> listener) {
         synchronized (lock) {
-            childHandlers.add(childHandler);
-        }
-    }
-
-    public void update() {
-        this.invoker = invokerFactory.apply(listeners);
-    }
-
-    @Override
-    public void register(@NotNull EventProcessor<E> listener) {
-        register(Priority.NORMAL, listener);
-    }
-
-    @Override
-    public void register(@NotNull Priority priority, @NotNull EventProcessor<E> listener) {
-        Objects.requireNonNull(priority, "Tried to register a listener for a null priority!");
-        Objects.requireNonNull(listener, "Tried to register a null listener!");
-
-        synchronized (lock) {
-            getOrCreatePhase(priority, true).addListener(listener);
-            rebuildInvoker(listeners.length + 1);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private EventPhaseData<E> getOrCreatePhase(Priority id, boolean sortIfCreate) {
-        EventPhaseData<E> phase = phases.get(id);
-
-        if (phase == null) {
-            phase = new EventPhaseData<>(id, (Class<EventProcessor<E>>) listeners.getClass().getComponentType());
-            phases.put(id, phase);
-            sortedPhases.add(phase);
-
-            if (sortIfCreate) {
-                sortedPhases.sort(Comparator.comparing(data -> data.priority));
-            }
-        }
-
-        return phase;
-    }
-
-    private void rebuildInvoker(int newLength) {
-        // Rebuild handlers.
-        if (sortedPhases.size() == 1) {
-            // Special case with a single phase: use the array of the phase directly.
-            listeners = sortedPhases.getFirst().listeners;
-        } else {
             @SuppressWarnings("unchecked")
-            EventProcessor<E>[] newHandlers = (EventProcessor<E>[]) Array.newInstance(listeners.getClass().getComponentType(), newLength);
-            int newHandlersIndex = 0;
-
-            for (EventPhaseData<E> existingPhase : sortedPhases) {
-                int length = existingPhase.listeners.length;
-                System.arraycopy(existingPhase.listeners, 0, newHandlers, newHandlersIndex, length);
-                newHandlersIndex += length;
-            }
-
-            listeners = newHandlers;
+            EventProcessor<E>[] newArray = (EventProcessor<E>[]) new EventProcessor[listeners.length + 1];
+            System.arraycopy(listeners, 0, newArray, 0, listeners.length);
+            newArray[listeners.length] = listener;
+            listeners = newArray;
+            rebuildInvoker();
         }
-
-        // Rebuild invoker.
-        update();
     }
 
-    @Override
+    /**
+     * Rebuild the merged invoker from all registered listeners.
+     * Called after every {@link #addListener}.
+     */
+    private void rebuildInvoker() { // use invoker factory later
+        EventProcessor<E>[] snapshot = listeners;
+        invoker = switch (snapshot.length) {
+            case 0 -> event -> {};
+            case 1 -> snapshot[0];
+            default -> event -> {
+                for (EventProcessor<E> l : snapshot) l.process(event);
+            };
+        };
+    }
+
+    /**
+     * Clear all listeners and reset the invoker.
+     */
+    @SuppressWarnings("unchecked")
+    public void clear() {
+        synchronized (lock) {
+            listeners = (EventProcessor<E>[]) new EventProcessor[0];
+            invoker = event -> {};
+        }
+    }
+
+    /**
+     * The single merged invoker. Calls all registered listeners in registration order.
+     */
     public EventProcessor<E> invoker() {
         return invoker;
     }
 
-    /**
-     * Get the event type this handler manages.
-     */
-    public Class<E> getEventType() {
+    public Class<E> eventType() {
         return eventType;
     }
 
-    /**
-     * Get all child handlers registered with this handler.
-     */
-    public List<ArrayBackedEventHandler<? extends E>> getChildHandlers() {
-        synchronized (lock) {
-            return new ArrayList<>(childHandlers);
-        }
+    public Priority priority() {
+        return priority;
     }
 }

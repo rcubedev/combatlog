@@ -162,6 +162,7 @@ public class MainConfiguration extends WrappedConfig {
     // fixme change to a EnumOrSet when created.
     public EnumOrList<TagReason> enabledTagReasons = EnumOrList.of("*", new TypedClass<>(){}, new TypedClass<>(){});
 
+    // fixme maybe merge with MainConfiguration
     public record ConfigReader(MainConfiguration config) {
 
         public boolean isProjectileIgnored(EntityType<?> type) {
@@ -181,6 +182,7 @@ public class MainConfiguration extends WrappedConfig {
         }
 
         // todo: cache? idk.
+        // todo: in future maybe make a serializable set?
         public @NotNull List<TagReason> getEnabledTagReasons() {
             // List<TagReason> enabledTagReasons = ConfigurationHelper.parseEnums(mainConfiguration.enabledTagReasons, TagReason.class);
             // return Collections.unmodifiableSet(enabledTagReasons);
