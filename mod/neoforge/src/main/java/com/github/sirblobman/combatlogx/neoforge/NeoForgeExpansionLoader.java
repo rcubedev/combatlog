@@ -149,10 +149,10 @@ public final class NeoForgeExpansionLoader implements IExpansionLoader {
     }
 
     private static Class<?> loadClass(IModFile file, String className) {
-        String moduleName = file./*? if >=1.21.10 {*/ /*getId()*/ /*?} else {*/ getModFileInfo().moduleName() /*?}*/;
+        String moduleName = file./*? if >=1.21.10 {*/ getId() /*?} else {*/ /*getModFileInfo().moduleName() *//*?}*/;
         Module module = FMLLoader
                 //? if >=1.21.10
-                /*.getCurrent()*/
+                .getCurrent()
                 .getGameLayer()
                 .findModule(moduleName)
                 .orElseThrow();

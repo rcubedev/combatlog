@@ -1,3 +1,4 @@
+import java.nio.file.Files
 import java.util.Properties
 
 val isCi = System.getenv("CI") == "true"
@@ -20,13 +21,14 @@ pluginManagement {
 
 plugins {
     id("dev.kikugie.stonecutter") version "0.7"
+    id("dev.kikugie.loom-back-compat") version "0.4"
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 rootProject.name = "CombatLog"
 
 // discover & include all subprojects
-val stonecutterGroups = listOf("mod")
+val stonecutterGroups = listOf("mod") + discoverStonecutterGroups("expansions")
 
 data class StonecutterMeta(val value: Map<ProjectDescriptor, Map<String, List<String>>>)
 fun stonecutterMeta(groups: List<String>): StonecutterMeta {
@@ -34,11 +36,10 @@ fun stonecutterMeta(groups: List<String>): StonecutterMeta {
     for (group in groups) {
         include(group)
         val projectDesc = project(":$group")
-        val propsFile = projectDesc.projectDir.resolve("gradle.properties")
-        if (!propsFile.isFile) continue
+        val propsPath = projectDesc.projectDir.toPath().resolve("gradle.properties")
+        if (!Files.isRegularFile(propsPath)) continue
 
-        val props = Properties().apply { propsFile.inputStream().use { load(it) } }
-
+        val props = Properties().apply { Files.newInputStream(propsPath).use { load(it) } }
         val commonVersions = props.getProperty("stonecutter_enabled_common_versions")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
         val fabricVersions = props.getProperty("stonecutter_enabled_fabric_versions")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
         val forgeVersions = props.getProperty("stonecutter_enabled_forge_versions")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
@@ -56,17 +57,16 @@ fun stonecutterMeta(groups: List<String>): StonecutterMeta {
     return StonecutterMeta(map.toMap())
 }
 
-//val commonVersions = providers.gradleProperty("stonecutter_enabled_common_versions").orNull?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-//val fabricVersions = providers.gradleProperty("stonecutter_enabled_fabric_versions").orNull?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-//val forgeVersions = providers.gradleProperty("stonecutter_enabled_forge_versions").orNull?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-//val neoforgeVersions = providers.gradleProperty("stonecutter_enabled_neoforge_versions").orNull?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-//val dists = mapOf(
-//    "common" to commonVersions,
-//    "forge" to forgeVersions,
-//    "fabric" to fabricVersions,
-//    "neoforge" to neoforgeVersions
-//).filterValues { it.isNotEmpty() }
-//val uniqueVersions = dists.values.flatten().distinct()
+fun discoverStonecutterGroups(baseDirName: String): List<String> {
+    val baseDirPath = layout.rootDirectory.dir(baseDirName).asFile.toPath()
+    if (!Files.isDirectory(baseDirPath)) return emptyList()
+
+    return Files.list(baseDirPath).use { stream ->
+        stream.filter { path -> Files.isDirectory(path) && Files.exists(path.resolve("gradle.properties")) }
+            .map { path -> "$baseDirName:${path.fileName}" }
+            .toList()
+    }
+}
 
 stonecutter {
     kotlinController = true
@@ -97,6 +97,7 @@ stonecutter {
 //    }
 }
 
+includeBuild("build-logic")
 includeBuild("../java-utils") {
     name = "java_utils"
     dependencySubstitution {

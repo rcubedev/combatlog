@@ -54,7 +54,7 @@ import java.util.function.Supplier;
 public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
 
     public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
-        super(level, /*? if <1.21.10 {*/blockPos, f,/*?}*/ gameProfile);
+        super(level, /*? if <1.21.10 {*//*blockPos, f,*//*?}*/ gameProfile);
     }
 
     @Unique
@@ -113,13 +113,13 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
     }*/
 
     //? if >=1.21.10 {
-    /*@ModifyArg(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketSendListener;exceptionallySend(Ljava/util/function/Supplier;)Lio/netty/channel/ChannelFutureListener;"))
+    @ModifyArg(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketSendListener;exceptionallySend(Ljava/util/function/Supplier;)Lio/netty/channel/ChannelFutureListener;"))
     private Supplier<Packet<?>> captureFailure(Supplier<Packet<?>> packet, @Local(ordinal = 0) Component component) {
         al$saveDeathMsg(component, packet);
         return packet;
     }
-    *///?} else {
-    @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
+    //?} else {
+    /*@WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, PacketSendListener listener, Operation<Void> original) {
         if (!this.al$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
             original.call(instance, packet, listener);
@@ -127,7 +127,7 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
         }
 
         al$saveDeathMsg(combatKillPacket.message(), listener::onFailure);
-        /*UntagEventListener.DEATH_MESSAGES.put(this.getUUID(), p -> {
+        /^UntagEventListener.DEATH_MESSAGES.put(this.getUUID(), p -> {
             p.displayClientMessage(deathMsg, false);
             p.connection.send(new ClientboundPlayerCombatKillPacket(p.getId(), deathMsg),
                     PacketSendListener.exceptionallySend(() -> {
@@ -135,10 +135,10 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
                         if (!(failure instanceof ClientboundPlayerCombatKillPacket failKillPacket)) return null;
                         return new ClientboundPlayerCombatKillPacket(p.getId(), failKillPacket.message());
                     }));
-        });*/
+        });^/
         original.call(instance, packet, listener);
     }
-    //?}
+    *///?}
 
     @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, Operation<Void> original) {

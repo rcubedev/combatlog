@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.github.rcubedev.example.permission.node.PermissionNode;import net.minecraft.server.MinecraftServer;
+import com.github.rcubedev.example.permission.node.PermissionNode;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +84,7 @@ public interface ICombatManager extends ICombatLogXNeeded {
     /**
      * Get combat tag information for the specified player.
      *
-     * @param player The {@link Player} to check.
+     * @param player The {@link ServerPlayer} to check.
      * @return Information about a players combat tag, or {@code null} if the player is not tagged into combat.
      */
     @Nullable TagInformation getTagInformation(@NotNull ServerPlayer player);
@@ -92,7 +92,7 @@ public interface ICombatManager extends ICombatLogXNeeded {
     /**
      * Get the amount of seconds in combat this player will be tagged for.
      *
-     * @param player The {@link Player} to check.
+     * @param player The {@link ServerPlayer} to check.
      * @return A number of seconds based on a permission or a global configuration setting.
      */
     int getMaxTimerSeconds(@NotNull ServerPlayer player);

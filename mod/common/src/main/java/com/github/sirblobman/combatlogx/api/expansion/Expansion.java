@@ -98,4 +98,6 @@ public abstract class Expansion {
      * Called when a configuration reload request is dispatched to this expansion.
      */
     public abstract void reloadConfig();
+
+    // todo maybe add self disable like parity?
 }

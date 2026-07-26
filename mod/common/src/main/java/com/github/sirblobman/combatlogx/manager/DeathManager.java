@@ -31,7 +31,7 @@ public final class DeathManager extends Manager implements IDeathManager {
         System.out.println(player.level());
         //fixme this didnt work either man
         // player.die(player.damageSources().genericKill());
-        player.kill(/*? if >= 1.21.10 {*/ /*player.level() *//*?}*/); // death msg changed by DeathListener
+        player.kill(/*? if >= 1.21.10 {*/ player.level() /*?}*/); // death msg changed by DeathListener
     }
 
     // fixme do i want to make it a punish kill if we keep them online forcefully and a player kills them

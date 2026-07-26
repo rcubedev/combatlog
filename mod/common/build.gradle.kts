@@ -1,6 +1,6 @@
 plugins {
     id("multiloader-common")
-    id("dev.kikugie.loom-back-compat") version "0.2"
+    id("dev.kikugie.loom-back-compat")
     // id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
 }
@@ -53,7 +53,7 @@ dependencies {
     compileOnly("org.spongepowered:mixin:0.8.5")
     modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
 
-    implementation("com.github.rcubedev:java_utils")
+    api("com.github.rcubedev:java_utils")
 
     // todo
     modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")
@@ -61,7 +61,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
     implementation("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
-    implementation("folk.sisby:kaleido-config:0.3.3+1.3.2")
+    api("folk.sisby:kaleido-config:0.3.3+1.3.2")
 }
 
 /*tasks.jar {

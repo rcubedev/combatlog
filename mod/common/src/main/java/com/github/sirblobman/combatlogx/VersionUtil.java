@@ -13,14 +13,14 @@ public final class VersionUtil {
     private VersionUtil() {}
 
     public static @NotNull MinecraftServer getServer(@NotNull ServerPlayer player) {
-        return player./*? if >=1.21.10 {*/ /*level(). *//*?}*/getServer();
+        return player./*? if >=1.21.10 {*/ level(). /*?}*/getServer();
     }
 
     public static @NotNull String getName(@NotNull GameProfile profile) {
-        return profile./*? if >=1.21.10 {*/ /*name() *//*?} else {*/ getName() /*?}*/;
+        return profile./*? if >=1.21.10 {*/ name() /*?} else {*/ /*getName() *//*?}*/;
     }
 
     public static @NotNull UUID getUUID(@NotNull GameProfile profile) {
-        return profile./*? if >=1.21.10 {*/ /*id() *//*?} else {*/ getId() /*?}*/;
+        return profile./*? if >=1.21.10 {*/ id() /*?} else {*/ /*getId() *//*?}*/;
     }
 }

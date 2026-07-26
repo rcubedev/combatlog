@@ -2,11 +2,11 @@ package com.github.rcubedev.example.fabric;
 
 import com.github.rcubedev.example.platform.IAdventure;
 //? if <1.21.10 {
-import net.kyori.adventure.platform.fabric.FabricAudiences;
-//?} else {
-/*import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences;
+/*import net.kyori.adventure.platform.fabric.FabricAudiences;
+*///?} else {
+import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences;
 import net.kyori.adventure.platform.modcommon.impl.NonWrappingComponentSerializer;
-*///?}
+//?}
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.minecraft.server.MinecraftServer;
@@ -28,12 +28,12 @@ public class FabricAdventure implements IAdventure {
 
     @Override
     public @NotNull ComponentSerializer<Component, Component, net.minecraft.network.chat.Component> nonWrappingSerializer() {
-        return /*? if >=1.21.10 {*/ /*NonWrappingComponentSerializer.INSTANCE *//*?} else {*/ FabricAudiences.nonWrappingSerializer()/*?}*/;
+        return /*? if >=1.21.10 {*/ NonWrappingComponentSerializer.INSTANCE /*?} else {*/ /*FabricAudiences.nonWrappingSerializer()*//*?}*/;
     }
 
     @Override
     public @NotNull net.minecraft.network.chat.Component update(net.minecraft.network.chat.Component input,
                                                                 UnaryOperator<Component> modifier, MinecraftServer server) {
-        return /*? if >=1.21.10 {*/ /*MinecraftServerAudiences.of(server) *//*?} else {*/ FabricAudiences /*?}*/.update(input, modifier);
+        return /*? if >=1.21.10 {*/ MinecraftServerAudiences.of(server) /*?} else {*/ /*FabricAudiences *//*?}*/.update(input, modifier);
     }
 }

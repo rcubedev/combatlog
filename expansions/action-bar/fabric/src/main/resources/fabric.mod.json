@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "${modId}",
+	"version": "${modVersion}",
+	"name": "${modName}",
+	"description": "${modDescription}",
+	"authors": [
+		"${modAuthor}"
+	],
+	"contact": {
+		"sources": "${modGitHub}"
+	},
+	"license": "${modLicense}",
+	"icon": "${modId}.png",
+	"environment": "*",
+	"entrypoints": {
+		"combatlogx": [
+			"combatlogx.expansion.actionbar.ActionBarExpansionInitializer"
+		]
+	},
+	"mixins": [
+		"${modId}.mixins.json",
+		"${modId}.fabric.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${fabricLoaderVersion}",
+		"fabric-api": ">=${fabricApiVersion}",
+		"minecraft": "~${minMinecraftVersion}",
+		"java": ">=${javaVersion}"
+	}
+}

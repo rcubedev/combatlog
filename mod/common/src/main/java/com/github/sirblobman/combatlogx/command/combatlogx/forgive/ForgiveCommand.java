@@ -23,7 +23,6 @@ import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import com.github.sirblobman.combatlogx.api.placeholder.PlaceholderHelper;
 import com.github.sirblobman.combatlogx.command.combatlogx.Command;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 // todo do all the commands

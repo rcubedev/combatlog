@@ -63,7 +63,7 @@ public final class DeathListener extends CombatListener {
         PlayerDataManager playerDataManager = getPlayerDataManager();
         PlayerData playerData = playerDataManager.getIfPresent(player);
         // System.out.println("killOnJoin: " + (playerData != null ? playerData.getData().getBoolean("killOnJoin") : Optional.of(false))/*? if >=1.21.10 {*/ /*.orElse(false) *//*?}*/);
-        if (playerData == null || !playerData.getData().getBoolean("killOnJoin")/*? if >=1.21.10 {*/ /*.orElse(false) *//*?}*/) return;
+        if (playerData == null || !playerData.getData().getBoolean("killOnJoin")/*? if >=1.21.10 {*/ .orElse(false) /*?}*/) return;
 
         // System.out.println("Transforming killOnJoin");
         playerData.transform(tag -> tag.putBoolean("killOnJoin", false));
@@ -79,7 +79,7 @@ public final class DeathListener extends CombatListener {
         PlayerData data = getPlayerDataManager().getIfPresent(player);
         if (data == null) return;
 
-        CompoundTag offlineDeath = data.getData().getCompound("offlineDeath")/*? if >=1.21.10 {*/ /*.orElse(new CompoundTag()) *//*?}*/;;
+        CompoundTag offlineDeath = data.getData().getCompound("offlineDeath")/*? if >=1.21.10 {*/ .orElse(new CompoundTag()) /*?}*/;;
         if (offlineDeath.isEmpty()) return;
 
         data.transform(tag -> tag.remove("offlineDeath"));
