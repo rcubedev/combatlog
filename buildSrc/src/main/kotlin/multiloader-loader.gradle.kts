@@ -33,7 +33,11 @@ afterEvaluate {
             val javaConfName = "${depLoader}${depSourceSetName.upperCaseFirst()}Java"
             val resConfName = "${depLoader}${depSourceSetName.upperCaseFirst()}Resources"
             var stonecutterGenName: String = if (depSourceSetName != "main") { "stonecutterGenerate${depSourceSetName.upperCaseFirst()}" } else { "stonecutterGenerate" }
-            val stonecutterGenTask = project(":${depLoader}:${project.name}").tasks.named(stonecutterGenName)
+
+            val depProject = "${moduleProject.path}:$depLoader:${project.name}"
+
+            val stonecutterGenTask = project(depProject).tasks.named(stonecutterGenName)
+            //val stonecutterGenTask = project(":${depLoader}:${project.name}").tasks.named(stonecutterGenName)
 
             // Safely get or create the configurations
             val javaConf = configurations.maybeCreate(javaConfName)
@@ -44,9 +48,9 @@ afterEvaluate {
                 //     loaderSS.implementationConfigurationName,
                 //     project(path = ":$depLoader:${project.name}", configuration = javaConfName)
                 // )
-                javaConf(project(path = ":$depLoader:${project.name}", configuration = javaConfName))
-                resConf(project(path = ":$depLoader:${project.name}", configuration = resConfName))
-                compileOnly(project(":$depLoader:${project.name}"))
+                javaConf(project(path = depProject, configuration = javaConfName))
+                resConf(project(path = depProject, configuration = resConfName))
+                compileOnly(project(depProject))
             }
 
             // Attach dependency sources to compile/runtime tasks
@@ -76,7 +80,7 @@ afterEvaluate {
                     // loaderSS.resources.srcDirs(resConf)
                     
                     // FIXME :: Jank exclusion to prevent fabric.mod.json duplication in server jar, doesn't affect neoforge
-                    if (loaderSSName != "main" && loaderSSName != "dev" && project.path.startsWith(":fabric")) {
+                    if (loaderSSName != "main" && loaderSSName != "dev" && project.path.contains(":fabric")) {
                         exclude {
                             it.name == "fabric.mod.json"
                         }

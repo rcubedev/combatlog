@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.process.SCPrepareTask
-
 plugins {
     id("java")
     id("idea")
@@ -7,6 +5,10 @@ plugins {
 }
 
 //println("=== Applying multiloader-common plugin for ${loader}'s ${project.name}, isCommon=${isCommonLoader} ===")
+//println("Via tree: :${commonProject.name}")
+//println("Common loader: :${commonLoader}")
+val gradleCommon = moduleProject.project(requireNotNull(commonLoader)).project(stonecutterBuild.current.project)
+//println("Gradle common: $gradleCommon")
 version = "${loader}-${commonMod.version}+mc${stonecutterBuild.current.version}"
 
 base {
@@ -115,7 +117,10 @@ tasks.build {
 
 tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn(":common:${commonMod.propOrNull("minecraft_version")}:stonecutterGenerate")
+    gradleCommon.tasks.findByName("stonecutterGenerate")?.let {
+        dependsOn(it)
+    }
+//    dependsOn(":common:${commonMod.propOrNull("minecraft_version")}:stonecutterGenerate")
 }
 
 if (isCommonLoader) {
@@ -185,7 +190,7 @@ if (isCommonLoader) {
     //         }
     //     }
     // }
-    
+
     // === Shared Key Generation ===
     // Keys are now generated in the :keygen subproject
 }

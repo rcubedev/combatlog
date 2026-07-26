@@ -16,13 +16,21 @@ fun RepositoryHandler.strictMaven(url: String, alias: String, vararg groups: Str
 val Project.stonecutterBuild get() = extensions.getByType<StonecutterBuildExtension>()
 val Project.stonecutterController get() = extensions.getByType<StonecutterControllerExtension>()
 
+//
 val Project.common get() = requireNotNull(stonecutterBuild.node.sibling("common")) {
     "No common project for $project"
 }
-val Project.commonProject get() = rootProject.project(stonecutterBuild.current.project)
+
+val Project.moduleProject get() = stonecutterBuild.tree.project
+//val Project.gradleCommon get() = moduleProject.project(requireNotNull(commonLoader)).project(stonecutterBuild.current.project)
+// refers to module:version e.g. :mod:1.21.1 (not :mod:common:1.21.1)
+val Project.commonProject get() = moduleProject.project(stonecutterBuild.current.project)
+//val Project.commonProject get() = rootProject.project(stonecutterBuild.current.project)
 val Project.commonMod get() = commonProject.mod
 
 val Project.loader: String? get() = prop("loader")
+
+// access thru commonMod??
 val Project.commonLoader: String? get() = prop("loader.common")
 val Project.isCommonLoader: Boolean get() {
     val commonLoaders = commonLoader?.split(',')?.map { it.trim() } ?: emptyList()
