@@ -89,5 +89,11 @@ value class ModData(private val project: Project) {
     fun modProp(key: String) = requireNotNull(modPropOrNull(key)) { "Missing 'mod.$key'" }
     fun depOrNull(key: String): String? = project.prop("deps.$key")?.takeIf { it.isNotEmpty() && it != "" }
     fun dep(key: String) = requireNotNull(depOrNull(key)) { "Missing 'deps.$key'" }
+    fun depLoader(key: String): String {
+        val commonProject = project.commonProject;
+        val loader = project.loader ?: return requireNotNull(commonProject.prop("deps.$key")) { "Missing 'deps.$key'" }
+        val specific = loader.let { commonProject.prop("deps.$it.$key") }
+        return requireNotNull(specific ?: commonProject.prop("deps.$key")) { "Missing $specific or deps.$key" }
+    }
     fun modrinth(name: String, version:String) = "maven.modrinth:$name:$version"
 }

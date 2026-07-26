@@ -4,7 +4,6 @@ import com.github.rcubedev.example.platform.IAdventure;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import com.github.sirblobman.combatlogx.CombatLogX;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;

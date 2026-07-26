@@ -2,11 +2,10 @@ package com.github.sirblobman.combatlogx.api.listener;
 
 import java.util.Locale;
 
-import net.minecraft.server.level.ServerPlayer;
-
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerDataManager;
 import com.github.sirblobman.combatlogx.api.language.LanguageManager;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
@@ -21,11 +20,19 @@ public abstract class CombatListener {
         this.mod = mod;
     }
 
+    /*public @NotNull Subscription register() {
+        ICombatLogX combatLogX = getCombatLogX();
+        IEventBus<Event> bus = combatLogX.getEventBus();
+        Identity id = Identity.of(MethodHandles.lookup());
+
+        return bus.register(this, id);
+    }*/
+
     protected final @NotNull ICombatLogX getCombatLogX() {
         return this.mod;
     }
 
-    public final @NotNull Logger getLogger() {
+    public @NotNull Logger getLogger() {
         ICombatLogX mod = getCombatLogX();
         return mod.getLogger();
     }

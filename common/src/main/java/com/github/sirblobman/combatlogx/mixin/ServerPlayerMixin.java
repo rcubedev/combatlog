@@ -1,36 +1,33 @@
 package com.github.sirblobman.combatlogx.mixin;
 
+import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerLocaleChangeEvent;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerData;
-import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.expression.Definition;import com.llamalad7.mixinextras.expression.Expression;import com.llamalad7.mixinextras.injector.ModifyExpressionValue;import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.DimensionTransition;
 
 import com.github.rcubedev.example.task.api.TaskType;
 import com.github.rcubedev.example.task.impl.ModdedTaskScheduler;
 import com.github.rcubedev.example.task.impl.TickContext;
 import com.github.sirblobman.combatlogx.CombatLogX;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerDeathEvent;
-import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerRespawnEvent;
 import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import com.github.sirblobman.combatlogx.listener.UntagEventListener;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -44,15 +41,17 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
 
     public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
-        super(level, blockPos, f, gameProfile);
+        super(level, /*? if <1.21.10 {*//*blockPos, f,*//*?}*/ gameProfile);
     }
 
     @Unique
@@ -61,6 +60,23 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
     @Shadow
     private boolean disconnected;
 
+    @Shadow
+    private String language;
+
+    @Inject(method = "updateOptions", at = @At("HEAD"))
+    private void getPreviousLocale(ClientInformation information, CallbackInfo ci, @Share("preLocale") LocalRef<String> preLocaleConsumer) {
+        preLocaleConsumer.set(this.language);
+    }
+
+    @Inject(method = "updateOptions", at = @At("RETURN"))
+    private void fireLocaleChangeEvent(ClientInformation information, CallbackInfo ci, @Share("preLocale") LocalRef<String> preLocaleSupplier) {
+        String previousLocale = preLocaleSupplier.get();
+        if (Objects.equals(previousLocale, this.language)) return;
+
+        PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent((ServerPlayer) (Object) this, this.language);
+        event.dispatch();
+    }
+
     @Inject(method = "die", at = @At("HEAD"))
     private void fireDeathEvent(DamageSource damageSource, CallbackInfo ci, @Share("deathEvent") LocalRef<PlayerDeathEvent> eventConsumer) {
         PlayerDeathEvent event = new PlayerDeathEvent((ServerPlayer) (Object) this, damageSource);
@@ -68,11 +84,19 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
         event.dispatch();
     }
 
-    @ModifyVariable(method = "die", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"), ordinal = 0)
+    //old
+    /*@ModifyVariable(method = "die", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"), ordinal = 0)
     private Component setDeathMessage(Component original, @Share("deathEvent") LocalRef<PlayerDeathEvent> eventSupplier) {
         PlayerDeathEvent event = eventSupplier.get();
         Component custom = event.getDeathMessage();
         return (custom != null && !CommonComponents.EMPTY.equals(custom)) ? custom : original;
+    }*/
+
+    @ModifyExpressionValue(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getDeathMessage()Lnet/minecraft/network/chat/Component;"))
+    private Component setDeathMessage(Component original, @Share("deathEvent") LocalRef<PlayerDeathEvent> eventSupplier) {
+        PlayerDeathEvent event = eventSupplier.get();
+        Component custom = event.getDeathMessage();
+        return (custom != null /*&& !CommonComponents.EMPTY.equals(custom)*/) ? custom : original; // fixme prob
     }
 
     /*@Inject(method = "findRespawnPositionAndUseSpawnBlock", at = @At("RETURN"))
@@ -85,15 +109,22 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
         event.dispatch();
     }*/
 
-    @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
+    //? if >=1.21.10 {
+    @ModifyArg(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketSendListener;exceptionallySend(Ljava/util/function/Supplier;)Lio/netty/channel/ChannelFutureListener;"))
+    private Supplier<Packet<?>> captureFailure(Supplier<Packet<?>> packet, @Local(ordinal = 0) Component component) {
+        al$saveDeathMsg(component, packet);
+        return packet;
+    }
+    //?} else {
+    /*@WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, @Nullable PacketSendListener listener, Operation<Void> original) {
         if (!this.al$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
             original.call(instance, packet, listener);
             return;
         }
 
-        saveDeathMsg(combatKillPacket.message(), listener);
-        /*UntagEventListener.DEATH_MESSAGES.put(this.getUUID(), p -> {
+        saveDeathMsg(combatKillPacket.message(), () -> listener.onFailure());
+        /^UntagEventListener.DEATH_MESSAGES.put(this.getUUID(), p -> {
             p.displayClientMessage(deathMsg, false);
             p.connection.send(new ClientboundPlayerCombatKillPacket(p.getId(), deathMsg),
                     PacketSendListener.exceptionallySend(() -> {
@@ -101,9 +132,10 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
                         if (!(failure instanceof ClientboundPlayerCombatKillPacket failKillPacket)) return null;
                         return new ClientboundPlayerCombatKillPacket(p.getId(), failKillPacket.message());
                     }));
-        });*/
+        });^/
         original.call(instance, packet, listener);
     }
+    *///?}
 
     @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, Operation<Void> original) {
@@ -112,15 +144,20 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
             return;
         }
 
-        saveDeathMsg(combatKillPacket.message(), null);
+        al$saveDeathMsg(combatKillPacket.message(), null);
         /*UntagEventListener.DEATH_MESSAGES.put(this.getUUID(), p -> {
             p.connection.send(new ClientboundPlayerCombatKillPacket(p.getId(), combatKillPacket.message()));
         });*/
         original.call(instance, packet);
     }
 
-    private void saveDeathMsg(Component deathMsg, @Nullable PacketSendListener listener) {
-        PlayerData data = CombatLogX.INSTANCE.getPlayerDataManager().get((ServerPlayer) (Object) this);
+    //fixme prob move out
+    @Unique
+    private void al$saveDeathMsg(Component deathMsg, @Nullable Supplier<Packet<?>> listener) {
+        ICombatLogX instance = CombatLogX.INSTANCE;
+        if (instance == null) return;
+
+        PlayerData data = instance.getPlayerDataManager().get((ServerPlayer) (Object) this);
         data.transform(tag -> {
             CompoundTag msgTag = new CompoundTag();
 
@@ -129,7 +166,7 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
             msgTag.put("primary", serializedNormal);
 
             if (listener != null) {
-                Packet<?> failure = listener.onFailure();
+                Packet<?> failure = listener.get();
                 if (failure instanceof ClientboundPlayerCombatKillPacket failKillPacket) {
                     DataResult<Tag> serializingFallback = ComponentSerialization.CODEC.encodeStart(NbtOps.INSTANCE, failKillPacket.message());
                     Tag serializedFallback = serializingFallback.resultOrPartial(CombatLogX.LOGGER::error).orElseThrow();
@@ -175,7 +212,10 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
 
     @ModifyReturnValue(method = "hasDisconnected", at = @At("RETURN"))
     public boolean hasDisconnected(boolean original) {
-        return original && !CombatLogX.INSTANCE.getCombatManager().isInCombat((ServerPlayer) (Object) this); // todo?
+        if (!original) return false;
+
+        ICombatLogX instance = CombatLogX.INSTANCE;
+        return instance == null || !instance.getCombatManager().isInCombat((ServerPlayer) (Object) this); // todo?
     }
 
     @WrapOperation(

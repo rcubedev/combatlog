@@ -137,7 +137,7 @@ public final class ConfigurationListener extends CombatListener {
     private void checkEnemyDeathUntag(@NotNull LivingEntity enemy) {
         ICombatManager combatManager = getCombatManager();
         if (getConfiguration().untagOnEnemyDeath) {
-            List<ServerPlayer> playerList = combatManager.getPlayersInCombat(Objects.requireNonNull(enemy.getServer()));
+            List<ServerPlayer> playerList = combatManager.getPlayersInCombat(Objects.requireNonNull(enemy.level().getServer()));
             for (ServerPlayer player : playerList) {
                 combatManager.untag(player, enemy, UntagReason.ENEMY_DEATH);
             }

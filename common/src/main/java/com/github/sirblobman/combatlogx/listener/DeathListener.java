@@ -2,13 +2,16 @@ package com.github.sirblobman.combatlogx.listener;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.rcubedev.example.platform.IAdventure;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +48,13 @@ public final class DeathListener extends CombatListener {
     @SubscribeEvent(priority = Priority.NORMAL, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent e) {
         ServerPlayer player = e.getPlayer();
+        System.out.println("Sending empty message");
+        player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Sending empty message"));
+        player.sendSystemMessage(CommonComponents.EMPTY);
+        player.sendSystemMessage(CommonComponents.EMPTY);
+        player.sendSystemMessage(CommonComponents.EMPTY);
+        player.sendSystemMessage(CommonComponents.EMPTY);
+        player.sendSystemMessage(CommonComponents.EMPTY);
 
         /*Consumer<ServerPlayer> deathMsg = UntagEventListener.DEATH_MESSAGES.remove(player.getUUID());
         if (deathMsg != null) {
@@ -55,12 +65,16 @@ public final class DeathListener extends CombatListener {
         PunishConfiguration punishConfiguration = getPunishConfiguration();
         KillTime killTime = punishConfiguration.killTime;
         if (killTime != KillTime.JOIN) return;
+        System.out.println("KillTime == JOIN");
 
         PlayerDataManager playerDataManager = getPlayerDataManager();
         PlayerData playerData = playerDataManager.getIfPresent(player);
-        if (playerData == null || !playerData.getData().getBoolean("killOnJoin")) return;
+        System.out.println("killOnJoin: " + (playerData != null ? playerData.getData().getBoolean("killOnJoin") : Optional.of(false))/*? if >=1.21.10 {*/ .orElse(false) /*?}*/);
+        if (playerData == null || !playerData.getData().getBoolean("killOnJoin")/*? if >=1.21.10 {*/ .orElse(false) /*?}*/) return;
 
+        System.out.println("Transforming killOnJoin");
         playerData.transform(tag -> tag.putBoolean("killOnJoin", false));
+        System.out.println("New killOnJoin: " + playerData.getData().getBoolean("killOnJoin").orElse(false));
         // playerDataManager.save(player);
 
         IDeathManager deathManager = getDeathManager();
@@ -72,8 +86,8 @@ public final class DeathListener extends CombatListener {
         PlayerData data = getPlayerDataManager().getIfPresent(player);
         if (data == null) return;
 
-        CompoundTag offlineDeath = data.getData().getCompound("offlineDeath");
-        if (offlineDeath == null) return;
+        CompoundTag offlineDeath = data.getData().getCompound("offlineDeath")/*? if >=1.21.10 {*/ .orElse(new CompoundTag()) /*?}*/;;
+        if (offlineDeath.isEmpty()) return;
 
         data.transform(tag -> tag.remove("offlineDeath"));
         Tag deathMsgSerialized = offlineDeath.get("primary");
@@ -90,8 +104,10 @@ public final class DeathListener extends CombatListener {
 
         player.connection.send(new ClientboundPlayerCombatKillPacket(player.getId(), deathMsg),
                 PacketSendListener.exceptionallySend(() -> {
-                    net.minecraft.network.chat.Component fallback = ComponentSerialization.CODEC.parse(NbtOps.INSTANCE,
-                            fallbackSerialized).resultOrPartial(CombatLogX.LOGGER::error).orElseThrow();
+                    net.minecraft.network.chat.Component fallback = ComponentSerialization.CODEC
+                            .parse(NbtOps.INSTANCE, fallbackSerialized)
+                            .resultOrPartial(CombatLogX.LOGGER::error)
+                            .orElseThrow();
                     return new ClientboundPlayerCombatKillPacket(player.getId(), fallback);
                 })
         );

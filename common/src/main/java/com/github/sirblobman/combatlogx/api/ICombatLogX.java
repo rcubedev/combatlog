@@ -7,7 +7,7 @@ import com.github.sirblobman.combatlogx.api.configuration.CommandConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerDataManager;
 import com.github.sirblobman.combatlogx.api.configuration.PunishConfiguration;
-import com.github.sirblobman.combatlogx.api.language.LanguageManager;
+import com.github.sirblobman.combatlogx.api.expansion.ExpansionManager;import com.github.sirblobman.combatlogx.api.expansion.ExpansionRegistry;import com.github.sirblobman.combatlogx.api.language.LanguageManager;
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.manager.ICrystalManager;
 import com.github.sirblobman.combatlogx.api.manager.IDeathManager;
@@ -40,6 +40,16 @@ public interface ICombatLogX extends ILoggingProvider, TaskOwner {
      * @return The language configuration manager for this mod.
      */
     @NotNull LanguageManager<LanguageFileConfiguration> getLanguageManager();
+
+    /**
+     * @return The expansion registry for this mod.
+     */
+    @NotNull ExpansionRegistry getExpansionRegistry();
+
+    /**
+     * @return The expansion manager for this mod.
+     */
+    @NotNull ExpansionManager getExpansionManager();
 
     /**
      * @return The combat manager for this mod.

@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.minecraft.server.level.ServerPlayer;
+import com.github.sirblobman.combatlogx.VersionUtil;import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
 import net.kyori.adventure.text.Component;
@@ -104,7 +104,7 @@ public final class PlaceholderManager extends Manager implements IPlaceholderMan
                 String opCommand = replacedCommand.substring(4);
                 CommandHelper.runSync(plugin, () -> CommandHelper.runAsOperator(plugin, player, opCommand));
             } else {
-                CommandHelper.runSync(plugin, () -> CommandHelper.runAsConsole(plugin, player.server, replacedCommand));
+                CommandHelper.runSync(plugin, () -> CommandHelper.runAsConsole(plugin, VersionUtil.getServer(player), replacedCommand));
             }
         }
     }

@@ -7,4 +7,4 @@ stonecutter parameters {
     }
 }
 
-stonecutter active "1.21.1"
+stonecutter active "1.21.10"

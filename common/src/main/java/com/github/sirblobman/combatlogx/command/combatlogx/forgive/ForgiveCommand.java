@@ -1,6 +1,7 @@
 package com.github.sirblobman.combatlogx.command.combatlogx.forgive;
 
 import com.github.rcubedev.example.platform.IAdventure;
+import com.github.sirblobman.combatlogx.VersionUtil;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -22,6 +23,7 @@ import com.github.sirblobman.combatlogx.api.object.UntagReason;
 import com.github.sirblobman.combatlogx.api.placeholder.PlaceholderHelper;
 import com.github.sirblobman.combatlogx.command.combatlogx.Command;
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 // todo do all the commands
@@ -82,7 +84,9 @@ public class ForgiveCommand extends Command {
         net.minecraft.network.chat.Component playerName = caller.getName();
         net.minecraft.network.chat.Component enemyName = PlaceholderHelper.getEnemyNameNative(mod, caller, enemy);
         IAdventure.getInstance().sendSuccess(context.getSource(), enemyName, n -> n.append(Component.text(" accepted your forgive request.")), false);
-        enemy.sendSystemMessage(IAdventure.getInstance().update(playerName, name -> name.append(Component.text(" accepted your forgive request.")), caller.getServer()));
+        if (enemy instanceof ServerPlayer enemyP) {
+            enemyP.sendSystemMessage(IAdventure.getInstance().update(playerName, name -> name.append(Component.text(" accepted your forgive request.")), VersionUtil.getServer(caller)));
+        }
         return SUCCESS;
     }
 

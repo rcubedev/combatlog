@@ -1,9 +1,13 @@
-package com.github.sirblobman.combatlogx.api.bukkiteventcompat;
+package com.github.sirblobman.combatlogx.neoforge.impl.bukkiteventcompat;
 
 import com.github.rcubedev.example.task.api.TaskType;
 import com.github.rcubedev.example.task.impl.ModdedTaskScheduler;
 import com.github.rcubedev.example.task.impl.TickContext;
 import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.EntityDeathEvent;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerJoinEvent;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerQuitEvent;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerRespawnEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;

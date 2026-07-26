@@ -1,5 +1,6 @@
 package com.github.sirblobman.combatlogx.api.language;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -12,9 +13,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import com.github.rcubedev.example.event.api.Identity;
+import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.platform.IAdventure;
 import com.github.rcubedev.example.platform.IPlatformHelper;
+import com.github.sirblobman.combatlogx.VersionUtil;
+import com.github.sirblobman.combatlogx.api.language.listener.LanguageListener;
 import com.github.sirblobman.combatlogx.platform.IPlaceholderAPI;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.minecraft.commands.CommandSourceStack;
@@ -94,13 +99,13 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
     }
 
     public void setLocale(@NotNull ServerPlayer player, @NotNull String locale) {
-        this.printDebug("Detected setLocale for player '" + player.getGameProfile().getName() + "' and locale '" + locale + "'.");
+        this.printDebug("Detected setLocale for player '" + VersionUtil.getName(player.getGameProfile()) + "' and locale '" + locale + "'.");
         UUID playerId = player.getUUID();
         this.localeMap.put(playerId, locale);
     }
 
     public void removeLocale(@NotNull ServerPlayer player) {
-        this.printDebug("Detected removeLocale for player '" + player.getGameProfile().getName() + "'.");
+        this.printDebug("Detected removeLocale for player '" + VersionUtil.getName(player.getGameProfile()) + "'.");
         UUID playerId = player.getUUID();
         this.localeMap.remove(playerId);
     }
@@ -143,17 +148,19 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
     public @Nullable Language<T> getLanguage(@Nullable String name) {
         this.printDebug("Detected getLanguage for name '" + name + "'...");
         Language<T> defaultLanguage = this.getDefaultLanguage();
-        if (name != null && !name.isEmpty() && !name.equals("default")) {
-            this.printDebug("Getting name from language map.");
-            return this.languageMap.getOrDefault(name, defaultLanguage);
-        } else {
+        if (name == null || name.isEmpty()) {
             this.printDebug("Name is not valid, using default language.");
             return defaultLanguage;
+        } else if (name.equals("default")) {
+            this.printDebug("Using default language.");
+            return defaultLanguage;
         }
+        this.printDebug("Getting name from language map.");
+        return this.languageMap.getOrDefault(name, defaultLanguage);
     }
 
     private @Nullable Language<T> getPlayerLanguage(@NotNull ServerPlayer player) {
-        this.printDebug("Detected getPlayerLanguage for player '" + player.getGameProfile().getName() + "'.");
+        this.printDebug("Detected getPlayerLanguage for player '" + VersionUtil.getName(player.getGameProfile()) + "'.");
         String cachedLocale = this.getCachedLocale(player);
         this.printDebug("Cached Locale Name: " + cachedLocale);
         return this.getLanguage(cachedLocale);
@@ -175,9 +182,10 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
         }
     }
 
-    public void onInitialize() {
+    public void onEnable() {
         this.printDebug("Detected onInitialize...");
-        // todo register lang event handlers
+        Identity id = Identity.of(MethodHandles.lookup());
+        MainBus.BUS.register(new LanguageListener(mod, this), id);
     }
 
     public void loadDefaultLanguageFiles(Path configDir, String family, String languageDir) {
@@ -235,7 +243,7 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
         for (Map.Entry<String, Language<T>> entry : this.languageMap.entrySet()) {
             Language<T> language = entry.getValue();
             T localeCfg = language.getConfiguration();
-            CombatLogX.reload(CombatLogX.create(localeCfg));
+            CombatLogX.reload(localeCfg);
             this.reloadLanguage(language);
         }
     }

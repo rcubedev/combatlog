@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 // matches bukkit by extending event instead of entityevent
 public abstract class PlayerEvent extends BukkitEvent {
 
-    protected ServerPlayer player;
+    protected @NotNull ServerPlayer player;
 
     protected PlayerEvent(@NotNull ServerPlayer player) {
         this.player = player;

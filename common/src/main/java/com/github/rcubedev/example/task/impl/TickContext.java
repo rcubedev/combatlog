@@ -2,7 +2,7 @@ package com.github.rcubedev.example.task.impl;
 
 import java.util.List;
 
-import net.minecraft.server.MinecraftServer;
+import com.github.sirblobman.combatlogx.VersionUtil;import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public record TickContext(@NotNull MinecraftServer server, @Nullable ServerPlaye
     }
 
     public static TickContext ofPlayer(@NotNull ServerPlayer player) {
-        return new TickContext(player.server, player);
+        return new TickContext(VersionUtil.getServer(player), player);
     }
 
     /**

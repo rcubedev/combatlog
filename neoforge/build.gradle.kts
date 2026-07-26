@@ -43,45 +43,16 @@ dependencies {
     jarJar("com.github.rcubedev:java_utils")
     compileOnly("net.luckperms:api:${commonMod.dep("luckperms-api")}")
 
-//    // todo
-//    val adventurePatched = files(
-//        rootProject.file("neoforge/libs/adventure-platform-mod-shared-6.0.0-patched.jar")
-//    )
-//    implementation(adventurePatched)
-//    // jarJar(adventurePatched)
-
-    implementation("net.kyori:adventure-platform-neoforge:6.0.0")
-    //implementation("net.kyori:adventure-platform-mod-shared:6.0.0")
-    //jarJar("net.kyori:adventure-platform-mod-shared:6.0.0")
-
-    // implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    // implementation("net.kyori:adventure-text-serializer-plain:5.1.1")
-    // implementation("net.kyori:adventure-platform-mod-shared:6.0.1")
-    // implementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.0.1")
-    // implementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.2.0")}
-
-    // implementation("net.kyori:adventure-text-serializer-legacy:5.1.1")
+    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
     // fixme kinda jank
-    injectModType("net.kyori:adventure-text-serializer-legacy:4.17.0")
+    injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
     implementation("folk.sisby:kaleido-config:0.3.3+1.3.2")
 
     if (stonecutter.eval(project.name, "<=1.21.1")) {
         "additionalRuntimeClasspath"("org.jetbrains:annotations:24.1.0")
-        // "additionalRuntimeClasspath"("net.kyori:adventure-text-minimessage:4.17.0")
-        // "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-plain:4.17.0")
         "additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
         "additionalRuntimeClasspath"("com.github.rcubedev:java_utils")
-
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-gson:4.17.0")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-gson:5.1.1")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-json:4.17.0")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-json:5.1.1")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-commons:4.17.0")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-commons:5.1.1")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-ansi:4.17.0")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-ansi:5.1.1")
-//        "additionalRuntimeClasspath"("net.kyori:adventure-text-serializer-legacy:5.1.1")
     }
 }
 

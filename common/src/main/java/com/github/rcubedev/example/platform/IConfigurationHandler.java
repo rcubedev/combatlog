@@ -10,13 +10,16 @@ public interface IConfigurationHandler extends IService {
 
     /**
      * Configuration handler instance getter.
-     * Blocks until the configuration handler instance is available.
      *
      * @return The configuration handler instance.
      */
     static IConfigurationHandler getInstance() {
-        return IService.createInstance(IConfigurationHandler.class);
+        return Holder.INSTANCE;
     }
 
     <T extends WrappedConfig> WrappedConfigAccessor getAccessor(T config);
+
+    static class Holder {
+        private static IConfigurationHandler INSTANCE = IService.createInstance(IConfigurationHandler.class);
+    }
 }

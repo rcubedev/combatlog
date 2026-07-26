@@ -1,7 +1,7 @@
 package com.github.rcubedev.example.platform;
 
 import com.github.rcubedev.example.util.IService;
-import net.kyori.adventure.text.Component;
+import com.github.sirblobman.combatlogx.VersionUtil;import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.minecraft.commands.CommandSourceStack;import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,15 +11,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
 public interface IAdventure extends IService {
-
     /**
      * Adventure instance getter.
-     * Blocks until the adventure instance is available.
      *
      * @return The adventure instance.
      */
     static IAdventure getInstance() {
-        return IService.createInstance(IAdventure.class);
+        return Holder.INSTANCE;
     }
 
     @NotNull Component asAdventure(net.minecraft.network.chat.Component component);
@@ -37,7 +35,7 @@ public interface IAdventure extends IService {
 
     default @NotNull net.minecraft.network.chat.Component update(net.minecraft.network.chat.Component input,
                                                                  UnaryOperator<Component> modifier, ServerPlayer player) {
-        return update(input, modifier, player.getServer());
+        return update(input, modifier, VersionUtil.getServer(player));
     };
 
     default void sendSuccess(CommandSourceStack source, net.minecraft.network.chat.Component component,
@@ -51,5 +49,9 @@ public interface IAdventure extends IService {
 
     default void sendFailure(CommandSourceStack source, Component component) {
         source.sendFailure(IAdventure.getInstance().asNative(component));
+    }
+
+    static class Holder {
+        private static final IAdventure INSTANCE = IService.createInstance(IAdventure.class);
     }
 }

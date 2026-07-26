@@ -69,6 +69,7 @@ public final class UntagEventListener extends CombatListener {
     public void onQuit(PlayerQuitEvent e) {
         ServerPlayer player = e.getPlayer();
         if (getCombatLogX().getPunishConfiguration().killTime == KillTime.KEEP_ONLINE || !isInCombat(player)) return;
+        System.out.println("KillTime != KEEP_ONLINE");
 
         ICombatManager combatManager = getCombatManager();
         // fixme this isnt great as if the NPC dies the quit event is fired and they are untagged under a QUIT which idk.
@@ -77,7 +78,8 @@ public final class UntagEventListener extends CombatListener {
 
     @SubscribeEvent(priority = Priority.MONITOR) // todo is that priority right
     public void onDisconnect(PlayerDisconnectEvent e) {
-        CombatLogX.LOGGER.info("Handing disconnect event for player: {}, packet listener: {}, in combat: {}", e.getPlayer().getName(), e.getPacketListener().getClass().getName(), isInCombat(e.getPlayer()));
+        if (getCombatLogX().getPunishConfiguration().killTime != KillTime.KEEP_ONLINE) return;
+        CombatLogX.LOGGER.info("Handling disconnect event for player: {}, packet listener: {}, in combat: {}", e.getPlayer().getName(), e.getPacketListener().getClass().getName(), isInCombat(e.getPlayer()));
         ServerPlayer player = e.getPlayer();
         if (!isInCombat(player)) return;
 
@@ -88,9 +90,10 @@ public final class UntagEventListener extends CombatListener {
 
     @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
     public void onUntag(PlayerUntagEvent e) {
+        System.out.println("Recieving untag event");
         ServerPlayer player = e.getPlayer();
         UntagReason untagReason = e.getUntagReason();
-        CombatLogX.LOGGER.info("Handing untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName(), untagReason, isInCombat(e.getPlayer()));
+        CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()));
 
         sendUntagMessage(player, untagReason);
 

@@ -3,15 +3,19 @@ package com.github.sirblobman.combatlogx;
 import com.github.rcubedev.example.event.api.Identity;
 import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.config.WrappedConfigAccessor;
-import com.github.rcubedev.example.platform.IConfigurationHandler;
+import com.github.rcubedev.example.event.api.spi.Subscription;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStartingEvent;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStoppingEvent;import com.github.rcubedev.example.platform.IConfigurationHandler;
 import com.github.rcubedev.example.platform.IPlatformHelper;
 import com.github.rcubedev.example.services.api.ServiceBootstrap;
 import com.github.rcubedev.example.services.api.ServiceRegistry;
 import com.github.rcubedev.example.services.impl.layer.ClassLoaderServiceLayer;
 import com.github.rcubedev.example.services.impl.layer.ModuleLayerServiceLayer;
 import com.github.rcubedev.example.task.impl.ModdedTaskScheduler;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.github.sirblobman.combatlogx.api.expansion.ExpansionFactory;
+import com.github.sirblobman.combatlogx.api.expansion.ExpansionManager;
+import com.github.sirblobman.combatlogx.api.object.UntagReason;
+import com.github.sirblobman.combatlogx.expansion.ExpansionRegistryImpl;
 
 import com.github.rcubedev.example.task.api.TaskScheduler;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
@@ -40,6 +44,7 @@ import com.github.sirblobman.combatlogx.manager.ForgiveManager;
 import com.github.sirblobman.combatlogx.manager.PlaceholderManager;
 import com.github.sirblobman.combatlogx.manager.PunishManager;
 import com.github.sirblobman.combatlogx.placeholder.BasePlaceholderExpansion;
+import com.github.sirblobman.combatlogx.platform.IExpansionLoader;
 import com.github.sirblobman.combatlogx.task.TimerUpdateTask;
 import com.github.sirblobman.combatlogx.task.UntagTask;
 import folk.sisby.kaleido.api.WrappedConfig;
@@ -47,24 +52,26 @@ import folk.sisby.kaleido.lib.quiltconfig.api.Config;
 import folk.sisby.kaleido.lib.quiltconfig.impl.ConfigImpl;
 import folk.sisby.kaleido.lib.quiltconfig.impl.builders.ConfigBuilderImpl;
 
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-
 import com.github.sirblobman.combatlogx.listener.DamageEventListener;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 public class CombatLogX implements ICombatLogX {
-    public static volatile ICombatLogX INSTANCE; // todo
-    // fixme uses internal & breaks on fabric as fabric does not have modulelayers
+    public static volatile @Nullable ICombatLogX INSTANCE; // todo needed for mixins / event hooks?
+
+    // fixme uses internal service api as it isnt completed as of yet.
     public static final ServiceRegistry SERVICE_REGISTRY = ServiceBootstrap.bootstrap(
             CombatLogX.class.getModule().getLayer() != null ?
                 new ModuleLayerServiceLayer("mod", CombatLogX.class.getModule().getLayer(), 100)
-            : new ClassLoaderServiceLayer("mod", CombatLogX.class.getClassLoader(), 100)
-            );
+            : new ClassLoaderServiceLayer("mod", CombatLogX.class.getClassLoader(), 100));
+
     public static final String MOD_ID = "antilogout";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -72,60 +79,110 @@ public class CombatLogX implements ICombatLogX {
     private final CommandConfiguration commandConfiguration = CommandConfiguration.createToml(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "commands", CommandConfiguration.class);
     private final PunishConfiguration punishConfiguration = PunishConfiguration.createToml(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "punish", PunishConfiguration.class);
     private final LanguageConfiguration languageConfiguration = LanguageConfiguration.createToml(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "language", LanguageConfiguration.class);
+
     private final TimerUpdateTask timerUpdateTask = new TimerUpdateTask(this);
+
     private final PlayerDataManager playerDataManager = new PlayerDataManager(this);
     private final LanguageManager<LanguageFileConfiguration> languageManager = new LanguageManager<>(this, LanguageFileConfiguration.class, languageConfiguration, "prefix", c -> c.prefix);
     private final CombatManager combatManager = new CombatManager(this);
     private final PunishManager punishManager = new PunishManager(this);
-    // private final ExpansionManager expansionManager = new ExpansionManager(this);
+    private final ExpansionManager expansionManager = new ExpansionManager(this);
     private final PlaceholderManager placeholderManager = new PlaceholderManager(this);
     private final DeathManager deathManager = new DeathManager(this);
     private final ForgiveManager forgiveManager = new ForgiveManager(this);
     private final CrystalManager crystalManager = new CrystalManager(this);
+
+    //fixme
+    private volatile @Nullable Subscription startingSubscription;
+    private volatile @Nullable Subscription stoppingSubscription;
+
     // relies on config, must be late init
     private final PermissionHolder permissionHolder = new PermissionHolder(this);
 
-    public void onInitializeServer() {
-        INSTANCE = this;
+    public void onLoad() {
+        LanguageManager<LanguageFileConfiguration> languageManager = getLanguageManager();
+        languageManager.loadDefaultLanguageFiles(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "language");
+        //languageManager.reloadLanguages();
+
+        ExpansionRegistryImpl registry = getExpansionRegistry();
+        List<ExpansionFactory> modLoadedFactories = IExpansionLoader.getInstance().load();
+        registry.registerExpansions(modLoadedFactories);
+
+        //fixme
+        this.startingSubscription = MainBus.BUS.register(ServerStartingEvent.class,
+                e -> this.onEnable(e.getServer()), Identity.ofPublic());
+        this.stoppingSubscription = MainBus.BUS.register(ServerStoppingEvent.class,
+                e -> this.onDisable(e.getServer()), Identity.ofPublic());
+    }
+
+    // server starting event; neo/fabric
+    public void onEnable(@NotNull MinecraftServer server) {
+        Subscription sub = this.startingSubscription;
+        this.startingSubscription = null;
+        if (sub != null) sub.unsubscribe();
+
+        onReload();
+
+        LanguageManager<LanguageFileConfiguration> languageManager = getLanguageManager();
+        languageManager.onEnable();
+
+        //broadcastMessageOnLoad();
 
         registerCommands();
         registerListeners();
         registerTasks();
+        registerExpansions(server);
         registerBasePlaceholders();
 
-        LanguageManager<LanguageFileConfiguration> languageManager = getLanguageManager();
-        languageManager.onInitialize();
-        languageManager.loadDefaultLanguageFiles(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "language");
-        languageManager.reloadLanguages();
+        //broadcastMessageOnEnable();
 
-        // ServerLifecycleEvents.SERVER_STARTING.register(server -> audiences = MinecraftServerAudiences.of(server));
-        // ServerLifecycleEvents.SERVER_STOPPED.register(server -> audiences = null);
+        // all loaded so should be safe to publish?
+        INSTANCE = this;
+    }
 
-        // ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {});
-        // AttackEntityCallback.EVENT.register(DamageEventListener::onAttack);
-        // ServerLivingEntityEvents.AFTER_DEATH.register(DamageEventListener::onDeath);
-        // ServerPlayConnectionEvents.JOIN.register(DamageEventListener::onPlayerJoin);
+    public void onDisable(@NotNull MinecraftServer server) {
+        Subscription sub = this.stoppingSubscription;
+        this.stoppingSubscription = null;
+        if (sub != null) sub.unsubscribe();
+        sub = this.startingSubscription;
+        this.startingSubscription = null;
+        if (sub != null) sub.unsubscribe();
 
+        untagAllPlayers(server);
 
-        // CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-        //     AfkCommand.register(dispatcher);
-        //     AntiLogoutCommand.register(dispatcher);
-        // });
+        ExpansionManager expansionManager = getExpansionManager();
+        expansionManager.disableExpansions(server);
 
-        LOGGER.info("AntiLogout initialized. TCL: {}. CL: {}", Thread.currentThread().getContextClassLoader(), CombatLogX.class.getClassLoader());
+        //broadcastMessageOnDisable();
     }
 
     // todo: gotta make something to call onReload
-    // fixme: add a thread safe singleton logger thingy
-
     @Override
     public void onReload() {
-        // todo
+        CombatLogX.reload(getConfiguration());
+        CombatLogX.reload(getCommandConfiguration());
+        CombatLogX.reload(getPunishConfiguration());
+
+        reloadLanguage();
+
+        ExpansionManager expansionManager = getExpansionManager();
+        expansionManager.reloadConfigs();
     }
 
     @Override
     public @NotNull Logger getLogger() {
         return LOGGER;
+    }
+
+    @Override
+    public @NotNull ExpansionRegistryImpl getExpansionRegistry() {
+        return ExpansionRegistryImpl.getInstance();
+    }
+
+    // todo stop the internal leakage
+    @Override
+    public @NotNull ExpansionManager getExpansionManager() {
+        return this.expansionManager;
     }
 
     @Override
@@ -173,7 +230,7 @@ public class CombatLogX implements ICombatLogX {
         return this.forgiveManager;
     }
 
-    //fixme
+    // fixme again internal as task api not finished
     @Override
     public @NotNull TaskScheduler getScheduler() {
         return ModdedTaskScheduler.getScheduler();
@@ -206,28 +263,17 @@ public class CombatLogX implements ICombatLogX {
     }
 
     // fixme jank. in future use varhandle or methodhandle getter
-    public static <T extends WrappedConfig> WrappedConfigAccessor create(T config) {
+    public static <T extends WrappedConfig> WrappedConfigAccessor getAccessor(T config) {
         return IConfigurationHandler.getInstance().getAccessor(config);
-//        if (!(config instanceof folk.sisby.kaleido.lib.quiltconfig.api.WrappedConfig))
-//            throw new IllegalStateException("Kaleido WrappedConfig does not extend QuiltConfig Wrapped Config.");
-//        Config wrapped;
-//        try {
-//            Field field = folk.sisby.kaleido.lib.quiltconfig.api.WrappedConfig.class.getDeclaredField("wrapped");
-//            field.trySetAccessible();
-//            wrapped = (Config) field.get(config);
-//        } catch (NoSuchFieldException | IllegalAccessException e) {
-//            throw new RuntimeException("Failed to create WrappedConfigAccessor", e);
-//        }
-//        return new WrappedConfigAccessor() {
-//            @Override
-//            public Config test$getWrapped() {
-//                return wrapped;
-//            }
-//        };
     }
 
-    // fixme just pass a WrappedConfigAccessor
-    public static void reload(WrappedConfigAccessor config) {
+    public static <T extends WrappedConfig> T reload(T config) {
+        reload(getAccessor(config));
+        return config;
+    }
+
+    // fixme jank. see QuiltMC/quilt-config#62
+    private static void reload(WrappedConfigAccessor config) {
         try {
             Config wrapped = config.test$getWrapped();
             if (!(wrapped instanceof ConfigImpl wrappedImpl)) throw new IllegalStateException("Unexpected config type: " + wrapped.getClass().getName());
@@ -237,7 +283,7 @@ public class CombatLogX implements ICombatLogX {
         }
     }
 
-    // fixme jank. see QuiltMC/quilt-config#62
+    /*
     public static int reload(WrappedConfigAccessor config, CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         try {
             Config wrapped = config.test$getWrapped();
@@ -251,6 +297,11 @@ public class CombatLogX implements ICombatLogX {
             context.getSource().sendFailure(Component.literal("An error occurred while reloading."));
             return 0;
         }
+    }*/
+
+    private void reloadLanguage() {
+        LanguageManager<LanguageFileConfiguration> languageManager = getLanguageManager();
+        languageManager.reloadLanguages();
     }
 
     private void registerCommands() {
@@ -271,6 +322,19 @@ public class CombatLogX implements ICombatLogX {
         ITimerManager timerManager = getTimerManager();
         timerManager.register();
         new UntagTask(this).register();
+    }
+
+    private void registerExpansions(@NotNull MinecraftServer server) {
+        ExpansionManager expansionManager = getExpansionManager();
+        expansionManager.enableExpansions(server);
+    }
+
+    private void untagAllPlayers(@NotNull MinecraftServer server) {
+        ICombatManager combatManager = getCombatManager();
+        List<ServerPlayer> playerCombatList = combatManager.getPlayersInCombat(server);
+        for (ServerPlayer player : playerCombatList) {
+            combatManager.untag(player, UntagReason.EXPIRE);
+        }
     }
 
     private void registerBasePlaceholders() {

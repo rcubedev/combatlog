@@ -28,7 +28,7 @@ public final class CrystalManager extends Manager implements ICrystalManager {
         UUID playerId = this.endCrystalMap.get(entityId);
         if (playerId == null) return null;
         
-        MinecraftServer server = crystal.getServer();
+        MinecraftServer server = crystal.level().getServer();
         return server == null ? null : server.getPlayerList().getPlayer(playerId);
     }
 

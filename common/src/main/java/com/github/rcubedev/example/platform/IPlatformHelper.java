@@ -13,12 +13,11 @@ public interface IPlatformHelper extends IService {
 
     /**
      * Platform helper getter.
-     * Blocks until the platform helper instance is available.
      *
      * @return The platform helper instance.
      */
     static IPlatformHelper getInstance() {
-        return IService.createInstance(IPlatformHelper.class);
+        return Holder.INSTANCE;
     }
 
     /**
@@ -55,4 +54,8 @@ public interface IPlatformHelper extends IService {
      * @return True if the {@link ServerPlayer} is an instance of the loader's NPC type
      */
     boolean isNPCInst(ServerPlayer player);
+
+    static class Holder {
+        private static final IPlatformHelper INSTANCE = IService.createInstance(IPlatformHelper.class);
+    }
 }

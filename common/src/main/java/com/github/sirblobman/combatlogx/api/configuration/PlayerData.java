@@ -1,9 +1,12 @@
 package com.github.sirblobman.combatlogx.api.configuration;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
+//? if >=1.21.10
+import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,16 +15,18 @@ import java.util.function.Consumer;
 // todo don't use SavedData, make own NBT thing.
 //  see https://github.com/gigaherz/Ender-Rift/blob/master/src/main/java/dev/gigaherz/enderrift/rift/storage/RiftStorage.java
 //  and https://github.com/gigaherz/Ender-Rift/pull/56
-// todo not thread safe
+// todo not thread safe, not really any reason to use CompoundTag instead of serializing data
 public final class PlayerData extends SavedData {
 
-    private volatile @Nullable CompoundTag tag;
+    private final @NotNull CompoundTag tag;
 
-    private PlayerData() {}
+    private PlayerData(@NotNull CompoundTag tag) {
+        this.tag = tag;
+    }
 
     // make sure to mark dirty when done!
     private @NotNull CompoundTag getTag() {
-        return this.tag == null ? this.tag = new CompoundTag() : this.tag;
+        return this.tag;
     }
 
     public void transform(@NotNull Consumer<CompoundTag> transformation) {
@@ -37,35 +42,32 @@ public final class PlayerData extends SavedData {
     }
 
     // do not call; the game will call it for us.
-    @Override
+    //? if <1.21.10 {
+    /*@Override
     public @NotNull CompoundTag save(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        if (this.tag == null) return tag;
-        tag.merge(this.tag);
+        tag.merge(this.tag); // fixme i dont think this is even needed
         return tag;
     }
+    *///?}
 
     public static @Nullable PlayerData loadIfPresent(@NotNull ServerPlayer player) {
-        return player.server.overworld().getDataStorage().get(factory(), "clx_playerdata_" + player.getStringUUID());
+        return player.level().getServer().overworld().getDataStorage().get(
+                /*? if >=1.21.10 {*/ type(player) /*?} else {*/ /*FACTORY, "clx_playerdata_" + player.getStringUUID()*//*?}*/);
     }
 
     public static @NotNull PlayerData load(@NotNull ServerPlayer player) {
-        return player.server.overworld().getDataStorage().computeIfAbsent(factory(), "clx_playerdata_" + player.getStringUUID());
+        return player.level().getServer().overworld().getDataStorage().computeIfAbsent(
+                /*? if >=1.21.10 {*/ type(player) /*?} else {*/ /*FACTORY, "clx_playerdata_" + player.getStringUUID()*//*?}*/);
     }
 
-    private static @NotNull PlayerData create() {
-        PlayerData data = new PlayerData();
-        data.tag = new CompoundTag();
-        return data;
+    //? if >=1.21.10 {
+    private static final Codec<PlayerData> CODEC = CompoundTag.CODEC.xmap(PlayerData::new, PlayerData::getTag);
+    private static @NotNull SavedDataType<PlayerData> type(@NotNull ServerPlayer player) {
+        return new SavedDataType<>("clx_playerdata_" + player.getStringUUID(),
+                () -> new PlayerData(new CompoundTag()), CODEC, null);
     }
-
-    private static @NotNull PlayerData load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-        PlayerData data = PlayerData.create();
-        data.tag = tag;
-        return data;
-    }
-
-    private static Factory<PlayerData> factory() {
-        // fabric api & neo make it safe to pass null.
-        return new Factory<>(PlayerData::create, PlayerData::load, null);
-    }
+    //?} else {
+    /*private static final Factory<PlayerData> FACTORY = new Factory<>(() -> new PlayerData(new CompoundTag()),
+              (tag, prov) -> new PlayerData(tag), null);
+    *///?}
 }

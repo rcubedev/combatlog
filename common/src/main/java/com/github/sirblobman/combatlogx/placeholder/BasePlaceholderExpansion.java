@@ -377,7 +377,7 @@ public final class BasePlaceholderExpansion implements IPlaceholderExpansion {
     private @NotNull Component getEnemyName(@NotNull Entity entity) {
         ICombatLogX mod = getCombatLogX();
         net.minecraft.network.chat.Component vanilla = entity.getName();
-        MinecraftServer server = entity.getServer();
+        MinecraftServer server = entity.level().getServer();
         if (server == null) throw new IllegalStateException("entity does not have a server");
         return IAdventure.getInstance().asAdventure(vanilla);
     }

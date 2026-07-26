@@ -16,13 +16,12 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     private @Nullable Component deathMessage;
 
     @ApiStatus.Internal
-    public PlayerDeathEvent(final @NotNull ServerPlayer player, final @NotNull DamageSource damageSource) {
+    public PlayerDeathEvent(@NotNull ServerPlayer player, @NotNull DamageSource damageSource) {
         super(player, damageSource);
     }
 
-    @NotNull
     @Override
-    public ServerPlayer getEntity() {
+    public @NotNull ServerPlayer getEntity() {
         return (ServerPlayer) this.entity;
     }
 

@@ -16,6 +16,6 @@ public class CombatLogXNeoForge {
 //        PermissionTypes.SUPPORTED_TYPES.forEach(t -> IPermissionNodeFactory.setInstance(new NeoForgePermissionNodeFactory<>(t)));
 //        IPlaceholderAPI.setInstance(new PlaceholderAPIFallback());
 
-        new CombatLogX().onInitializeServer();
+        new CombatLogX().onLoad();
     }
 }

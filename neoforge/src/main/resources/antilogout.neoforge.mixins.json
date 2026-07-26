@@ -9,7 +9,5 @@
   "overwrites": {
     "requireAnnotations": true
   },
-  "mixins": [],
-  "client": [],
   "server": []
 }

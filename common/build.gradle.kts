@@ -56,14 +56,10 @@ dependencies {
     implementation("com.github.rcubedev:java_utils")
 
     // todo
-    //modImplementation("net.kyori:adventure-platform-fabric:5.14.2")
-    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.0.0")
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
-    implementation("net.kyori:adventure-text-serializer-plain:4.17.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
-    // modImplementation("net.kyori:adventure-platform-mod-shared:6.0.1")
-    // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.0.1")
-    // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.2.0")}
+    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")
+    implementation("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
+    implementation("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
+    implementation("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
     implementation("folk.sisby:kaleido-config:0.3.3+1.3.2")
 }

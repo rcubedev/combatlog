@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraft.server.players.PlayerList;
+import net.minecraft.server.network.config.PrepareSpawnTask;import net.minecraft.server.players.PlayerList;
 
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerNPCReplaceEvent;
 import com.github.sirblobman.combatlogx.listener.UntagEventListener;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At;import java.util.function.Supplier;
 
 @Mixin(ServerConfigurationPacketListenerImpl.class)
 public abstract class ServerConfigurationPacketListenerImplLoginMixin extends ServerCommonPacketListenerImpl {
@@ -55,7 +55,8 @@ public abstract class ServerConfigurationPacketListenerImplLoginMixin extends Se
             method = "handleConfigurationFinished",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;"
+                    target = /*? if >=1.21.10 {*/ "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lnet/minecraft/server/players/NameAndId;)Lnet/minecraft/network/chat/Component;"
+                    /*?} else {*/ /*"Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;"*/ /*?}*/
             )
     )
     private Component bypassServerFull(@Nullable Component original, @Share("npc") LocalRef<@Nullable ServerPlayer> npc) {
@@ -65,20 +66,29 @@ public abstract class ServerConfigurationPacketListenerImplLoginMixin extends Se
         return original;
     }
 
+    //fixme inject before PrepareSpawnTask#spawnPlayer
     @WrapOperation(
             method = "handleConfigurationFinished",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/players/PlayerList;getPlayerForLogin(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/server/level/ClientInformation;)Lnet/minecraft/server/level/ServerPlayer;"
+                    target = /*? if >=1.21.10 {*/ "Lnet/minecraft/server/network/config/PrepareSpawnTask;spawnPlayer(Lnet/minecraft/network/Connection;Lnet/minecraft/server/network/CommonListenerCookie;)Lnet/minecraft/server/level/ServerPlayer;"
+                    /*?} else {*/ /*"Lnet/minecraft/server/players/PlayerList;getPlayerForLogin(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/server/level/ClientInformation;)Lnet/minecraft/server/level/ServerPlayer;"*/ /*?}*/
             )
     )
-    private ServerPlayer kickNPC(PlayerList instance, GameProfile gameProfile, ClientInformation clientInformation, Operation<ServerPlayer> original, @Share("npc") LocalRef<@Nullable ServerPlayer> npcOpt) {
-        ServerPlayer npc = npcOpt.get();
-        if (npc == null) return original.call(instance, gameProfile, clientInformation);
+    private ServerPlayer kickNPC(
+            /*? if >=1.21.10 {*/ PrepareSpawnTask instance, Connection connection, CommonListenerCookie cookie
+            /*?} else {*/ /*PlayerList instance, GameProfile gameProfile, ClientInformation clientInformation *//*?}*/,
+            Operation<ServerPlayer> original, @Share("npc") LocalRef<@Nullable ServerPlayer> npcOpt) {
 
-        this.server.getPlayerList().remove(npc); // fires quit event
+        return kickNPC(npcOpt.get(), () -> original.call(instance, /*? if >=1.21.10 {*/ connection, cookie /*?} else {*/ /*gameProfile, clientInformation *//*?}*/));
+    }
+
+    private ServerPlayer kickNPC(@Nullable ServerPlayer npc, Supplier<ServerPlayer> original) {
+        if (npc == null) return original.get();
+
+        this.server.getPlayerList().remove(npc);
         UntagEventListener.DISCONNECTED.remove(npc);
-        ServerPlayer newPlayer = original.call(instance, gameProfile, clientInformation);
+        ServerPlayer newPlayer = original.get();
 
         PlayerNPCReplaceEvent event = new PlayerNPCReplaceEvent(npc, newPlayer);
         event.dispatch();

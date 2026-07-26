@@ -25,12 +25,14 @@ public final class PunishManager extends Manager implements IPunishManager {
 
     @Override
     public boolean punish(@NotNull ServerPlayer player, @NotNull UntagReason punishReason, @NotNull List<Entity> enemyList) {
+        System.out.println("PunishManager#punish called");
         PlayerPunishEvent punishEvent = new PlayerPunishEvent(player, punishReason, enemyList);
         punishEvent.dispatch();
 
         if (punishEvent.isCancelled()) return false;
 
         increasePunishmentCount(player);
+        System.out.println("Running kill check");
         runKillCheck(player, enemyList);
 
         ICombatLogX plugin = getCombatLogX();
@@ -54,7 +56,7 @@ public final class PunishManager extends Manager implements IPunishManager {
             PlayerData playerData = playerDataManager.getIfPresent(player);
 
             if (playerData == null) return 0L;
-            return playerData.getData().getLong("punishmentCount");
+            return playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ .orElse(0L) /*?}*/;
         }
 
         return 0L;
@@ -68,7 +70,7 @@ public final class PunishManager extends Manager implements IPunishManager {
         PlayerDataManager playerDataManager = getPlayerDataManager();
         PlayerData playerData = playerDataManager.get(player);
 
-        long currentCount = playerData.getData().getLong("punishmentCount");
+        long currentCount = playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ .orElse(0L) /*?}*/;
         playerData.transform(tag -> tag.putLong("punishmentCount", currentCount + 1L));
 
         // playerDataManager.save(player);
@@ -95,9 +97,11 @@ public final class PunishManager extends Manager implements IPunishManager {
 
         switch (killTime) {
             case JOIN:
+                System.out.println("KillTime was join");
                 killOnJoin(player);
                 break;
             case QUIT:
+                System.out.println("KillTime was quit");
                 killOnQuit(player, enemyList);
                 break;
             default:
@@ -111,6 +115,7 @@ public final class PunishManager extends Manager implements IPunishManager {
         PlayerData playerData = playerDataManager.get(player);
 
         playerData.transform(tag -> tag.putBoolean("killOnJoin", true));
+        System.out.println("Set killOnJoin. New value: " + playerData.getData().getBoolean("killOnJoin").orElse(false));
 
         // playerDataManager.save(player);
     }

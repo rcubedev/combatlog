@@ -1,7 +1,14 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "com.github.sirblobman.combatlogx.mixin",
   "compatibilityLevel": "JAVA_${javaVersion}",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
   "server": [
     "ConnectionMixin",
     "ExplosionMixin",
@@ -13,10 +20,8 @@
     "ServerConnectionListenerMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerLoginPacketListenerImplMixin",
+    "ServerPlayerAccessor",
     "ServerPlayerMixin",
     "WrappedConfigAccessorImpl"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  ]
 }

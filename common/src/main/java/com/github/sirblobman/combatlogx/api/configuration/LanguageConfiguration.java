@@ -36,7 +36,7 @@ public class LanguageConfiguration extends WrappedConfig implements ILanguageCon
 
     @Override
     public void reload() {
-        CombatLogX.reload(CombatLogX.create(this));
+        CombatLogX.reload(this);
     }
 
     @Override

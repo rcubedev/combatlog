@@ -14,7 +14,7 @@ import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.platform.IAdventure;
 import com.github.rcubedev.example.platform.IPlatformHelper;
 import com.github.sirblobman.combatlogx.PermissionHolder;
-import net.minecraft.server.MinecraftServer;
+import com.github.sirblobman.combatlogx.VersionUtil;import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.world.TickRateManager;
@@ -89,7 +89,7 @@ public final class CombatManager extends Manager implements ICombatManager {
 
         double minimumTps = mod.getConfiguration().minimumServerTPS;
         if (minimumTps > 0.0D) {
-            double tps = getServerTPS(player.server); // todo maybe make it per world. see getServerTPS for more info.
+            double tps = getServerTPS(VersionUtil.getServer(player)); // todo maybe make it per world. see getServerTPS for more info.
             if (tps < minimumTps) {
                 mod.printDebug("Server TPS: " + tps);
                 mod.printDebug("Minimum TPS: " + tps);

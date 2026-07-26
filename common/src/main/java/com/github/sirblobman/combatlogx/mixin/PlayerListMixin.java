@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.mixin;
 
-import net.minecraft.network.Connection;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
@@ -43,12 +43,13 @@ public abstract class PlayerListMixin {
     //     original.call(instance, component, overlay);
     // }
 
-    @WrapOperation(
-            method = "placeNewPlayer",
-            at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
-    )
-    private Object skipPutByUUID(Map<UUID, ServerPlayer> instance, Object uuid, Object player, Operation<Object> original, @Share("isNpc") LocalBooleanRef isNpc) {
-        if (isNpc.get()) return instance.get(uuid);
-        return original.call(instance, uuid, player);
-    }
+    // fixme why is this done? do we inject to put it later? commented out now/.
+    // @WrapOperation(
+    //         method = "placeNewPlayer",
+    //         at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    // )
+    // private Object skipPutByUUID(Map<UUID, ServerPlayer> instance, Object uuid, Object player, Operation<Object> original, @Share("isNpc") LocalBooleanRef isNpc) {
+    //     if (isNpc.get()) return instance.get(uuid);
+    //     return original.call(instance, uuid, player);
+    // }
 }
