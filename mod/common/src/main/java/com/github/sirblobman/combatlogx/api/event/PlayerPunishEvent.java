@@ -1,14 +1,13 @@
 package com.github.sirblobman.combatlogx.api.event;
 
+import com.github.sirblobman.combatlogx.api.object.UntagReason;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-
-import com.github.sirblobman.combatlogx.api.object.UntagReason;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A custom event that will fire before a player is punished.

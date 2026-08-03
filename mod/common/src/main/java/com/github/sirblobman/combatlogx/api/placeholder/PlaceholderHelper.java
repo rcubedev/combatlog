@@ -1,15 +1,14 @@
 package com.github.sirblobman.combatlogx.api.placeholder;
 
-import com.github.rcubedev.example.platform.IAdventure;import com.github.sirblobman.combatlogx.platform.IPlaceholderAPI;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-
-import com.github.sirblobman.combatlogx.CombatLogX;
+import com.github.rcubedev.example.platform.IAdventure;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.language.LanguageManager;
+import com.github.sirblobman.combatlogx.platform.IPlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

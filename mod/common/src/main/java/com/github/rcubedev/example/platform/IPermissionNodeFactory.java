@@ -4,17 +4,12 @@ import com.github.rcubedev.example.permission.node.MappedPermissionNode;
 import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.permission.node.PermissionNodeFactory;
 import com.github.rcubedev.example.permission.type.PermissionType;
-import com.github.rcubedev.example.permission.type.PermissionTypes;
 import com.github.rcubedev.example.util.IService;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Factory interface to create permission node instances without depending on loader-specific code.

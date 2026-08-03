@@ -1,12 +1,11 @@
 package com.github.rcubedev.example.task.api.details.abstracts;
 
-import java.util.function.Consumer;
-
 import com.github.rcubedev.example.task.api.TaskScheduler;
-import net.minecraft.server.level.ServerPlayer;
-
 import com.github.rcubedev.example.task.api.info.TaskInfo;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public abstract class AbstractPlayerTaskDetails extends AbstractTaskDetails implements Consumer<ServerPlayer> {
 

@@ -38,6 +38,8 @@ dependencies {
     // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.2.0")}
 
     modImplementation("eu.pb4:placeholder-api:2.4.2+1.21")
+    implementation("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
+    implementation("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
     implementation("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
     api("folk.sisby:kaleido-config:0.3.3+1.3.2")
@@ -46,6 +48,25 @@ dependencies {
 
 loom {
     splitEnvironmentSourceSets()
+}
+
+val clientJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("client")
+    from(sourceSets["client"].output)
+}
+val namedRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    extendsFrom(configurations.runtimeClasspath)
+}
+val namedClientRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    extendsFrom(configurations["clientRuntimeClasspath"])
+    outgoing.artifact(clientJar)
+}
+configurations.matching { it.name == "namedElements" }.configureEach {
+    namedRuntimeElements.extendsFrom(this)
 }
 
 sourceSets {
@@ -64,20 +85,20 @@ loom {
             sourceSet(sourceSets["server"])
         }
     }
-    runs {
-        getByName("client") {
-            client()
-            configName = "Fabric Client"
-            runDir = "run/client"
-            source(sourceSets["client"])
-            ideConfigGenerated(true)
-        }
-        getByName("server") {
-            server()
-            configName = "Fabric Server"
-            runDir = "run/server"
-            source(sourceSets["server"])
-            ideConfigGenerated(true)
-        }
-    }
+//    runs {
+//        getByName("client") {
+//            client()
+//            configName = "Fabric Client"
+//            runDir = "run/client"
+//            source(sourceSets["client"])
+//            ideConfigGenerated(true)
+//        }
+//        getByName("server") {
+//            server()
+//            configName = "Fabric Server"
+//            runDir = "run/server"
+//            source(sourceSets["server"])
+//            ideConfigGenerated(true)
+//        }
+//    }
 }

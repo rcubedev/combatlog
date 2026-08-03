@@ -60,8 +60,8 @@ public final class TimerUpdateTask extends AbstractServerTaskDetails implements 
     }
 
     public void register() {
-        ICombatLogX plugin = getCombatLogX();
-        TaskScheduler scheduler = plugin.getScheduler();
+        ICombatLogX combatLogX = getCombatLogX();
+        TaskScheduler scheduler = combatLogX.getScheduler();
 
         TaskInfo info = getInfo();
         info.setDelay(5L);
@@ -70,8 +70,8 @@ public final class TimerUpdateTask extends AbstractServerTaskDetails implements 
     }
 
     private void update(@NotNull ServerPlayer player) {
-        ICombatLogX plugin = getCombatLogX();
-        ICombatManager combatManager = plugin.getCombatManager();
+        ICombatLogX combatLogX = getCombatLogX();
+        ICombatManager combatManager = combatLogX.getCombatManager();
         TagInformation tagInformation = combatManager.getTagInformation(player);
         if (tagInformation == null) {
             return;

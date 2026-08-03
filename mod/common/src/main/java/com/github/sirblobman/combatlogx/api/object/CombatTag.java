@@ -1,13 +1,12 @@
 package com.github.sirblobman.combatlogx.api.object;
 
-import java.lang.ref.WeakReference;
-import java.util.UUID;
-
-import net.minecraft.world.entity.Entity;
-
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.UUID;
 
 // todo reapply new serverplayer on relog. should be done
 // ensure to add and remove from ICombatManager#allCombatTags

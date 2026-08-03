@@ -5,7 +5,8 @@ import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.config.WrappedConfigAccessor;
 import com.github.rcubedev.example.event.api.spi.Subscription;
 import com.github.rcubedev.example.event.server.lifecycle.ServerStartingEvent;
-import com.github.rcubedev.example.event.server.lifecycle.ServerStoppingEvent;import com.github.rcubedev.example.platform.IConfigurationHandler;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStoppingEvent;
+import com.github.rcubedev.example.platform.IConfigurationHandler;
 import com.github.rcubedev.example.platform.IPlatformHelper;
 import com.github.rcubedev.example.services.api.ServiceBootstrap;
 import com.github.rcubedev.example.services.api.ServiceRegistry;
@@ -113,6 +114,9 @@ public class CombatLogX implements ICombatLogX {
                 e -> this.onEnable(e.getServer()), Identity.ofPublic());
         this.stoppingSubscription = MainBus.BUS.register(ServerStoppingEvent.class,
                 e -> this.onDisable(e.getServer()), Identity.ofPublic());
+
+        //fixme early publication as needed for builtinregmixin?
+        INSTANCE = this;
     }
 
     // server starting event; neo/fabric
@@ -137,7 +141,7 @@ public class CombatLogX implements ICombatLogX {
         //broadcastMessageOnEnable();
 
         // all loaded so should be safe to publish?
-        INSTANCE = this;
+        //INSTANCE = this;
     }
 
     public void onDisable(@NotNull MinecraftServer server) {

@@ -55,11 +55,18 @@ dependencies {
 
     api("com.github.rcubedev:java_utils")
 
-    // todo
-    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")
-    implementation("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
-    implementation("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
-    implementation("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
+    // make sure to provide in :mod:common impls like :mod:fabric
+//    compileOnly("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")
+    modCompileOnly("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")
+    if (commonMod.dep("adventure-platform").startsWith("6.0")) {
+        // fix for 6.0.1 not including its deps
+        compileOnly("net.kyori:adventure-api:${commonMod.dep("adventure-api")}")
+        compileOnly("net.kyori:adventure-platform-api:4.3.4")
+    }
+//    compileOnly("net.kyori:adventure-platform-api:4.3.3")
+    compileOnly("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
+    compileOnly("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
     api("folk.sisby:kaleido-config:0.3.3+1.3.2")
 }

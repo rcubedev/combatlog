@@ -1,13 +1,12 @@
 package com.github.rcubedev.example.task.api.info;
 
-import java.lang.ref.WeakReference;
-
-import net.minecraft.world.entity.Entity;
-
 import com.github.rcubedev.example.task.api.TaskOwner;
 import com.github.rcubedev.example.task.api.TaskType;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 public class EntityTaskInfo<E extends Entity> extends TaskInfo {
     private final WeakReference<E> entityReference;

@@ -1,7 +1,6 @@
 package com.github.sirblobman.combatlogx.api.bukkiteventcompat;
 
 import net.minecraft.world.entity.Entity;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

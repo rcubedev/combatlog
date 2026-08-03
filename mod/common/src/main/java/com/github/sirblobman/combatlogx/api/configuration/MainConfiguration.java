@@ -1,29 +1,24 @@
 package com.github.sirblobman.combatlogx.api.configuration;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ServerLevelData;
-
 import com.github.rcubedev.example.EnumOrList;
 import com.github.rcubedev.example.StringOrList;
 import com.github.rcubedev.example.reflect.TypedClass;
 import com.github.sirblobman.combatlogx.api.object.TagReason;
 import com.github.sirblobman.combatlogx.api.object.TimerType;
 import folk.sisby.kaleido.api.WrappedConfig;
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.DisplayNameConvention;
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.FloatRange;
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange;
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConvention;
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.*;
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueMap;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ServerLevelData;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @DisplayNameConvention(NamingSchemes.SPACE_SEPARATED_LOWER_CASE_INITIAL_UPPER_CASE)
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)

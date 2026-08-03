@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraft.server./*? if >=1.21.10 {*/ network.config.PrepareSpawnTask /*?} else {*/ /*players.PlayerList *//*?}*/;
+import net.minecraft.server./*? if >=1.21.10 {*/ /*network.config.PrepareSpawnTask *//*?} else {*/ players.PlayerList /*?}*/;
 
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerNPCReplaceEvent;
 import com.github.sirblobman.combatlogx.listener.UntagEventListener;
@@ -55,8 +55,8 @@ public abstract class ServerConfigurationPacketListenerImplLoginMixin extends Se
             method = "handleConfigurationFinished",
             at = @At(
                     value = "INVOKE",
-                    target = /*? if >=1.21.10 {*/ "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lnet/minecraft/server/players/NameAndId;)Lnet/minecraft/network/chat/Component;"
-                    /*?} else {*/ /*"Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;" *//*?}*/
+                    target = /*? if >=1.21.10 {*/ /*"Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lnet/minecraft/server/players/NameAndId;)Lnet/minecraft/network/chat/Component;"
+                    *//*?} else {*/ "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;" /*?}*/
             )
     )
     private Component bypassServerFull(@Nullable Component original, @Share("npc") LocalRef<@Nullable ServerPlayer> npc) {
@@ -71,16 +71,16 @@ public abstract class ServerConfigurationPacketListenerImplLoginMixin extends Se
             method = "handleConfigurationFinished",
             at = @At(
                     value = "INVOKE",
-                    target = /*? if >=1.21.10 {*/ "Lnet/minecraft/server/network/config/PrepareSpawnTask;spawnPlayer(Lnet/minecraft/network/Connection;Lnet/minecraft/server/network/CommonListenerCookie;)Lnet/minecraft/server/level/ServerPlayer;"
-                    /*?} else {*/ /*"Lnet/minecraft/server/players/PlayerList;getPlayerForLogin(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/server/level/ClientInformation;)Lnet/minecraft/server/level/ServerPlayer;" *//*?}*/
+                    target = /*? if >=1.21.10 {*/ /*"Lnet/minecraft/server/network/config/PrepareSpawnTask;spawnPlayer(Lnet/minecraft/network/Connection;Lnet/minecraft/server/network/CommonListenerCookie;)Lnet/minecraft/server/level/ServerPlayer;"
+                    *//*?} else {*/ "Lnet/minecraft/server/players/PlayerList;getPlayerForLogin(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/server/level/ClientInformation;)Lnet/minecraft/server/level/ServerPlayer;" /*?}*/
             )
     )
     private ServerPlayer kickNPC(
-            /*? if >=1.21.10 {*/ PrepareSpawnTask instance, Connection connection, CommonListenerCookie cookie
-            /*?} else {*/ /*PlayerList instance, GameProfile gameProfile, ClientInformation clientInformation *//*?}*/,
+            /*? if >=1.21.10 {*/ /*PrepareSpawnTask instance, Connection connection, CommonListenerCookie cookie
+            *//*?} else {*/ PlayerList instance, GameProfile gameProfile, ClientInformation clientInformation /*?}*/,
             Operation<ServerPlayer> original, @Share("npc") LocalRef<@Nullable ServerPlayer> npcOpt) {
 
-        return kickNPC(npcOpt.get(), () -> original.call(instance, /*? if >=1.21.10 {*/ connection, cookie /*?} else {*/ /*gameProfile, clientInformation *//*?}*/));
+        return kickNPC(npcOpt.get(), () -> original.call(instance, /*? if >=1.21.10 {*/ /*connection, cookie *//*?} else {*/ gameProfile, clientInformation /*?}*/));
     }
 
     private ServerPlayer kickNPC(@Nullable ServerPlayer npc, Supplier<ServerPlayer> original) {

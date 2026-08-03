@@ -1,10 +1,8 @@
 package com.github.sirblobman.combatlogx.api.object;
 
-import net.minecraft.server.level.ServerPlayer;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.github.sirblobman.combatlogx.api.manager.ITimerManager;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * If you are going to implement this class, don't forget to register your instance with the timer manager.

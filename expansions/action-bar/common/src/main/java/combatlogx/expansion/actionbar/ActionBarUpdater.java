@@ -87,14 +87,14 @@ public final class ActionBarUpdater implements TimerUpdater {
     private void sendActionBar(ServerPlayer player, long timeLeftMillis) {
         LanguageManager<ActionBarLanguageFileConfiguration> languageManager = getLanguageManager();
         if (timeLeftMillis <= 0) {
-            languageManager.sendActionBar(player.createCommandSourceStack(), "ended", c -> c.ended);
+            languageManager.sendActionBar(player.createCommandSourceStack(), "expansion.action-bar.ended", c -> c.ended);
             return;
         }
 
         ICombatLogX combatLogX = getCombatLogX();
         ICombatManager combatManager = combatLogX.getCombatManager();
         IPlaceholderManager placeholderManager = combatLogX.getPlaceholderManager();
-        Component message = languageManager.getMessage(player.createCommandSourceStack(), "timer", c -> c.timer);
+        Component message = languageManager.getMessage(player.createCommandSourceStack(), "expansion.action-bar.timer", c -> c.timer);
 
         TextReplacementConfig replacementConfig = getBarsReplacement(player, timeLeftMillis);
         message = message.replaceText(replacementConfig);
@@ -131,7 +131,7 @@ public final class ActionBarUpdater implements TimerUpdater {
         long scale = configuration.scale;
 
         //todo
-        MiniMessage miniMessage = MiniMessage.miniMessage();
+        MiniMessage miniMessage = getLanguageManager().getMiniMessage();
         Component leftSymbol = configuration.getLeftSymbol(miniMessage);
         Component rightSymbol = configuration.getRightSymbol(miniMessage);
 

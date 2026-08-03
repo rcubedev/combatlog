@@ -1,9 +1,10 @@
 package com.github.sirblobman.combatlogx.api.utility;
 
-import java.util.Collection;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map;
 
 public final class Validate {
     public static <O> @NotNull O notNull(@Nullable O value, @NotNull String message) {

@@ -50,7 +50,9 @@ afterEvaluate {
                 // )
                 javaConf(project(path = depProject, configuration = javaConfName))
                 resConf(project(path = depProject, configuration = resConfName))
-                compileOnly(project(depProject))
+                //compileOnly(project(depProject))
+                //fixme idk if this is right
+                api(project(depProject))
             }
 
             // Attach dependency sources to compile/runtime tasks

@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class AbstractPermissionFactoryManager implements IPermissionFactoryManager {
+public class PermissionFactoryManager implements IPermissionFactoryManager {
 
     private final Map<PermissionType<?>, IPermissionNodeFactory<?>> factories = new HashMap<>();
     private final Provider provider;
     private volatile boolean initialized = false;
 
-    protected AbstractPermissionFactoryManager(Provider provider) {
+    protected PermissionFactoryManager(Provider provider) {
         this.provider = provider;
         // PermissionTypes.SUPPORTED_TYPES.forEach(type -> factories.put(type, provider.createFactory(type)));
     }

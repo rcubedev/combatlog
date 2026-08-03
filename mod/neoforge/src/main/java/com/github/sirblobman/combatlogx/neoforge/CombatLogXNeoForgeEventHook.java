@@ -15,7 +15,6 @@ import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @EventBusSubscriber(modid = CombatLogX.MOD_ID, value = Dist.DEDICATED_SERVER)
 public class CombatLogXNeoForgeEventHook {

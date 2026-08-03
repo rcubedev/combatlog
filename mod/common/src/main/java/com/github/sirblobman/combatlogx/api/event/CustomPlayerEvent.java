@@ -1,8 +1,7 @@
 package com.github.sirblobman.combatlogx.api.event;
 
-import net.minecraft.server.level.ServerPlayer;
-
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerEvent;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CustomPlayerEvent extends PlayerEvent {

@@ -168,22 +168,18 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
 
     // todo should prob also add a CommandSource variant
     public @Nullable Language<T> getLanguage(@Nullable CommandSourceStack sender) {
-        if (this.forceDefaultLanguage) {
-            return this.getDefaultLanguage();
-        } else if (sender != null && sender.getEntity() != null) {
+        if (this.forceDefaultLanguage) return this.getDefaultLanguage();
+
+        if (sender != null && sender.getEntity() != null) {
             ServerPlayer playerSender = sender.getPlayer();
-            if (playerSender != null) {
-                return this.getPlayerLanguage(playerSender);
-            } else {
-                return this.getDefaultLanguage();
-            }
-        } else {
-            return this.getConsoleLanguage();
+            if (playerSender != null) return this.getPlayerLanguage(playerSender);
+            return this.getDefaultLanguage();
         }
+        return this.getConsoleLanguage();
     }
 
     public void onEnable() {
-        this.printDebug("Detected onInitialize...");
+        this.printDebug("Detected onEnable...");
         Identity id = Identity.of(MethodHandles.lookup());
         MainBus.BUS.register(new LanguageListener<>(mod, this), id);
     }
@@ -198,10 +194,10 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
     }
 
     public void printDebug(@NotNull String message) {
-        if (this.debugLanguage) {
-            Logger logger = this.getLogger();
-            logger.info("[Debug] [Language] {}", message);
-        }
+        if (!this.debugLanguage) return;
+
+        Logger logger = this.getLogger();
+        logger.info("[Debug] [Language] {}", message);
     }
 
     public void printMiniMessageDebug(@NotNull String message) {
@@ -211,6 +207,7 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
     public void reloadLanguages() {
         this.reloadLanguageSettings();
         this.reloadLanguageFiles();
+
         int languageCount = this.languageMap.size();
         Logger logger = this.getLogger();
         logger.info("Successfully loaded {} language(s).", languageCount);
@@ -218,10 +215,13 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
 
     private boolean loadLanguageFile(Path configDir, String family, String languageDir, String languageName) {
         if (languageMap.containsKey(languageName)) return true; // already loaded
+
         Path path = configDir.resolve(family).resolve(languageDir).resolve(languageName + ".lang.toml"); // fixme kinda jank but works ig
         if (!Files.isRegularFile(path) && !languageName.equals(config.defaultLocale())) return false; // doesn't exist and not default locale; we don't want to create the file.
+
         T localeCfg = WrappedConfig.createToml(configDir, family + "/" + languageDir, languageName + ".lang", clazz);
         Language<T> language = new Language<>(languageName, localeCfg, getMiniMessage());
+
         this.languageMap.put(languageName, language);
         return true;
     }
@@ -395,7 +395,7 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
 
     public void sendActionBar(@NotNull CommandSourceStack audience, @NotNull String path, @NotNull ConfigGetter<T, String> value) {
         Component message = this.getMessage(audience, path, value);
-        this.sendMessage(audience, message);
+        this.sendActionBar(audience, message);
     }
 
     public void sendActionBar(@NotNull CommandSourceStack audience, @NotNull Component message) {

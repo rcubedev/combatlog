@@ -1,15 +1,14 @@
 package com.github.sirblobman.combatlogx.api.object;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 // all public methods prune expired.
 public final class TagInformation {

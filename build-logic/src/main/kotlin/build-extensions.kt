@@ -4,7 +4,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.kotlin.dsl.*
 
-val Project.mod: ModData get() = ModData(this)
+val Project.env: EnvData get() = EnvData(this)
+val Project.mod: ModData get() = ModData(env)
 fun Project.prop(key: String): String? = findProperty(key)?.toString()
 fun String.upperCaseFirst() = replaceFirstChar { if (it.isLowerCase()) it.uppercaseChar() else it }
 
@@ -26,6 +27,7 @@ val Project.moduleProject get() = stonecutterBuild.tree.project
 // refers to module:version e.g. :mod:1.21.1 (not :mod:common:1.21.1)
 val Project.commonProject get() = moduleProject.project(stonecutterBuild.current.project)
 //val Project.commonProject get() = rootProject.project(stonecutterBuild.current.project)
+val Project.commonEnv get() = commonProject.env
 val Project.commonMod get() = commonProject.mod
 
 val Project.loader: String? get() = prop("loader")
@@ -80,21 +82,11 @@ val Project.loaderSourceSetDeps: Map<String, List<String>> get() {
 }
 
 @JvmInline
-value class ModData(private val project: Project) {
-    val id: String get() = modProp("id")
-    val name: String get() = modProp("name")
-    val version: String get() = modProp("version")
-    val group: String get() = modProp("group")
-    val author: String get() = modProp("author")
-    val description: String get() = modProp("description")
-    val license: String get() = modProp("license")
-    val github: String get() = modProp("github")
+value class EnvData(private val project: Project) {
     val mc: String get() = depOrNull("minecraft") ?: project.stonecutterBuild.current.version
 
     fun propOrNull(key: String) = project.prop(key)
     fun prop(key: String) = requireNotNull(propOrNull(key)) { "Missing '$key'" }
-    fun modPropOrNull(key: String) = project.prop("mod.$key")
-    fun modProp(key: String) = requireNotNull(modPropOrNull(key)) { "Missing 'mod.$key'" }
     fun depOrNull(key: String): String? = project.prop("deps.$key")?.takeIf { it.isNotEmpty() && it != "" }
     fun dep(key: String) = requireNotNull(depOrNull(key)) { "Missing 'deps.$key'" }
     fun depLoader(key: String): String {
@@ -104,4 +96,27 @@ value class ModData(private val project: Project) {
         return requireNotNull(specific ?: commonProject.prop("deps.$key")) { "Missing $specific or deps.$key" }
     }
     fun modrinth(name: String, version:String) = "maven.modrinth:$name:$version"
+}
+
+@JvmInline
+value class ModData(private val env: EnvData) {
+
+    val id: String get() = modProp("id")
+    val name: String get() = modProp("name")
+    val version: String get() = modProp("version")
+    val group: String get() = modProp("group")
+    val author: String get() = modProp("author")
+    val description: String get() = modProp("description")
+    val license: String get() = modProp("license")
+    val github: String get() = modProp("github")
+    val mc: String get() = env.mc
+
+    fun propOrNull(key: String) = env.propOrNull(key)
+    fun prop(key: String) = env.prop(key)
+    fun modPropOrNull(key: String) = env.prop("mod.$key")
+    fun modProp(key: String) = requireNotNull(modPropOrNull(key)) { "Missing 'mod.$key'" }
+    fun depOrNull(key: String): String? = env.depOrNull(key)
+    fun dep(key: String) = env.dep(key)
+    fun depLoader(key: String): String = env.depLoader(key)
+    fun modrinth(name: String, version:String) = env.modrinth(name, version)
 }

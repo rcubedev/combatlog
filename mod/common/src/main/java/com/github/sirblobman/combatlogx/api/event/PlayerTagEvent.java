@@ -1,11 +1,10 @@
 package com.github.sirblobman.combatlogx.api.event;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.object.TagReason;
 import com.github.sirblobman.combatlogx.api.object.TagType;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

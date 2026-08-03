@@ -1,24 +1,18 @@
 package com.github.sirblobman.combatlogx.api.manager;
 
+import com.github.rcubedev.example.permission.node.PermissionNode;
+import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
+import com.github.sirblobman.combatlogx.api.object.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import com.github.rcubedev.example.permission.node.PermissionNode;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
-import com.github.sirblobman.combatlogx.api.object.TagInformation;
-import com.github.sirblobman.combatlogx.api.object.TagReason;
-import com.github.sirblobman.combatlogx.api.object.TagType;
-import com.github.sirblobman.combatlogx.api.object.UntagReason;
-import com.github.sirblobman.combatlogx.api.object.CombatTag;
 
 public interface ICombatManager extends ICombatLogXNeeded {
     /**

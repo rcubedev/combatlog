@@ -39,13 +39,20 @@ public final class ActionBarExpansion extends Expansion {
     }
 
     @Override
-    public void onLoad() {}
+    public void onLoad() {
+        LanguageManager<ActionBarLanguageFileConfiguration> languageManager = getLanguageManager();
+        languageManager.loadDefaultLanguageFiles(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX-ActionBar", "language");
+    }
 
     @Override
     public void onEnable(@NotNull MinecraftServer server) {
         ICombatLogX combatLogX = getCombatLogX();
 
+        LanguageManager<ActionBarLanguageFileConfiguration> languageManager = getLanguageManager();
+        languageManager.onEnable();
+
         reloadConfig();
+
         ITimerManager timerManager = combatLogX.getTimerManager();
         timerManager.addUpdaterTask(new ActionBarUpdater(this));
     }

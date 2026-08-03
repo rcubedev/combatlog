@@ -28,7 +28,7 @@ public final class ForgiveManager extends Manager implements IForgiveManager {
         ICombatLogX mod = getCombatLogX();
         PlayerDataManager playerDataManager = mod.getPlayerDataManager();
         PlayerData data = playerDataManager.get(player);
-        return data.getData().getBoolean("forgiveToggle")/*? if >=1.21.10 {*/ .orElse(false) /*?}*/;
+        return data.getData().getBoolean("forgiveToggle")/*? if >=1.21.10 {*/ /*.orElse(false) *//*?}*/;
     }
 
     @Override

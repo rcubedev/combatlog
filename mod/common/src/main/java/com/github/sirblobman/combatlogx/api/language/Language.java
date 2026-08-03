@@ -1,5 +1,10 @@
 package com.github.sirblobman.combatlogx.api.language;
 
+import folk.sisby.kaleido.api.WrappedConfig;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -7,11 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import folk.sisby.kaleido.api.WrappedConfig;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 
 public final class Language<T extends WrappedConfig & ILanguage> {
     private final String languageName;

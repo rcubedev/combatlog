@@ -4,7 +4,6 @@ import com.github.rcubedev.example.util.IService;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Platform abstraction for loader-specific helpers.

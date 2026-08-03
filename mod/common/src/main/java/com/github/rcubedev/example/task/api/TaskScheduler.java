@@ -1,12 +1,12 @@
 package com.github.rcubedev.example.task.api;
 
-import java.util.concurrent.Executor;
-
 import com.github.rcubedev.example.task.api.details.RunnableTaskDetails;
 import com.github.rcubedev.example.task.api.details.abstracts.AbstractPlayerTaskDetails;
 import com.github.rcubedev.example.task.api.details.abstracts.AbstractRunnableTaskDetails;
 import com.github.rcubedev.example.task.api.details.abstracts.AbstractServerTaskDetails;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.Executor;
 
 public interface TaskScheduler {
 

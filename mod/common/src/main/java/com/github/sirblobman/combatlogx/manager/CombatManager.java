@@ -21,7 +21,6 @@ import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
-import com.github.sirblobman.combatlogx.CombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.language.ConfigGetter;
 import com.github.sirblobman.combatlogx.api.language.LanguageManager;

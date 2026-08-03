@@ -1,10 +1,10 @@
 package com.github.sirblobman.combatlogx.api.expansion;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ExpansionMetadata {
     private final String name;

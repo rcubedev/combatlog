@@ -1,7 +1,6 @@
 package com.github.sirblobman.combatlogx.api.bukkiteventcompat;
 
 import net.minecraft.server.level.ServerPlayer;
-
 import org.jetbrains.annotations.NotNull;
 
 // matches bukkit by extending event instead of entityevent

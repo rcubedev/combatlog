@@ -65,8 +65,8 @@ public final class CommandHelper {
     public static void runAsOperator(@NotNull ICombatLogX mod, @NotNull ServerPlayer player, @NotNull String command) {
         CommandSourceStack playerSourceStack = player.createCommandSourceStack();
         MinecraftServer server = VersionUtil.getServer(player);
-        boolean isOp = server.getPlayerList().isOp(player./*? if >=1.21.10 {*/ nameAndId() /*?} else {*/ /*getGameProfile() *//*?}*/);
-        CommandSourceStack sourceStack = isOp ? playerSourceStack : playerSourceStack.withPermission(server./*? if >=1.21.10 {*/ operatorUserPermissionLevel() /*?} else {*/ /*getOperatorUserPermissionLevel() *//*?}*/);
+        boolean isOp = server.getPlayerList().isOp(player./*? if >=1.21.10 {*/ /*nameAndId() *//*?} else {*/ getGameProfile() /*?}*/);
+        CommandSourceStack sourceStack = isOp ? playerSourceStack : playerSourceStack.withPermission(server./*? if >=1.21.10 {*/ /*operatorUserPermissionLevel() *//*?} else {*/ getOperatorUserPermissionLevel() /*?}*/);
 
         runAsStack(sourceStack, command, ex -> {
             String playerName = player.getName().getString();

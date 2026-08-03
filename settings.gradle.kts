@@ -28,7 +28,7 @@ plugins {
 rootProject.name = "CombatLog"
 
 // discover & include all subprojects
-val stonecutterGroups = listOf("mod") + discoverStonecutterGroups("expansions")
+val stonecutterGroups = listOf("test", "mod") + discoverStonecutterGroups("expansions")
 
 data class StonecutterMeta(val value: Map<ProjectDescriptor, Map<String, List<String>>>)
 fun stonecutterMeta(groups: List<String>): StonecutterMeta {
@@ -62,7 +62,9 @@ fun discoverStonecutterGroups(baseDirName: String): List<String> {
     if (!Files.isDirectory(baseDirPath)) return emptyList()
 
     return Files.list(baseDirPath).use { stream ->
-        stream.filter { path -> Files.isDirectory(path) && Files.exists(path.resolve("gradle.properties")) }
+        // jank exclusion for now
+        stream.filter { path -> path.fileName?.toString() != "next" && Files.isDirectory(path) &&
+                Files.exists(path.resolve("gradle.properties")) }
             .map { path -> "$baseDirName:${path.fileName}" }
             .toList()
     }

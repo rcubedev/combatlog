@@ -22,6 +22,7 @@
     "ServerLoginPacketListenerImplMixin",
     "ServerPlayerAccessor",
     "ServerPlayerMixin",
-    "WrappedConfigAccessorImpl"
+    "WrappedConfigAccessorImpl",
+    "events.BoatItemMixin"
   ]
 }

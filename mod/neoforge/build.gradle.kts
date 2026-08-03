@@ -45,7 +45,9 @@ dependencies {
 
     implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
     // fixme kinda jank
+//    injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
     injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
+    injectModType("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
 
     api("folk.sisby:kaleido-config:0.3.3+1.3.2")
 
@@ -72,23 +74,23 @@ sourceSets {
 }
 
 neoForge {
-    runs {
-        register("client") {
-            client()
-            gameDirectory = project.file("run/client")
-            ideName = "NeoForge Client (${project.path})"
-        }
-        register("server") {
-            server()
-            gameDirectory = project.file("run/server")
-            ideName = "NeoForge Server (${project.path})"
-            systemProperty("mixin.debug", "true")
-            systemProperty("mixin.debug.export", "true")
-        }
-
-        configureEach {
-        }
-    }
+//    runs {
+//        register("client") {
+//            client()
+//            gameDirectory = project.file("run/client")
+//            ideName = "NeoForge Client (${project.path})"
+//        }
+//        register("server") {
+//            server()
+//            gameDirectory = project.file("run/server")
+//            ideName = "NeoForge Server (${project.path})"
+//            systemProperty("mixin.debug", "true")
+//            systemProperty("mixin.debug.export", "true")
+//        }
+//
+//        configureEach {
+//        }
+//    }
 
     parchment {
         commonMod.depOrNull("parchment")?.let {

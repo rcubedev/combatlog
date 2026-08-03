@@ -1,12 +1,11 @@
 package com.github.sirblobman.combatlogx.api.manager;
 
-import java.util.List;
-
+import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-
-import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface IDeathManager extends ICombatLogXNeeded {
     /**

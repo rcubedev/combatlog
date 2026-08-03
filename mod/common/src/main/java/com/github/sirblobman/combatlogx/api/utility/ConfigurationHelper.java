@@ -1,17 +1,11 @@
 package com.github.sirblobman.combatlogx.api.utility;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-
 import com.github.rcubedev.example.StringOrList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public final class ConfigurationHelper {
     @Contract("_, _, !null -> !null")

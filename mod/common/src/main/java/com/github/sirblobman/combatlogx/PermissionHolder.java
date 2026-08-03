@@ -3,7 +3,6 @@ package com.github.sirblobman.combatlogx;
 import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.permission.type.PermissionTypes;
 import com.github.rcubedev.example.platform.IPermissionFactoryManager;
-import com.github.rcubedev.example.platform.IPermissionNodeFactory;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

@@ -241,7 +241,7 @@ public final class LPIntegration {
 
     @Contract(pure = true)
     private static UUID getUUID(@NotNull GameProfile profile) {
-        return profile./*? if >=1.21.10 {*/ id() /*?} else {*/ /*getId()*//*?}*/;
+        return profile./*? if >=1.21.10 {*/ /*id() *//*?} else {*/ getId()/*?}*/;
     }
 
     public static <T> T getPermissionValue(User user, PermissionNode<T> permission, PermissionDynamicContext<?>... context) {

@@ -1,17 +1,16 @@
 package com.github.sirblobman.combatlogx.api.listener;
 
-import java.util.Locale;
-
+import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerDataManager;
 import com.github.sirblobman.combatlogx.api.language.LanguageManager;
-import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
-
-import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.manager.IDeathManager;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+
+import java.util.Locale;
 
 public abstract class CombatListener {
     private final ICombatLogX mod;

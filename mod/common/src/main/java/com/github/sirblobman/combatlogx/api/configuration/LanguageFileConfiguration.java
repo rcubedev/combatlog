@@ -1,7 +1,5 @@
 package com.github.sirblobman.combatlogx.api.configuration;
 
-import java.util.List;
-
 import com.github.sirblobman.combatlogx.api.language.ILanguage;
 import folk.sisby.kaleido.api.WrappedConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
@@ -10,6 +8,8 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.List;
 
 @DisplayNameConvention(NamingSchemes.SPACE_SEPARATED_LOWER_CASE_INITIAL_UPPER_CASE)
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)

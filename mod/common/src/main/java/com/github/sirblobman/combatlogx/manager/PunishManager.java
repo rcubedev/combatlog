@@ -56,7 +56,7 @@ public final class PunishManager extends Manager implements IPunishManager {
             PlayerData playerData = playerDataManager.getIfPresent(player);
 
             if (playerData == null) return 0L;
-            return playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ .orElse(0L) /*?}*/;
+            return playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ /*.orElse(0L) *//*?}*/;
         }
 
         return 0L;
@@ -70,7 +70,7 @@ public final class PunishManager extends Manager implements IPunishManager {
         PlayerDataManager playerDataManager = getPlayerDataManager();
         PlayerData playerData = playerDataManager.get(player);
 
-        long currentCount = playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ .orElse(0L) /*?}*/;
+        long currentCount = playerData.getData().getLong("punishmentCount")/*? if >=1.21.10 {*/ /*.orElse(0L) *//*?}*/;
         playerData.transform(tag -> tag.putLong("punishmentCount", currentCount + 1L));
 
         // playerDataManager.save(player);

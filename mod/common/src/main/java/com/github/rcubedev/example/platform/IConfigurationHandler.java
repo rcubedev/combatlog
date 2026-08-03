@@ -4,8 +4,6 @@ import com.github.rcubedev.example.config.WrappedConfigAccessor;
 import com.github.rcubedev.example.util.IService;
 import folk.sisby.kaleido.api.WrappedConfig;
 
-import java.util.concurrent.CompletableFuture;
-
 public interface IConfigurationHandler extends IService {
 
     /**

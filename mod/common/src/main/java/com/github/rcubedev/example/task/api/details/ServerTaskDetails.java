@@ -3,9 +3,8 @@ package com.github.rcubedev.example.task.api.details;
 import com.github.rcubedev.example.task.api.TaskOwner;
 import com.github.rcubedev.example.task.api.TaskType;
 import com.github.rcubedev.example.task.api.details.abstracts.AbstractServerTaskDetails;
-import net.minecraft.server.MinecraftServer;
-
 import com.github.rcubedev.example.task.api.info.TaskInfo;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

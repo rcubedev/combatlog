@@ -2,7 +2,6 @@ package com.github.sirblobman.combatlogx.api.bukkiteventcompat;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

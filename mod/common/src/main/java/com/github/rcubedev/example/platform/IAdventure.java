@@ -1,14 +1,17 @@
 package com.github.rcubedev.example.platform;
 
 import com.github.rcubedev.example.util.IService;
-import com.github.sirblobman.combatlogx.VersionUtil;import net.kyori.adventure.text.Component;
+import com.github.sirblobman.combatlogx.VersionUtil;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
-import net.minecraft.commands.CommandSourceStack;import net.minecraft.server.MinecraftServer;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.UnaryOperator;
 
 public interface IAdventure extends IService {
@@ -21,7 +24,12 @@ public interface IAdventure extends IService {
         return Holder.INSTANCE;
     }
 
-    @ApiStatus.Internal
+    @NotNull AudienceProvider provider(@NotNull MinecraftServer server);
+
+    @NotNull Audience audience(@NotNull ServerPlayer player);
+
+    @NotNull Audience audience(@NotNull Iterable<ServerPlayer> players);
+
     @NotNull Component asAdventure(net.minecraft.network.chat.Component component);
 
     @NotNull net.minecraft.network.chat.Component asNative(Component component);

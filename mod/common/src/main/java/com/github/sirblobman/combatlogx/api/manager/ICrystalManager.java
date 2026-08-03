@@ -1,13 +1,12 @@
 package com.github.sirblobman.combatlogx.api.manager;
 
-import java.util.UUID;
-
+import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-
-import com.github.sirblobman.combatlogx.api.ICombatLogXNeeded;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public interface ICrystalManager extends ICombatLogXNeeded {
     @Nullable ServerPlayer getPlacer(EndCrystal crystal);
