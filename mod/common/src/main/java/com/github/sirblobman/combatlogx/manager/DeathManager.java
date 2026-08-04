@@ -27,8 +27,6 @@ public final class DeathManager extends Manager implements IDeathManager {
     public void kill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList) {
         UUID playerId = player.getUUID();
         this.killedPlayerMap.put(playerId, new ArrayList<>(enemyList)); //fixme
-        System.out.println("Should be killing the player");
-        System.out.println(player.level());
         //fixme this didnt work either man
         // player.die(player.damageSources().genericKill());
         player.kill(/*? if >= 1.21.10 {*/ /*player.level() *//*?}*/); // death msg changed by DeathListener

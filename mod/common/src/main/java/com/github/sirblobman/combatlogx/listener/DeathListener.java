@@ -58,16 +58,12 @@ public final class DeathListener extends CombatListener {
         PunishConfiguration punishConfiguration = getPunishConfiguration();
         KillTime killTime = punishConfiguration.killTime;
         if (killTime != KillTime.JOIN) return;
-        System.out.println("KillTime == JOIN");
 
         PlayerDataManager playerDataManager = getPlayerDataManager();
         PlayerData playerData = playerDataManager.getIfPresent(player);
-        // System.out.println("killOnJoin: " + (playerData != null ? playerData.getData().getBoolean("killOnJoin") : Optional.of(false))/*? if >=1.21.10 {*/ /*.orElse(false) *//*?}*/);
         if (playerData == null || !playerData.getData().getBoolean("killOnJoin")/*? if >=1.21.10 {*/ /*.orElse(false) *//*?}*/) return;
 
-        // System.out.println("Transforming killOnJoin");
         playerData.transform(tag -> tag.putBoolean("killOnJoin", false));
-        // System.out.println("New killOnJoin: " + playerData.getData().getBoolean("killOnJoin").orElse(false));
         // playerDataManager.save(player);
 
         IDeathManager deathManager = getDeathManager();

@@ -69,7 +69,6 @@ public final class UntagEventListener extends CombatListener {
     public void onQuit(PlayerQuitEvent e) {
         ServerPlayer player = e.getPlayer();
         if (getCombatLogX().getPunishConfiguration().killTime == KillTime.KEEP_ONLINE || !isInCombat(player)) return;
-        System.out.println("KillTime != KEEP_ONLINE");
 
         ICombatManager combatManager = getCombatManager();
         // fixme this isnt great as if the NPC dies the quit event is fired and they are untagged under a QUIT which idk.
@@ -90,7 +89,6 @@ public final class UntagEventListener extends CombatListener {
 
     @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
     public void onUntag(PlayerUntagEvent e) {
-        System.out.println("Recieving untag event");
         ServerPlayer player = e.getPlayer();
         UntagReason untagReason = e.getUntagReason();
         CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()));

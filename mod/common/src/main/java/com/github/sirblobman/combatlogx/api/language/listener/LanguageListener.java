@@ -51,7 +51,6 @@ public final class LanguageListener<T extends WrappedConfig & ILanguage> {
     public void onSwitchLocale(PlayerLocaleChangeEvent e) {
         ServerPlayer player = e.getPlayer();
         String locale = e.getLocale();
-        System.out.println("Player locale changed from " + languageManager.getCachedLocale(player) + " to " + locale);
 
         LanguageManager<T> languageManager = getLanguageManager();
         if (locale == null) {
