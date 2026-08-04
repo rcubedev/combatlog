@@ -9,6 +9,7 @@ plugins {
 //println("Common loader: :${commonLoader}")
 val gradleCommon = moduleProject.project(requireNotNull(commonLoader)).project(stonecutterBuild.current.project)
 //println("Gradle common: $gradleCommon")
+version = "${loader}+mc${stonecutterBuild.current.version}"
 
 base {
     archivesName = commonEnv.prop("archives_name")
