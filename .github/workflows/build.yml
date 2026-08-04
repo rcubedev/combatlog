@@ -31,6 +31,6 @@ jobs:
         with:
           name: Artifacts
           path: |
-            fabric/versions/**/build/libs/*.jar
-            neoforge/versions/**/build/libs/*.jar
+            **/fabric/versions/**/build/libs/*.jar
+            **/neoforge/versions/**/build/libs/*.jar
           if-no-files-found: error
