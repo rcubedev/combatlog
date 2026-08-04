@@ -1,10 +1,10 @@
 import java.nio.file.Files
 import java.util.Properties
 
-val isCi = System.getenv("CI") == "true"
-gradle.startParameter.isParallelProjectExecutionEnabled = !isCi
-gradle.startParameter.isBuildCacheEnabled = !isCi
-gradle.startParameter.isConfigureOnDemand = !isCi
+// val isCi = System.getenv("CI") == "true"
+gradle.startParameter.isParallelProjectExecutionEnabled = true //!isCi
+gradle.startParameter.isBuildCacheEnabled = true //!isCi
+gradle.startParameter.isConfigureOnDemand = true //!isCi
 
 pluginManagement {
     repositories {
