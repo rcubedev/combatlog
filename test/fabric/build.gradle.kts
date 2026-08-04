@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id("multiloader-api-loader")
     id("dev.kikugie.loom-back-compat") version "0.4"
@@ -69,5 +71,14 @@ loom {
             source(sourceSets["server"])
             ideConfigGenerated(true)
         }
+    }
+}
+
+tasks.named<Jar>("jar") {
+    destinationDirectory.set(layout.buildDirectory.dir("temp/jars"))
+}
+tasks.withType<RemapJarTask>().configureEach {
+    if (name == "remapJar") {
+        destinationDirectory.set(layout.buildDirectory.dir("temp/jars"))
     }
 }

@@ -100,6 +100,10 @@ sourceSets.main {
     resources.srcDir("src/generated/resources")
 }
 
+tasks.named<Jar>("jar") {
+    destinationDirectory.set(layout.buildDirectory.dir("temp/jars"))
+}
+
 /*tasks.jar {
     description = "Assembles a jar archive containing the main and client classes."
     from(sourceSets["client"].output)
