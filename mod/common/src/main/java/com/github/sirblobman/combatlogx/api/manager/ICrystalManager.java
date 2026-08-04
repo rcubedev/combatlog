@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface ICrystalManager extends ICombatLogXNeeded {
+
     @Nullable ServerPlayer getPlacer(EndCrystal crystal);
 
     void setPlacer(@NotNull EndCrystal crystal, @NotNull ServerPlayer player);

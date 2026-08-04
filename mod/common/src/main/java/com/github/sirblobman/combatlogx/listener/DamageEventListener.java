@@ -21,13 +21,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import com.github.sirblobman.combatlogx.api.utility.EntityHelper;
 
-/**
- * Takes care of events.
- * We could use {@link ServerPlayer#onEnterCombat()}
- * and {@link ServerPlayer#onLeaveCombat()} but
- * since we want configurable combat timeout, we
- * have to use fabric events.
- */
 public class DamageEventListener extends CombatListener {
 
     public DamageEventListener(@NotNull ICombatLogX mod) {

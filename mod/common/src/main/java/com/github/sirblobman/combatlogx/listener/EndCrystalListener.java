@@ -2,6 +2,8 @@ package com.github.sirblobman.combatlogx.listener;
 
 import java.util.UUID;
 
+import com.github.rcubedev.example.event.api.Priority;
+import com.github.rcubedev.example.event.api.SubscribeEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -22,6 +24,7 @@ public class EndCrystalListener extends CombatListener {
         super(mod);
     }
 
+    @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent e) {
         if (!getConfiguration().linkEndCrystal) return;
 

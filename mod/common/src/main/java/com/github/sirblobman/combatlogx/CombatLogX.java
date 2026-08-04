@@ -35,7 +35,9 @@ import com.github.sirblobman.combatlogx.api.manager.IPlaceholderManager;
 import com.github.sirblobman.combatlogx.api.manager.IPunishManager;
 import com.github.sirblobman.combatlogx.api.manager.ITimerManager;
 import com.github.sirblobman.combatlogx.listener.ConfigurationListener;
+import com.github.sirblobman.combatlogx.listener.DamageEventListener;
 import com.github.sirblobman.combatlogx.listener.DeathListener;
+import com.github.sirblobman.combatlogx.listener.EndCrystalListener;
 import com.github.sirblobman.combatlogx.listener.PunishListener;
 import com.github.sirblobman.combatlogx.listener.UntagEventListener;
 import com.github.sirblobman.combatlogx.manager.CombatManager;
@@ -53,7 +55,6 @@ import folk.sisby.kaleido.lib.quiltconfig.api.Config;
 import folk.sisby.kaleido.lib.quiltconfig.impl.ConfigImpl;
 import folk.sisby.kaleido.lib.quiltconfig.impl.builders.ConfigBuilderImpl;
 
-import com.github.sirblobman.combatlogx.listener.DamageEventListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -320,6 +321,7 @@ public class CombatLogX implements ICombatLogX {
         MainBus.BUS.register(new UntagEventListener(this), id);
         MainBus.BUS.register(new DeathListener(this), id);
         // MainBus.BUS.register(new InvulnerableListener(this), id); todo bring back potentially
+        MainBus.BUS.register(new EndCrystalListener(this), id);
     }
 
     private void registerTasks() {
