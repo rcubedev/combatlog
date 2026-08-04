@@ -1,0 +1,3 @@
+[submodule "libs/java-utils"]
+	path = libs/java-utils
+	url = https://github.com/rcubedev/java-utils.git

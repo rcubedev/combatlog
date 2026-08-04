@@ -100,7 +100,7 @@ stonecutter {
 }
 
 includeBuild("build-logic")
-includeBuild("../java-utils") {
+includeBuild("libs/java-utils") {
     name = "java_utils"
     dependencySubstitution {
         substitute(module("com.github.rcubedev:java_utils"))
