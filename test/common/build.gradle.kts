@@ -51,6 +51,8 @@ dependencies {
 
     implementation(project(":mod:common:${commonMod.mc}"))
     implementation(project(":expansions:action-bar:common:${commonMod.mc}"))
+    implementation(project(":expansions:boss-bar:common:${commonMod.mc}"))
+    implementation(project(":expansions:end-crystal:common:${commonMod.mc}"))
 
     compileOnly("org.spongepowered:mixin:0.8.5")
     modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")

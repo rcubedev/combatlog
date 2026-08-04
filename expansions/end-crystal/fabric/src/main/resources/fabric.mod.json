@@ -15,7 +15,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"combatlogx": [
-			"combatlogx.expansion.bossbar.BossBarExpansionInitializer"
+			"combatlogx.expansion.endcrystal.EndCrystalExpansionInitializer"
 		]
 	},
 	"mixins": [

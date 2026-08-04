@@ -35,6 +35,9 @@ dependencies {
     implementation(project(path = ":expansions:boss-bar:fabric:${commonMod.mc}", configuration = "namedRuntimeElements"))
     "clientImplementation"(project(path = ":expansions:boss-bar:fabric:${commonMod.mc}", configuration = "namedClientRuntimeElements"))
 
+    implementation(project(path = ":expansions:end-crystal:fabric:${commonMod.mc}", configuration = "namedRuntimeElements"))
+    "clientImplementation"(project(path = ":expansions:end-crystal:fabric:${commonMod.mc}", configuration = "namedClientRuntimeElements"))
+
     // DevAuth for authentication
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.2")
 
