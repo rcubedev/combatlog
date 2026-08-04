@@ -8,9 +8,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.github.rcubedev.example.platform.IAdventure;
-import com.github.rcubedev.example.task.api.TaskScheduler;
-import com.github.rcubedev.example.task.api.TaskType;
-import com.github.rcubedev.example.task.api.details.PlayerTaskDetails;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerData;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerDataManager;
@@ -78,8 +75,9 @@ public final class BossBarUpdater implements TimerUpdater {
 
         ICombatLogX combatLogX = getCombatLogX();
 
-        TaskScheduler scheduler = combatLogX.getScheduler();
-        scheduler.schedulePlayer(new PlayerTaskDetails(combatLogX, TaskType.START_TICK, 1L, p -> actualRemove(p)));
+        actualRemove(player);
+        // TaskScheduler scheduler = combatLogX.getScheduler();
+        // scheduler.schedule(new RunnableTaskDetails(combatLogX, TaskType.START_TICK, 1L, () -> actualRemove(player)));
     }
 
     private BossBarExpansion getExpansion() {
