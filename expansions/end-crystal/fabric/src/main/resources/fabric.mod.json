@@ -26,6 +26,7 @@
 		"fabricloader": ">=${fabricLoaderVersion}",
 		"fabric-api": ">=${fabricApiVersion}",
 		"minecraft": "~${minMinecraftVersion}",
+		"combatlogx": ">=1.0.0",
 		"java": ">=${javaVersion}"
 	}
 }

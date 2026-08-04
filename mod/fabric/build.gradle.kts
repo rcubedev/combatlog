@@ -19,6 +19,7 @@ dependencies {
     })
 
     api("com.github.rcubedev:java_utils")
+    include("com.github.rcubedev:java_utils")
 
     modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
@@ -33,14 +34,22 @@ dependencies {
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.2")
 
     modImplementation("net.kyori:adventure-platform-fabric:${mod.depLoader("adventure-platform")}")
+    include("net.kyori:adventure-platform-fabric:${mod.depLoader("adventure-platform")}")
     // modImplementation("net.kyori:adventure-platform-mod-shared:6.0.1")
     // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.0.1")
     // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.2.0")}
 
     modImplementation("eu.pb4:placeholder-api:2.4.2+1.21")
+    include("eu.pb4:placeholder-api:2.4.2+1.21")
+
     implementation("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
+    include("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
+
     implementation("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
+    include("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
+
     implementation("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
+    include("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
 
     api("folk.sisby:kaleido-config:0.3.3+1.3.2")
     include("folk.sisby:kaleido-config:0.3.3+1.3.2")

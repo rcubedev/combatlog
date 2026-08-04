@@ -31,3 +31,10 @@ type = "required"
 versionRange = "[${minMinecraftVersion},)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.${ modId }]]
+modId = "combatlogx"
+type = "required"
+versionRange = "[1.0.0,)" # fixme
+ordering = "NONE"
+side = "BOTH"

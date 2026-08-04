@@ -79,7 +79,8 @@ tasks {
             "forgeVersion" to commonMod.depOrNull("forge"),
             "toml4jVersion" to commonMod.depOrNull("toml4j"),
             "modMenuVersion" to commonMod.depOrNull("modmenu"),
-            "fabricPermissionsApiVersion" to commonMod.depOrNull("fabric-permissions-api")
+            "fabricPermissionsApiVersion" to commonMod.depOrNull("fabric-permissions-api"),
+            "adventurePlatformVersion" to mod.depLoader("adventure-platform")
         ).filterValues { it?.isNotEmpty() == true }.mapValues { (_, v) -> v!! }
 
         val jsonExpandProps = expandProps.mapValues { (k, v) ->

@@ -40,7 +40,6 @@ fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionT
 
 dependencies {
     implementation("com.github.rcubedev:java_utils")
-    jarJar("com.github.rcubedev:java_utils")
 
     implementation(project(":mod:neoforge:${commonMod.mc}"))
 

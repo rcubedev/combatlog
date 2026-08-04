@@ -74,7 +74,7 @@ public class CombatLogX implements ICombatLogX {
                 new ModuleLayerServiceLayer("mod", CombatLogX.class.getModule().getLayer(), 100)
             : new ClassLoaderServiceLayer("mod", CombatLogX.class.getClassLoader(), 100));
 
-    public static final String MOD_ID = "antilogout";
+    public static final String MOD_ID = "combatlogx";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private final MainConfiguration configuration = MainConfiguration.createToml(IPlatformHelper.getInstance().getConfigDir(), "CombatLogX", "config", MainConfiguration.class);
