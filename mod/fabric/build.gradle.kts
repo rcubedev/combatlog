@@ -61,6 +61,7 @@ loom {
 
 val clientJar by tasks.registering(Jar::class) {
     archiveClassifier.set("client")
+    destinationDirectory.set(layout.buildDirectory.dir("client-libs"))
     from(sourceSets["client"].output)
 }
 val namedRuntimeElements by configurations.creating {
