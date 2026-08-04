@@ -23,6 +23,9 @@
     "ServerPlayerAccessor",
     "ServerPlayerMixin",
     "WrappedConfigAccessorImpl",
-    "events.BoatItemMixin"
+    "events.ArmorStandItemMixin",
+    "events.BoatItemMixin",
+    "events.EndCrystalItemMixin",
+    "events.MinecartItemMixin"
   ]
 }
