@@ -144,6 +144,18 @@ public class FmlPacker {
                 finisher.finish(jos);
             }
         } catch (IOException e) {
+            if (!source.exists()) {
+                throw new IllegalStateException("FmlPacker input jar does not exist: " + source.getAbsolutePath(), e);
+            }
+
+            if (!source.isFile()) {
+                throw new IllegalStateException("FmlPacker input is not a file: " + source.getAbsolutePath(), e);
+            }
+
+            if (!source.canRead()) {
+                throw new IllegalStateException("FmlPacker cannot read input jar: " + source.getAbsolutePath(), e);
+            }
+
             throw new RuntimeException("FmlPacker execution failed for: " + source.getName(), e);
         }
     }
