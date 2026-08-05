@@ -1,6 +1,7 @@
 package com.github.sirblobman.combatlogx.mixin;
 
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerNPCReplaceEvent;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.network.Connection;
@@ -10,6 +11,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.configuration.ServerboundFinishConfigurationPacket;
 import net.minecraft.server.MinecraftServer;
 //? if <1.21.10
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.*;
 import net.minecraft.server./*? if >=1.21.10 {*/ /*network.config.PrepareSpawnTask *//*?} else {*/ players.PlayerList /*?}*/;
