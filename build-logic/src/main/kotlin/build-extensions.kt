@@ -1,4 +1,5 @@
 import com.github.rcubedev.gradle.transform.FmlPacker
+import com.github.rcubedev.gradle.transform.FmlPatchTask
 import dev.kikugie.stonecutter.build.StonecutterBuildExtension
 import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import org.gradle.api.Project
@@ -16,21 +17,28 @@ fun RepositoryHandler.strictMaven(url: String, alias: String, vararg groups: Str
     filter { groups.forEach(::includeGroup) }
 }
 
+//fixme jank
+private var fmlPatchCounter = 0
 fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType = FmlPacker.InjectionType.MANIFEST_LIBRARY, overrideId: String = "", overrideDisplayName: String = ""): FileCollection {
-    val detached = configurations.detachedConfiguration(dependencies.create(dependencyNotation) {
+    val id = fmlPatchCounter++
+    val safeName = dependencyNotation.replace("[^A-Za-z0-9]".toRegex(), "")
+    val input = configurations.create("fmlInput${safeName}${id}") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
         isTransitive = false
-    })
-
-    val patchedFile = when (type) {
-        FmlPacker.InjectionType.MANIFEST_LIBRARY -> {
-            FmlPacker.patchManifestLibrary(detached, project.layout, overrideId)
-        }
-        FmlPacker.InjectionType.NEO_MOD_TOML -> {
-            FmlPacker.patchNeoModToml(detached, project.layout, overrideId, overrideDisplayName)
-        }
     }
-
-    return files(patchedFile)
+    dependencies.add(input.name, dependencyNotation)
+    val task = tasks.register<FmlPatchTask>("fmlPatch${safeName}${id}") {
+        inputJar.from(input)
+        outputJar.set(layout.buildDirectory.file("fml-patched/${safeName}-${id}.jar"))
+        this.type.set(type)
+        moduleName.set(overrideId)
+        this.overrideModId.set(overrideId)
+        this.overrideDisplayName.set(overrideDisplayName)
+        version.set("")
+        artifactName.set("")
+    }
+    return files(task.flatMap { it.outputJar })
 }
 
 fun Project.injectJarJar(dependencyNotation: String, type: FmlPacker.InjectionType = FmlPacker.InjectionType.MANIFEST_LIBRARY, overrideId: String = "", overrideDisplayName: String = ""): FileCollection {

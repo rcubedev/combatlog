@@ -1,8 +1,4 @@
 package com.github.rcubedev.gradle.transform;
-
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.file.ProjectLayout;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,7 +11,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-//fixme this runs at cfg time, bad practice
 public class FmlPacker {
 
     public enum InjectionType {
@@ -23,79 +18,67 @@ public class FmlPacker {
         NEO_MOD_TOML
     }
 
-    public static File patchManifestLibrary(Configuration detached, ProjectLayout layout, String moduleName) {
-        File originalJar = detached.getSingleFile();
-        File modifiedJar = getOutputFile(layout, originalJar, "manifest-");
+    public static File patchManifestLibrary(File originalJar, File modifiedJar, String moduleName) {
+        //System.out.println("PATCHING MANIFEST FOR NATIVE LOADING: " + originalJar.getName());
 
-        if (!modifiedJar.exists()) {
-            //System.out.println("PATCHING MANIFEST FOR NATIVE LOADING: " + originalJar.getName());
-
-            runPackerEngine(originalJar, modifiedJar, manifest -> {
-                Attributes attr = manifest.getMainAttributes();
-                attr.put(new Attributes.Name("FMLModType"), "LIBRARY");
-                if (moduleName != null && !moduleName.isEmpty()) attr.put(new Attributes.Name("Automatic-Module-Name"), moduleName);
-            }, (srcJar, entry, jos) -> {
-                if (JarFile.MANIFEST_NAME.equals(entry.getName())) {
-                    return;
-                }
-                try (InputStream is = srcJar.getInputStream(entry)) {
-                    is.transferTo(jos);
-                }
-            }, jos -> {});
-        }
+        runPackerEngine(originalJar, modifiedJar, manifest -> {
+            Attributes attr = manifest.getMainAttributes();
+            attr.put(new Attributes.Name("FMLModType"), "LIBRARY");
+            if (moduleName != null && !moduleName.isEmpty()) attr.put(new Attributes.Name("Automatic-Module-Name"), moduleName);
+        }, (srcJar, entry, jos) -> {
+            if (JarFile.MANIFEST_NAME.equals(entry.getName())) {
+                return;
+            }
+            try (InputStream is = srcJar.getInputStream(entry)) {
+                is.transferTo(jos);
+            }
+        }, jos -> {});
         return modifiedJar;
     }
 
-    public static File patchNeoModToml(Configuration detached, ProjectLayout layout, String overrideModId, String overrideDisplayName) {
-        File originalJar = detached.getSingleFile();
-        File modifiedJar = getOutputFile(layout, originalJar, "toml-");
+    public static File patchNeoModToml(File originalJar, File modifiedJar, String overrideModId, String overrideDisplayName,
+                                       String version, String artifactName) {
+        String modId = (overrideModId == null || overrideModId.isEmpty())
+                ? artifactName.toLowerCase().replace("-", "_")
+                : overrideModId;
 
-        if (!modifiedJar.exists()) {
-            Dependency dependency = detached.getDependencies().iterator().next();
-            String version = dependency.getVersion() != null ? dependency.getVersion() : "0.0.1-SNAPSHOT";
-            String artifactName = dependency.getName();
+        String displayName = (overrideDisplayName == null || overrideDisplayName.isEmpty())
+                ? capitalizeName(artifactName)
+                : overrideDisplayName;
 
-            String modId = (overrideModId == null || overrideModId.isEmpty())
-                    ? artifactName.toLowerCase().replace("-", "_")
-                    : overrideModId;
+        //System.out.println("INJECTING neoforge.mods.toml INTO: " + originalJar.getName() + " (v" + version + ")");
 
-            String displayName = (overrideDisplayName == null || overrideDisplayName.isEmpty())
-                    ? capitalizeName(artifactName)
-                    : overrideDisplayName;
+        String tomlTemplate =
+                "modLoader=\"javafml\"\n" +
+                        "loaderVersion=\"[1,)\"\n" +
+                        "license=\"Unknown\"\n\n" +
+                        "[[mods]]\n" +
+                        "modId=\"${modId}\"\n" +
+                        "version=\"${version}\"\n" +
+                        "displayName=\"${displayName}\"\n" +
+                        "description=\"\"\n";
 
-            //System.out.println("INJECTING neoforge.mods.toml INTO: " + originalJar.getName() + " (v" + version + ")");
+        String finalTomlContent = tomlTemplate
+                .replace("${modId}", modId)
+                .replace("${version}", version)
+                .replace("${displayName}", displayName);
 
-            String tomlTemplate =
-                    "modLoader=\"javafml\"\n" +
-                            "loaderVersion=\"[1,)\"\n" +
-                            "license=\"Unknown\"\n\n" +
-                            "[[mods]]\n" +
-                            "modId=\"${modId}\"\n" +
-                            "version=\"${version}\"\n" +
-                            "displayName=\"${displayName}\"\n" +
-                            "description=\"\"\n";
+        runPackerEngine(originalJar, modifiedJar, manifest -> {}, (srcJar, entry, jos) -> {
+            String name = entry.getName();
+            if (JarFile.MANIFEST_NAME.equals(name) ||
+                    "META-INF/neoforge.mods.toml".equals(name) ||
+                    "META-INF/mods.toml".equals(name)) {
+                return;
+            }
+            try (InputStream is = srcJar.getInputStream(entry)) {
+                is.transferTo(jos);
+            }
+        }, jos -> {
+            jos.putNextEntry(new JarEntry("META-INF/neoforge.mods.toml"));
+            jos.write(finalTomlContent.getBytes(StandardCharsets.UTF_8));
+            jos.closeEntry();
+        });
 
-            String finalTomlContent = tomlTemplate
-                    .replace("${modId}", modId)
-                    .replace("${version}", version)
-                    .replace("${displayName}", displayName);
-
-            runPackerEngine(originalJar, modifiedJar, manifest -> {}, (srcJar, entry, jos) -> {
-                String name = entry.getName();
-                if (JarFile.MANIFEST_NAME.equals(name) ||
-                        "META-INF/neoforge.mods.toml".equals(name) ||
-                        "META-INF/mods.toml".equals(name)) {
-                    return;
-                }
-                try (InputStream is = srcJar.getInputStream(entry)) {
-                    is.transferTo(jos);
-                }
-            }, jos -> {
-                jos.putNextEntry(new JarEntry("META-INF/neoforge.mods.toml"));
-                jos.write(finalTomlContent.getBytes(StandardCharsets.UTF_8));
-                jos.closeEntry();
-            });
-        }
         return modifiedJar;
     }
 
@@ -110,12 +93,6 @@ public class FmlPacker {
             }
         }
         return sb.toString().trim();
-    }
-
-    private static File getOutputFile(ProjectLayout layout, File originalJar, String prefix) {
-        File outputDir = layout.getBuildDirectory().dir("fml-patched").get().getAsFile();
-        if (!outputDir.exists()) outputDir.mkdirs();
-        return new File(outputDir, prefix + originalJar.getName());
     }
 
     private static void runPackerEngine(File source, File dest, ManifestModifier manifestModifier, JarEntryProcessor processor, JarFinishProcessor finisher) {
