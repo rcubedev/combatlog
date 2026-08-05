@@ -18,7 +18,13 @@ dependencies {
 
     implementation(project(":mod:neoforge:${commonMod.mc}"))
 
-    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
+    // PaperMC/adventure-platform-mod#255 (https://github.com/PaperMC/adventure-platform-mod/issues/255),
+    // PaperMC/adventure-platform-mod#263
+    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}") {
+        exclude(group = "net.kyori", module = "adventure-platform-mod-shared")
+    }
+    compileOnly("net.kyori:adventure-platform-mod-shared:${commonMod.dep("adventure-platform")}")
+
     // fixme kinda jank
     implementation(injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}"))
 

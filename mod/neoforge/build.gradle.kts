@@ -18,7 +18,13 @@ dependencies {
     jarJar("com.github.rcubedev:java_utils")
     compileOnly("net.luckperms:api:${commonMod.dep("luckperms-api")}")
 
-    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
+    // PaperMC/adventure-platform-mod#255 (https://github.com/PaperMC/adventure-platform-mod/issues/255),
+    // PaperMC/adventure-platform-mod#263
+    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}") {
+        exclude(group = "net.kyori", module = "adventure-platform-mod-shared")
+    }
+    compileOnly("net.kyori:adventure-platform-mod-shared:${commonMod.dep("adventure-platform")}")
+
     jarJar("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
 
     // fixme kinda jank
