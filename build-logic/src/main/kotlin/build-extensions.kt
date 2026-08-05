@@ -1,7 +1,9 @@
+import com.github.rcubedev.gradle.transform.FmlPacker
 import dev.kikugie.stonecutter.build.StonecutterBuildExtension
 import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
 
 val Project.env: EnvData get() = EnvData(this)
@@ -12,6 +14,29 @@ fun String.upperCaseFirst() = replaceFirstChar { if (it.isLowerCase()) it.upperc
 fun RepositoryHandler.strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
     forRepository { maven(url) { name = alias } }
     filter { groups.forEach(::includeGroup) }
+}
+
+fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType = FmlPacker.InjectionType.MANIFEST_LIBRARY, overrideId: String = "", overrideDisplayName: String = ""): FileCollection {
+    val detached = configurations.detachedConfiguration(dependencies.create(dependencyNotation) {
+        isTransitive = false
+    })
+
+    val patchedFile = when (type) {
+        FmlPacker.InjectionType.MANIFEST_LIBRARY -> {
+            FmlPacker.patchManifestLibrary(detached, project.layout, overrideId)
+        }
+        FmlPacker.InjectionType.NEO_MOD_TOML -> {
+            FmlPacker.patchNeoModToml(detached, project.layout, overrideId, overrideDisplayName)
+        }
+    }
+
+    return files(patchedFile)
+}
+
+fun Project.injectJarJar(dependencyNotation: String, type: FmlPacker.InjectionType = FmlPacker.InjectionType.MANIFEST_LIBRARY, overrideId: String = "", overrideDisplayName: String = ""): FileCollection {
+    val patched = injectModType(dependencyNotation, type, overrideId, overrideDisplayName)
+    dependencies.add("jarJar", patched)
+    return files(patched)
 }
 
 val Project.stonecutterBuild get() = extensions.getByType<StonecutterBuildExtension>()

@@ -13,52 +13,27 @@ neoForge {
     }
 }
 
-fun Project.injectModType(dependencyNotation: String) {
-    injectModType(dependencyNotation, FmlPacker.InjectionType.MANIFEST_LIBRARY)
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType) {
-    injectModType(dependencyNotation, type, "", "")
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType, overrideModId: String, overrideDisplayName: String) {
-    val detached = configurations.detachedConfiguration(dependencies.create(dependencyNotation) {
-        isTransitive = false
-    })
-
-    val patchedFile = when (type) {
-        FmlPacker.InjectionType.MANIFEST_LIBRARY -> {
-            FmlPacker.patchManifestLibrary(detached, project.layout)
-        }
-        FmlPacker.InjectionType.NEO_MOD_TOML -> {
-            FmlPacker.patchNeoModToml(detached, project.layout, overrideModId, overrideDisplayName)
-        }
-    }
-
-    dependencies.add("implementation", files(patchedFile))
-}
-
 dependencies {
-    api("com.github.rcubedev:java_utils")
+    api(injectModType("com.github.rcubedev:java_utils"))
     jarJar("com.github.rcubedev:java_utils")
     compileOnly("net.luckperms:api:${commonMod.dep("luckperms-api")}")
 
     implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
     jarJar("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
+
     // fixme kinda jank
-//    injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
-    injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
+    implementation(injectModType("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}"))
     jarJar("net.kyori:adventure-text-serializer-legacy:${commonMod.dep("adventure-api")}")
 
-    injectModType("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
+    implementation(injectModType("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}"))
     jarJar("net.kyori:adventure-text-serializer-plain:${commonMod.dep("adventure-api")}")
 
-    api("folk.sisby:kaleido-config:0.3.3+1.3.2")
-    jarJar("folk.sisby:kaleido-config:0.3.3+1.3.2")
+    api(injectJarJar("folk.sisby:kaleido-config:0.3.3+1.3.2", overrideId = "kaleido.config"))
+    // jarJar("folk.sisby:kaleido-config:0.3.3+1.3.2")
 
     if (stonecutter.eval(project.name, "<=1.21.1")) {
         "additionalRuntimeClasspath"("org.jetbrains:annotations:24.1.0")
-        "additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
+        //"additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
         "additionalRuntimeClasspath"("com.github.rcubedev:java_utils")
     }
 }

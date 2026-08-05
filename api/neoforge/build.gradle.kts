@@ -13,31 +13,6 @@ neoForge {
     }
 }
 
-fun Project.injectModType(dependencyNotation: String) {
-    injectModType(dependencyNotation, FmlPacker.InjectionType.MANIFEST_LIBRARY)
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType) {
-    injectModType(dependencyNotation, type, "", "")
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType, overrideModId: String, overrideDisplayName: String) {
-    val detached = configurations.detachedConfiguration(dependencies.create(dependencyNotation) {
-        isTransitive = false
-    })
-
-    val patchedFile = when (type) {
-        FmlPacker.InjectionType.MANIFEST_LIBRARY -> {
-            FmlPacker.patchManifestLibrary(detached, project.layout)
-        }
-        FmlPacker.InjectionType.NEO_MOD_TOML -> {
-            FmlPacker.patchNeoModToml(detached, project.layout, overrideModId, overrideDisplayName)
-        }
-    }
-
-    dependencies.add("implementation", files(patchedFile))
-}
-
 dependencies {
     implementation("com.github.rcubedev:java_utils")
     jarJar("com.github.rcubedev:java_utils")

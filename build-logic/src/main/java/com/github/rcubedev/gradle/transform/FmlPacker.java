@@ -15,6 +15,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+//fixme this runs at cfg time, bad practice
 public class FmlPacker {
 
     public enum InjectionType {
@@ -22,15 +23,17 @@ public class FmlPacker {
         NEO_MOD_TOML
     }
 
-    public static File patchManifestLibrary(Configuration detached, ProjectLayout layout) {
+    public static File patchManifestLibrary(Configuration detached, ProjectLayout layout, String moduleName) {
         File originalJar = detached.getSingleFile();
         File modifiedJar = getOutputFile(layout, originalJar, "manifest-");
 
         if (!modifiedJar.exists()) {
-            System.out.println("PATCHING MANIFEST FOR NATIVE LOADING: " + originalJar.getName());
+            //System.out.println("PATCHING MANIFEST FOR NATIVE LOADING: " + originalJar.getName());
 
             runPackerEngine(originalJar, modifiedJar, manifest -> {
-                manifest.getMainAttributes().put(new Attributes.Name("FMLModType"), "LIBRARY");
+                Attributes attr = manifest.getMainAttributes();
+                attr.put(new Attributes.Name("FMLModType"), "LIBRARY");
+                if (moduleName != null && !moduleName.isEmpty()) attr.put(new Attributes.Name("Automatic-Module-Name"), moduleName);
             }, (srcJar, entry, jos) -> {
                 if (JarFile.MANIFEST_NAME.equals(entry.getName())) {
                     return;
@@ -52,7 +55,6 @@ public class FmlPacker {
             String version = dependency.getVersion() != null ? dependency.getVersion() : "0.0.1-SNAPSHOT";
             String artifactName = dependency.getName();
 
-            // All fallback and string cleanup logic is handled here now!
             String modId = (overrideModId == null || overrideModId.isEmpty())
                     ? artifactName.toLowerCase().replace("-", "_")
                     : overrideModId;
@@ -61,7 +63,7 @@ public class FmlPacker {
                     ? capitalizeName(artifactName)
                     : overrideDisplayName;
 
-            System.out.println("INJECTING neoforge.mods.toml INTO: " + originalJar.getName() + " (v" + version + ")");
+            //System.out.println("INJECTING neoforge.mods.toml INTO: " + originalJar.getName() + " (v" + version + ")");
 
             String tomlTemplate =
                     "modLoader=\"javafml\"\n" +

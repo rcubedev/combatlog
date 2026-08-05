@@ -13,35 +13,11 @@ neoForge {
     }
 }
 
-fun Project.injectModType(dependencyNotation: String) {
-    injectModType(dependencyNotation, FmlPacker.InjectionType.MANIFEST_LIBRARY)
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType) {
-    injectModType(dependencyNotation, type, "", "")
-}
-
-fun Project.injectModType(dependencyNotation: String, type: FmlPacker.InjectionType, overrideModId: String, overrideDisplayName: String) {
-    val detached = configurations.detachedConfiguration(dependencies.create(dependencyNotation) {
-        isTransitive = false
-    })
-
-    val patchedFile = when (type) {
-        FmlPacker.InjectionType.MANIFEST_LIBRARY -> {
-            FmlPacker.patchManifestLibrary(detached, project.layout)
-        }
-        FmlPacker.InjectionType.NEO_MOD_TOML -> {
-            FmlPacker.patchNeoModToml(detached, project.layout, overrideModId, overrideDisplayName)
-        }
-    }
-
-    dependencies.add("implementation", files(patchedFile))
-}
-
 dependencies {
     implementation(project(":mod:neoforge:${commonMod.mc}"))
     implementation(project(":expansions:action-bar:neoforge:${commonMod.mc}"))
     implementation(project(":expansions:boss-bar:neoforge:${commonMod.mc}"))
+    implementation(project(":expansions:end-crystal:neoforge:${commonMod.mc}"))
 
 //    implementation("net.kyori:adventure-platform-neoforge:${commonMod.dep("adventure-platform")}")
 //    // fixme kinda jank
@@ -49,8 +25,8 @@ dependencies {
 
     if (stonecutter.eval(project.name, "<=1.21.1")) {
         //"additionalRuntimeClasspath"("org.jetbrains:annotations:24.1.0")
-        "additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
-//        "additionalRuntimeClasspath"("com.github.rcubedev:java_utils")
+        //"additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
+        //"additionalRuntimeClasspath"("com.github.rcubedev:java_utils")
     }
 }
 
