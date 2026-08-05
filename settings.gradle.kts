@@ -53,7 +53,7 @@ fun stonecutterMeta(groups: List<String>): StonecutterMeta {
         map[projectDesc] = dists
         //val uniqueVersions = dists.values.flatten().distinct()
     }
-    println("StonecutterMeta ${map.toMap()}")
+    //println("StonecutterMeta ${map.toMap()}")
     return StonecutterMeta(map.toMap())
 }
 
