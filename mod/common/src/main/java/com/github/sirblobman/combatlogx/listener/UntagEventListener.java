@@ -83,7 +83,7 @@ public final class UntagEventListener extends CombatListener {
         ServerPlayer player = e.getPlayer();
         if (!isInCombat(player)) return;
 
-        DISCONNECTED.add(player); // todo add remove
+        DISCONNECTED.add(player);
         ((ILogoutRules) player).al$setDisconnected();
         e.cancel();
     }
