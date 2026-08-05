@@ -1,5 +1,9 @@
 package com.github.sirblobman.combatlogx.neoforge.impl.bukkiteventcompat;
 
+import com.github.rcubedev.example.event.server.lifecycle.ServerStartedEvent;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStartingEvent;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStoppedEvent;
+import com.github.rcubedev.example.event.server.lifecycle.ServerStoppingEvent;
 import com.github.rcubedev.example.task.api.TaskType;
 import com.github.rcubedev.example.task.impl.ModdedTaskScheduler;
 import com.github.rcubedev.example.task.impl.TickContext;
@@ -60,6 +64,30 @@ public class NeoForgeEventHook {
     @SubscribeEvent
     public static void fireRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         PlayerRespawnEvent e = new PlayerRespawnEvent((ServerPlayer) event.getEntity());
+        e.dispatch();
+    }
+
+    @SubscribeEvent // closer parity w fabric
+    public static void fireStartingEvent(net.neoforged.neoforge.event.server.ServerAboutToStartEvent event) {
+        ServerStartingEvent e = new ServerStartingEvent(event.getServer());
+        e.dispatch();
+    }
+
+    @SubscribeEvent
+    public static void fireStartedEvent(net.neoforged.neoforge.event.server.ServerStartedEvent event) {
+        ServerStartedEvent e = new ServerStartedEvent(event.getServer());
+        e.dispatch();
+    }
+
+    @SubscribeEvent
+    public static void fireStoppingEvent(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
+        ServerStoppingEvent e = new ServerStoppingEvent(event.getServer());
+        e.dispatch();
+    }
+
+    @SubscribeEvent
+    public static void fireStoppedEvent(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        ServerStoppedEvent e = new ServerStoppedEvent(event.getServer());
         e.dispatch();
     }
 
