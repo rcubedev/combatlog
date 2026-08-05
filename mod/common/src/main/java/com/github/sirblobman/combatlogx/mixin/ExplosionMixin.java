@@ -25,13 +25,13 @@ public abstract class ExplosionMixin {
     @Shadow
     public abstract Explosion.BlockInteraction getBlockInteraction();
 
-    @Inject(method = /*? if >=1.21.10 {*/ /*"explode" *//*?} else {*/ "finalizeExplosion" /*?}*/,
+    @Inject(method = /*? if >=1.21.10 {*/ /*"interactWithBlocks" *//*?} else {*/ "finalizeExplosion" /*?}*/,
             at = @At(value = "INVOKE", target =
                     //? if >=1.21.10 {
                     /*"Ljava/util/List;iterator()Ljava/util/Iterator;"
                     *//*?} else {*/ "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;iterator()Lit/unimi/dsi/fastutil/objects/ObjectListIterator;" /*?}*/,
                     ordinal = 0))
-    private void fireExplodeEvent(boolean bl, CallbackInfo ci) {
+    private void fireExplodeEvent(CallbackInfo ci) {
         Event event;
         if (this.source != null) event = new EntityExplodeEvent(this.source, this.source.position(), getBlockInteraction());
         else return; // for now no-op; if needed in future impl block explosion event
