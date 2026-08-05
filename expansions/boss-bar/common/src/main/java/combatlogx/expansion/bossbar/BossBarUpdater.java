@@ -7,7 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import com.github.rcubedev.example.event.api.SubscribeEvent;
 import com.github.rcubedev.example.platform.IAdventure;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerJoinEvent;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerData;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerDataManager;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerNPCReplaceEvent;
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.manager.IPlaceholderManager;
 import com.github.sirblobman.combatlogx.api.object.TagInformation;
@@ -69,9 +72,16 @@ public final class BossBarUpdater implements TimerUpdater {
         audience.showBossBar(bossBar);
     }
 
+    @SubscribeEvent(ignoreCancelled = true)
+    public void onNPCReplace(PlayerNPCReplaceEvent e) {
+        ServerPlayer newPlayer = e.getNewPlayer();
+        UUID playerId = newPlayer.getUUID();
+        this.bossBarMap.remove(playerId);
+    }
+
     @Override
     public void remove(@NotNull ServerPlayer player) {
-        update(player, 0L);
+        if (player.connection != null && player.connection.isAcceptingMessages()) update(player, 0L);
 
         ICombatLogX combatLogX = getCombatLogX();
 

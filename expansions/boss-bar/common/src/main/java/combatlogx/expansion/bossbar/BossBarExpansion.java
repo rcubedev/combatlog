@@ -1,5 +1,7 @@
 package combatlogx.expansion.bossbar;
 
+import com.github.rcubedev.example.event.api.Identity;
+import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.platform.IPlatformHelper;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageConfiguration;
@@ -16,6 +18,8 @@ import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public final class BossBarExpansion extends Expansion {
 
@@ -53,8 +57,10 @@ public final class BossBarExpansion extends Expansion {
 
         reloadConfig();
 
+        BossBarUpdater bossBarUpdater = new BossBarUpdater(this);
+        MainBus.BUS.register(bossBarUpdater, Identity.of(MethodHandles.lookup()));
         ITimerManager timerManager = combatLogX.getTimerManager();
-        timerManager.addUpdaterTask(new BossBarUpdater(this));
+        timerManager.addUpdaterTask(bossBarUpdater);
     }
 
     @Override
