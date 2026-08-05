@@ -5,9 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;import java.util.function.Consumer;
+import java.util.UUID;
+import java.util.function.Consumer;
 
-import net.minecraft.network.Connection;import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -78,7 +79,7 @@ public final class UntagEventListener extends CombatListener {
     @SubscribeEvent(priority = Priority.MONITOR) // todo is that priority right
     public void onDisconnect(PlayerDisconnectEvent e) {
         if (getCombatLogX().getPunishConfiguration().killTime != KillTime.KEEP_ONLINE) return;
-        CombatLogX.LOGGER.info("Handling disconnect event for player: {}, packet listener: {}, in combat: {}", e.getPlayer().getName(), e.getPacketListener().getClass().getName(), isInCombat(e.getPlayer()));
+        // CombatLogX.LOGGER.info("Handling disconnect event for player: {}, packet listener: {}, in combat: {}", e.getPlayer().getName(), e.getPacketListener().getClass().getName(), isInCombat(e.getPlayer()));
         ServerPlayer player = e.getPlayer();
         if (!isInCombat(player)) return;
 
@@ -91,7 +92,7 @@ public final class UntagEventListener extends CombatListener {
     public void onUntag(PlayerUntagEvent e) {
         ServerPlayer player = e.getPlayer();
         UntagReason untagReason = e.getUntagReason();
-        CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()));
+        // CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()));
 
         sendUntagMessage(player, untagReason);
 

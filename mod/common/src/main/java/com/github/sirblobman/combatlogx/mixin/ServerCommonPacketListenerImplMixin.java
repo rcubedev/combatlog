@@ -16,7 +16,7 @@ public class ServerCommonPacketListenerImplMixin {
 
     @Inject(method = "disconnect(Lnet/minecraft/network/DisconnectionDetails;)V", at = @At("TAIL"))
     private void fireKickEvent(DisconnectionDetails disconnectionDetails, CallbackInfo ci) {
-        CombatLogX.LOGGER.info("Disconnect invoked. DisconnectionDetails: {}", disconnectionDetails);
+        // CombatLogX.LOGGER.info("Disconnect invoked. DisconnectionDetails: {}", disconnectionDetails);
         if ((Object) this instanceof ServerPlayerConnection serverPlayerConnection) { // could use ServerGamePacketListenerImpl
             PlayerKickEvent event = new PlayerKickEvent(serverPlayerConnection.getPlayer(), disconnectionDetails.reason());
             event.dispatch();
