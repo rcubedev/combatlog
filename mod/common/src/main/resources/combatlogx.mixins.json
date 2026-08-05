@@ -16,7 +16,7 @@
     "LivingEntityMixin",
     "PlayerListMixin",
     "ServerCommonPacketListenerImplMixin",
-    "ServerConfigurationPacketListenerImplLoginMixin",
+    "ServerConfigurationPacketListenerImplMixin",
     "ServerConnectionListenerMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerLoginPacketListenerImplMixin",
