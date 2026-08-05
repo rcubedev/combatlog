@@ -4,7 +4,7 @@ import java.util.Properties
 // val isCi = System.getenv("CI") == "true"
 gradle.startParameter.isParallelProjectExecutionEnabled = true //!isCi
 gradle.startParameter.isBuildCacheEnabled = true //!isCi
-gradle.startParameter.isConfigureOnDemand = true //!isCi
+//gradle.startParameter.isConfigureOnDemand = true //!isCi using configuration caching now
 
 pluginManagement {
     repositories {

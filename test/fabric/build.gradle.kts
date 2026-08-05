@@ -59,17 +59,19 @@ loom {
     runs {
         getByName("client") {
             client()
-            configName = "Fabric Client"
-            runDir = "run/client"
-            source(sourceSets["client"])
-            ideConfigGenerated(true)
+            displayName.set("Fabric Client")
+            runDirectory.set(file("run/client"))
+            sourceSet.set("client")
+            generateRunConfig.set(true)
+            preferGradleTask = true
         }
         getByName("server") {
             server()
-            configName = "Fabric Server"
-            runDir = "run/server"
-            source(sourceSets["server"])
-            ideConfigGenerated(true)
+            displayName.set("Fabric Server")
+            runDirectory.set(file("run/server"))
+            sourceSet.set("server")
+            generateRunConfig.set(true)
+            preferGradleTask = true
         }
     }
 }
