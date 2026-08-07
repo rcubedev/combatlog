@@ -1,4 +1,6 @@
 import com.github.rcubedev.gradle.transform.FmlPacker
+import me.modmuss50.mpp.ReleaseType
+import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 
 plugins {
     id("multiloader-loader")
@@ -93,3 +95,31 @@ sourceSets.main {
     description = "Assembles a jar archive containing the main and client classes."
     from(sourceSets["client"].output)
 }*/
+
+publishMods {
+    val modJar = tasks.named<Jar>("jar")
+
+    val modrinthStaging = envTrue("PUB_MODRINTH_STAGING")
+    val modrinthAccessToken = env("PUB_MODRINTH_TOKEN")
+    if (envTrue("PUB_DRY_RUN") || !envTrue("PUB_MODS_ENABLE")) dryRun = true
+    val loaderName = "NeoForge" // todo dyn
+
+    file = modJar.flatMap { it.archiveFile }
+    type = ReleaseType.STABLE // todo dyn idk how
+    version = commonMod.version
+    changelog = modChangelog
+    modLoaders.add(loader)
+    displayName = "${commonMod.name} ${commonMod.version} for $loaderName ${commonMod.mc}"
+
+    modrinth {
+        if (modrinthStaging) apiEndpoint = "https://staging-api.modrinth.com/v2"
+
+        accessToken = modrinthAccessToken
+
+        projectId = "CmOWKJeL"
+        environment = ModrinthEnvironment.DEDICATED_SERVER_ONLY // todo add dyn
+        minecraftVersions.add(commonMod.mc)
+
+        requires("combatlogx-port")
+    }
+}

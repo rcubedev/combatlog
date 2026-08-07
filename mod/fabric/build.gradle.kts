@@ -1,3 +1,6 @@
+import me.modmuss50.mpp.ReleaseType
+import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
+
 plugins {
     id("multiloader-loader")
     id("dev.kikugie.loom-back-compat") version "0.4"
@@ -111,4 +114,34 @@ loom {
 //            ideConfigGenerated(true)
 //        }
 //    }
+}
+
+publishMods {
+    val modJar = loomx.modJar
+
+    val modrinthStaging = envTrue("PUB_MODRINTH_STAGING")
+    val modrinthAccessToken = env("PUB_MODRINTH_TOKEN")
+    if (envTrue("PUB_DRY_RUN") || !envTrue("PUB_MODS_ENABLE")) dryRun = true
+    val loaderName = "Fabric" // todo dyn
+
+    file = modJar.flatMap { it.archiveFile }
+    type = ReleaseType.STABLE // todo dyn idk how
+    version = commonMod.version
+    changelog = modChangelog
+    modLoaders.add(loader)
+    displayName = "${commonMod.name} ${commonMod.version} for $loaderName ${commonMod.mc}"
+
+    modrinth {
+        if (modrinthStaging) apiEndpoint = "https://staging-api.modrinth.com/v2"
+
+        accessToken = modrinthAccessToken
+
+        projectId = "YSRERqEd"
+        environment = ModrinthEnvironment.DEDICATED_SERVER_ONLY // todo add dyn
+        minecraftVersions.add(commonMod.mc)
+
+        requires("fabric-api")
+        embeds("fabric-permissions-api", "placeholder-api", "adventure-platform-mod")
+        optional("luckperms")
+    }
 }

@@ -13,5 +13,6 @@ repositories {
 dependencies {
     fun plugin(id: String, version: String) = "$id:$id.gradle.plugin:$version"
     implementation(plugin("net.fabricmc.fabric-loom-remap", "1.17-SNAPSHOT"))
+    implementation(plugin("me.modmuss50.mod-publish-plugin", "2.2.0"))
     implementation("dev.kikugie:stonecutter:0.7")
 }

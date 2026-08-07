@@ -5,11 +5,26 @@ import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
+import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import org.gradle.kotlin.dsl.*
+import java.util.Properties
 
 val Project.env: EnvData get() = EnvData(this)
 val Project.mod: ModData get() = ModData(env)
 fun Project.prop(key: String): String? = findProperty(key)?.toString()
+fun Project.env(variable: String): String? {
+    providers.environmentVariable(variable).orNull?.let { return it }
+    return rootProject.file(".env").takeIf { it.exists() }?.let { f ->
+        Properties().apply { f.inputStream().use(::load) }.getProperty(variable)
+    }
+}
+fun Project.envTrue(variable: String): Boolean = env(variable)?.toDefaultLowerCase() == "true"
+val Project.modChangelog get() = moduleProject.file("CHANGELOG.md").takeIf { it.exists() }?.readText()
+    ?.split("---")[1]
+    ?.trim()
+    ?.replace("[ModVersion]()", commonMod.version)
+    ?.replace("[MinecraftVersion]()", commonMod.mc) ?: ""
+
 fun String.upperCaseFirst() = replaceFirstChar { if (it.isLowerCase()) it.uppercaseChar() else it }
 
 fun RepositoryHandler.strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
@@ -50,7 +65,6 @@ fun Project.injectJarJar(dependencyNotation: String, type: FmlPacker.InjectionTy
 val Project.stonecutterBuild get() = extensions.getByType<StonecutterBuildExtension>()
 val Project.stonecutterController get() = extensions.getByType<StonecutterControllerExtension>()
 
-//
 val Project.common get() = requireNotNull(stonecutterBuild.node.sibling("common")) {
     "No common project for $project"
 }
@@ -63,7 +77,7 @@ val Project.commonProject get() = moduleProject.project(stonecutterBuild.current
 val Project.commonEnv get() = commonProject.env
 val Project.commonMod get() = commonProject.mod
 
-val Project.loader: String? get() = prop("loader")
+val Project.loader: String get() = prop("loader")!!
 
 // access thru commonMod??
 val Project.commonLoader: String? get() = prop("loader.common")

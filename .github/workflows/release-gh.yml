@@ -15,6 +15,11 @@ permissions:
 
 jobs:
   build:
+    env:
+      PUB_DRY_RUN: ${{ vars.PUB_DRY_RUN }}
+      PUB_MODS_ENABLE: ${{ vars.PUB_MODS_ENABLE }}
+      PUB_MODRINTH_STAGING: ${{ vars.PUB_MODRINTH_STAGING }}
+      PUB_MODRINTH_TOKEN: ${{ secrets.PUB_MODRINTH_TOKEN }}
     runs-on: ubuntu-24.04
 
     steps:
@@ -22,6 +27,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           submodules: recursive
+          fetch-depth: 1
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -46,3 +52,6 @@ jobs:
             **/fabric/versions/**/build/libs/*.jar
             **/neoforge/versions/**/build/libs/*.jar
           fail_on_unmatched_files: true
+
+      - name: Publish on Modrinth
+        run: ./gradlew publishMods

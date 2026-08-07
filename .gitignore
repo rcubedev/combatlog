@@ -119,7 +119,4 @@ runs/
 !gradle-wrapper.jar
 
 # Other
-security/**/*.pem
-**/src/client/resources/natives/*
-**/src/client/java/com/diffusehyperion/inertiaanticheat/client/util/security/keys/*/*KeyParts.java
-**/src/*/resources/keys/*
+.env
