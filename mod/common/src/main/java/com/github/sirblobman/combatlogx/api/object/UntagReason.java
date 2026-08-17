@@ -20,6 +20,11 @@ public enum UntagReason {
     ENEMY_DEATH(true),
 
     /**
+     * The player's enemy quit and the config option was enabled to untag them
+     */
+    ENEMY_QUIT(true),
+
+    /**
      * The enemy of the player forgave them.
      */
     ENEMY_FORGIVE(true),

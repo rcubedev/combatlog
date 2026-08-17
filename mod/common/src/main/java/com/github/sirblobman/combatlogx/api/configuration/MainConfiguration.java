@@ -138,9 +138,14 @@ public class MainConfiguration extends WrappedConfig {
     public boolean untagOnDeath = true;
 
     @Comment({"Should CombatLogX remove players from combat when their enemy is killed?",
-            "This also removed combat if the enemy is a creeper and decides to explode."
+            "This also removes combat if the enemy is a creeper and decides to explode."
     })
     public boolean untagOnEnemyDeath = true;
+
+    @Comment({"Should CombatLogX remove players from combat when their enemy disconnects?",
+            "This does not remove combat if configured to keep combat loggers online until their fake player dies or disconnects."
+    })
+    public boolean untagOnEnemyQuit = true;
 
     // TODO: Remove?
     @Comment({"How long must players wait between requests?",

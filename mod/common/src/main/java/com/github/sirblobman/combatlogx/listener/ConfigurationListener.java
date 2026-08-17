@@ -12,15 +12,12 @@ import net.minecraft.world.level.Level;
 
 import com.github.rcubedev.example.event.api.Priority;
 import com.github.rcubedev.example.event.api.SubscribeEvent;
-import com.github.sirblobman.combatlogx.api.bukkiteventcompat.EntityDeathEvent;
-import com.github.sirblobman.combatlogx.api.bukkiteventcompat.EntityExplodeEvent;
-import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerDeathEvent;
-import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerRespawnEvent;
-import com.github.sirblobman.combatlogx.api.configuration.MainConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.api.bukkiteventcompat.*;
+import com.github.sirblobman.combatlogx.api.configuration.MainConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.CommandConfiguration;
 import com.github.sirblobman.combatlogx.api.event.PlayerPreTagEvent;
 import com.github.sirblobman.combatlogx.api.event.PlayerTagEvent;
@@ -106,6 +103,12 @@ public final class ConfigurationListener extends CombatListener {
         checkEnemyDeathUntag(livingEntity);
     }
 
+    @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
+    public void onQuit(PlayerQuitEvent e) {
+        ServerPlayer player = e.getPlayer();
+        checkEnemyQuitUntag(player);
+    }
+
     private boolean checkBypass(@NotNull ServerPlayer player) {
         ICombatManager combatManager = getCombatManager();
         return combatManager.canBypass(player);
@@ -140,6 +143,16 @@ public final class ConfigurationListener extends CombatListener {
             List<ServerPlayer> playerList = combatManager.getPlayersInCombat(Objects.requireNonNull(enemy.level().getServer()));
             for (ServerPlayer player : playerList) {
                 combatManager.untag(player, enemy, UntagReason.ENEMY_DEATH);
+            }
+        }
+    }
+
+    private void checkEnemyQuitUntag(@NotNull ServerPlayer enemy) {
+        ICombatManager combatManager = getCombatManager();
+        if (getConfiguration().untagOnEnemyQuit) {
+            List<ServerPlayer> playerList = combatManager.getPlayersInCombat(Objects.requireNonNull(enemy.level().getServer()));
+            for (ServerPlayer player : playerList) {
+                combatManager.untag(player, enemy, UntagReason.ENEMY_QUIT);
             }
         }
     }

@@ -89,6 +89,8 @@ public class LanguageFileConfiguration extends WrappedConfig implements ILanguag
 
         public String enemyDeath = "<green>You are no longer in combat because your enemy died.</green>";
 
+        public String enemyQuit = "<green>You are no longer in combat because your enemy disconnected.</green>";
+
         public String selfDeath = "<green>You are no longer in combat because you died.</green>";
     }
 

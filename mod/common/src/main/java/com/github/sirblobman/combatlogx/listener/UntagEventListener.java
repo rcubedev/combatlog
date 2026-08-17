@@ -138,6 +138,10 @@ public final class UntagEventListener extends CombatListener {
                 getter = c -> c.combatTimer.enemyDeath;
                 path = "combatTimer.enemyDeath";
             }
+            case ENEMY_QUIT -> {
+                getter = c -> c.combatTimer.enemyQuit;
+                path = "combatTimer.enemyQuit";
+            }
             default -> {
                 getLogger().warn("Unknown UntagReason: {}", untagReason);
                 return;
