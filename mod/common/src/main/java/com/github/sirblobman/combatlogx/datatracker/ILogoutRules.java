@@ -7,10 +7,10 @@ public interface ILogoutRules {
      *
      * @return true if fake, false otherwise
      */
-    boolean al$isFake();
+    boolean clx$isFake();
 
     /**
-     * Set {@code disconnected} to true.
+     * Set {@code disconnected} to true and marks this player as a fake.
      */
-    void al$setDisconnected();
+    void clx$setFake();
 }

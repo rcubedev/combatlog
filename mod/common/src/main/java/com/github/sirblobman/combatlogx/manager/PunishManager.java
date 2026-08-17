@@ -24,21 +24,21 @@ public final class PunishManager extends Manager implements IPunishManager {
     }
 
     @Override
-    public boolean punish(@NotNull ServerPlayer player, @NotNull UntagReason punishReason, @NotNull List<Entity> enemyList) {
-        PlayerPunishEvent punishEvent = new PlayerPunishEvent(player, punishReason, enemyList);
+    public boolean punish(@NotNull ServerPlayer player, @NotNull UntagReason punishReason, @NotNull List<Entity> enemies, boolean isFake) {
+        PlayerPunishEvent punishEvent = new PlayerPunishEvent(player, punishReason, enemies, isFake);
         punishEvent.dispatch();
 
         if (punishEvent.isCancelled()) return false;
 
         increasePunishmentCount(player);
-        runKillCheck(player, enemyList);
+        runKillCheck(player, enemies);
 
         ICombatLogX plugin = getCombatLogX();
         CommandConfiguration commandConfiguration = plugin.getCommandConfiguration();
 
         List<String> punishCommandList = commandConfiguration.punishCommandList;
         if (!punishCommandList.isEmpty()) {
-            runPunishCommands(player, enemyList, punishCommandList);
+            runPunishCommands(player, enemies, punishCommandList);
         }
 
         return true;

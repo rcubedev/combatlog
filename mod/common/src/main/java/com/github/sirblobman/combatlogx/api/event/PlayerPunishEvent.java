@@ -19,12 +19,14 @@ public final class PlayerPunishEvent extends CustomPlayerEventCancellable {
 
     private final UntagReason punishReason;
     private final List<Entity> enemyList;
+    private final boolean isFake;
 
     public PlayerPunishEvent(@NotNull ServerPlayer player, @NotNull UntagReason punishReason,
-                             @NotNull List<Entity> enemyList) {
+                             @NotNull List<Entity> enemyList, boolean isFake) {
         super(player);
         this.punishReason = punishReason;
         this.enemyList = new ArrayList<>(enemyList);
+        this.isFake = isFake;
     }
 
     /**
@@ -39,5 +41,12 @@ public final class PlayerPunishEvent extends CustomPlayerEventCancellable {
      */
     public @NotNull List<Entity> getEnemies() {
         return Collections.unmodifiableList(this.enemyList);
+    }
+
+    /**
+     * @return If the player was a disconnected player spawned by {@link com.github.sirblobman.combatlogx.api.object.KillTime#KEEP_ONLINE KillTime.KEEP_ONLINE}
+     */
+    public boolean isFake() {
+        return this.isFake;
     }
 }

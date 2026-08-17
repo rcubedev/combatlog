@@ -10,11 +10,19 @@ import java.util.List;
 public interface IDeathManager extends ICombatLogXNeeded {
     /**
      * Track and kill a player.
+     * <p>
      * The player will be killed by {@link ServerPlayer#kill()}
      *
      * @param player The {@link ServerPlayer} to kill.
      */
     void kill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList);
+
+    /**
+     * Track a player's enemies they died to without killing them.
+     *
+     * @param player The {@link ServerPlayer} to kill.
+     */
+    void trackKill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList);
 
     /**
      * Check if a player was killed while tracked.

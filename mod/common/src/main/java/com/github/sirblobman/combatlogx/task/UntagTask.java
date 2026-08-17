@@ -49,10 +49,6 @@ public final class UntagTask extends AbstractServerTaskDetails {
             TagInformation tagInformation = combatManager.getTagInformation(player);
             if (tagInformation != null && tagInformation.isExpired()) {
                 combatManager.untag(player, UntagReason.EXPIRE);
-                if (UntagEventListener.DISCONNECTED.contains(player)) {
-                    ServerGamePacketListenerImpl connection = player.connection;
-                    connection.disconnect(Component.empty());
-                }
             }
         }
     }

@@ -14,7 +14,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.Packet;
@@ -44,7 +43,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
@@ -65,6 +63,9 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
 
     @Shadow
     private String language;
+
+    @Unique
+    private boolean clx$isFake = false;
 
     @Inject(method = "updateOptions", at = @At("HEAD"))
     private void getPreviousLocale(ClientInformation information, CallbackInfo ci, @Share("preLocale") LocalRef<String> preLocaleConsumer) {
@@ -121,7 +122,7 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
     *///?} else {
     @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, PacketSendListener listener, Operation<Void> original) {
-        if (!this.al$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
+        if (!this.clx$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
             original.call(instance, packet, listener);
             return;
         }
@@ -142,7 +143,7 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
 
     @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
     private void die(ServerGamePacketListenerImpl instance, Packet<?> packet, Operation<Void> original) {
-        if (!this.al$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
+        if (!this.clx$isFake() || !(packet instanceof ClientboundPlayerCombatKillPacket combatKillPacket)) {
             original.call(instance, packet);
             return;
         }
@@ -229,7 +230,7 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
             )
     )
     private void stopQueuingPackets(ServerGamePacketListenerImpl instance, Packet<?> packet, Operation<Void> original) {
-        if (!this.al$isFake()) original.call(instance, packet);
+        if (!this.clx$isFake()) original.call(instance, packet);
     }
 
     @Inject(method = "doTick", at = @At("HEAD"))
@@ -243,12 +244,13 @@ public abstract class ServerPlayerMixin extends Player implements ILogoutRules {
     }
 
     @Override
-    public boolean al$isFake() {
-        return this.disconnected;
+    public boolean clx$isFake() {
+        return this.clx$isFake;
     }
 
     @Override
-    public void al$setDisconnected() {
+    public void clx$setFake() {
+        this.clx$isFake = true;
         this.disconnected = true;
     }
 }

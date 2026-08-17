@@ -12,14 +12,17 @@ import org.jetbrains.annotations.NotNull;
 public interface IPunishManager extends ICombatLogXNeeded {
     /**
      * Punish a player for logging out during combat.
+     * <p>
      * Also called when expire punishing is enabled in the configuration.
      *
-     * @param player          The {@link ServerPlayer} to punish.
-     * @param punishReason    The original reason that the player was removed from combat.
-     * @param previousEnemies The list of enemies that the player had when they were untagged.
+     * @param player The {@link ServerPlayer} to punish.
+     * @param punishReason The original reason that the player was removed from combat.
+     * @param enemies The list of enemies that the player had (or currently has if in combat).
+     * @param isFake If the player was spawned due to combatlogging
      * @return {@code true} if the mod was able to punish the player successfully.
+     * @apiNote if {@code isFake == true}, the player may still be in combat when this is called
      */
-    boolean punish(@NotNull ServerPlayer player, @NotNull UntagReason punishReason, @NotNull List<Entity> previousEnemies);
+    boolean punish(@NotNull ServerPlayer player, @NotNull UntagReason punishReason, @NotNull List<Entity> enemies, boolean isFake);
 
     /**
      * Get the total amount of times a player was punished.

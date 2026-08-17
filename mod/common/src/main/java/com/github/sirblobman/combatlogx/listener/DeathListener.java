@@ -2,16 +2,15 @@ package com.github.sirblobman.combatlogx.listener;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.rcubedev.example.platform.IAdventure;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import com.github.sirblobman.combatlogx.api.object.TagInformation;
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
 import net.minecraft.server.level.ServerPlayer;

@@ -19,12 +19,14 @@ public final class PlayerUntagEvent extends CustomPlayerEvent {
 
     private final UntagReason untagReason;
     private final List<Entity> previousEnemyList;
+    private final boolean isFake;
 
     public PlayerUntagEvent(@NotNull ServerPlayer player, @NotNull UntagReason untagReason,
-                            @NotNull List<Entity> previousEnemyList) {
+                            @NotNull List<Entity> previousEnemyList, boolean isFake) {
         super(player);
         this.untagReason = untagReason;
         this.previousEnemyList = new ArrayList<>(previousEnemyList);
+        this.isFake = isFake;
     }
 
     /**
@@ -37,5 +39,12 @@ public final class PlayerUntagEvent extends CustomPlayerEvent {
 
     public @NotNull List<Entity> getPreviousEnemies() {
         return Collections.unmodifiableList(this.previousEnemyList);
+    }
+
+    /**
+     * @return If the player was a disconnected player spawned by {@link com.github.sirblobman.combatlogx.api.object.KillTime#KEEP_ONLINE KillTime.KEEP_ONLINE}
+     */
+    public boolean isFake() {
+        return this.isFake;
     }
 }

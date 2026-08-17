@@ -14,7 +14,10 @@ import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.platform.IAdventure;
 import com.github.rcubedev.example.platform.IPlatformHelper;
 import com.github.sirblobman.combatlogx.PermissionHolder;
-import com.github.sirblobman.combatlogx.VersionUtil;import net.minecraft.server.MinecraftServer;
+import com.github.sirblobman.combatlogx.VersionUtil;
+import com.github.sirblobman.combatlogx.api.manager.IDeathManager;
+import com.github.sirblobman.combatlogx.listener.UntagEventListener;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.world.TickRateManager;
@@ -139,12 +142,20 @@ public final class CombatManager extends Manager implements ICombatManager {
         timerManager.remove(player);
 
         List<Entity> enemyList = tagInformation.getEnemies();
+
+        // this isnt clean: unintended side effects
+        boolean isFake = UntagEventListener.DISCONNECTED.contains(player); // todo should probably duck cast and use clx$isFake
+        if (isFake && untagReason == UntagReason.SELF_DEATH) {
+            IDeathManager deathManager = mod.getDeathManager();
+            deathManager.trackKill(player, enemyList);
+        }
+
         for (Entity entity : enemyList) {
             PlayerEnemyRemoveEvent event = new PlayerEnemyRemoveEvent(player, untagReason, entity);
             event.dispatch();
         }
 
-        PlayerUntagEvent event = new PlayerUntagEvent(player, untagReason, enemyList);
+        PlayerUntagEvent event = new PlayerUntagEvent(player, untagReason, enemyList, isFake);
         event.dispatch();
     }
 
@@ -224,7 +235,7 @@ public final class CombatManager extends Manager implements ICombatManager {
 
     @Override
     public boolean isNPC(@NotNull ServerPlayer player) {
-        if (((ILogoutRules) player).al$isFake()) return false; // fixme jank
+        if (((ILogoutRules) player).clx$isFake()) return false; // fixme jank
         return IPlatformHelper.getInstance().isNPCInst(player);
     }
 

@@ -1,15 +1,14 @@
 package com.github.sirblobman.combatlogx.listener;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
+import com.github.sirblobman.combatlogx.api.object.TagInformation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 
 import com.github.rcubedev.example.event.api.Priority;
@@ -76,23 +75,31 @@ public final class UntagEventListener extends CombatListener {
         combatManager.untag(player, UntagReason.QUIT); // fixme playerquitevent may be a kick
     }
 
+    // todo: possibly make punish manager handle this?
     @SubscribeEvent(priority = Priority.MONITOR) // todo is that priority right
     public void onDisconnect(PlayerDisconnectEvent e) {
-        if (getCombatLogX().getPunishConfiguration().killTime != KillTime.KEEP_ONLINE) return;
+        ICombatLogX mod = getCombatLogX();
+        if (mod.getPunishConfiguration().killTime != KillTime.KEEP_ONLINE) return;
         // CombatLogX.LOGGER.info("Handling disconnect event for player: {}, packet listener: {}, in combat: {}", e.getPlayer().getName(), e.getPacketListener().getClass().getName(), isInCombat(e.getPlayer()));
         ServerPlayer player = e.getPlayer();
         if (!isInCombat(player)) return;
 
         DISCONNECTED.add(player);
-        ((ILogoutRules) player).al$setDisconnected();
+        ((ILogoutRules) player).clx$setFake();
         e.cancel();
+
+        TagInformation tagInformation = mod.getCombatManager().getTagInformation(player);
+        List<Entity> enemies = (tagInformation == null) ? List.of() : tagInformation.getEnemies();
+
+        IPunishManager punishManager = mod.getPunishManager();
+        punishManager.punish(player, UntagReason.QUIT, enemies, true);
     }
 
     @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
     public void onUntag(PlayerUntagEvent e) {
         ServerPlayer player = e.getPlayer();
         UntagReason untagReason = e.getUntagReason();
-        // CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()));
+        // CombatLogX.LOGGER.info("Handling untag event for player: {}, untag reason: {}, in combat: {}, combat NPC: {}", e.getPlayer().getName().getString(), untagReason, isInCombat(e.getPlayer()), e.isFake());
 
         sendUntagMessage(player, untagReason);
 
@@ -101,7 +108,10 @@ public final class UntagEventListener extends CombatListener {
 
         ICombatLogX mod = getCombatLogX();
         IPunishManager punishManager = mod.getPunishManager();
-        punishManager.punish(player, untagReason, previousEnemies);
+        if (e.isFake()) {
+            ServerGamePacketListenerImpl connection = player.connection;
+            connection.disconnect(Component.empty());
+        } else punishManager.punish(player, untagReason, previousEnemies, false); // disconnected players have already been punished
     }
 
     private boolean isKickReasonIgnored(@NotNull String reason) {

@@ -25,11 +25,17 @@ public final class DeathManager extends Manager implements IDeathManager {
 
     @Override
     public void kill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList) {
-        UUID playerId = player.getUUID();
-        this.killedPlayerMap.put(playerId, new ArrayList<>(enemyList)); //fixme
+        trackKill(player, enemyList);
+        //fixme on 1.21.10
         //fixme this didnt work either man
         // player.die(player.damageSources().genericKill());
         player.kill(/*? if >= 1.21.10 {*/ /*player.level() *//*?}*/); // death msg changed by DeathListener
+    }
+
+    @Override
+    public void trackKill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList) {
+        UUID playerId = player.getUUID();
+        this.killedPlayerMap.put(playerId, new ArrayList<>(enemyList)); //fixme
     }
 
     // fixme do i want to make it a punish kill if we keep them online forcefully and a player kills them
