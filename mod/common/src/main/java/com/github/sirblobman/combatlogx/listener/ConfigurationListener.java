@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.github.sirblobman.combatlogx.datatracker.ILogoutRules;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -106,6 +107,7 @@ public final class ConfigurationListener extends CombatListener {
     @SubscribeEvent(priority = Priority.MONITOR, ignoreCancelled = true)
     public void onQuit(PlayerQuitEvent e) {
         ServerPlayer player = e.getPlayer();
+        if (((ILogoutRules) player).clx$isFake()) return;
         checkEnemyQuitUntag(player);
     }
 
