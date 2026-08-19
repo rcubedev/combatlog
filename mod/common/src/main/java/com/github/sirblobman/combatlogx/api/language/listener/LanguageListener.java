@@ -1,8 +1,8 @@
 package com.github.sirblobman.combatlogx.api.language.listener;
 
-import com.github.rcubedev.example.event.api.Priority;
-import com.github.rcubedev.example.event.api.SubscribeEvent;
 import com.github.rcubedev.example.task.api.TaskScheduler;
+import com.github.rcubedev.utils.event.api.Priority;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerLocaleChangeEvent;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerQuitEvent;

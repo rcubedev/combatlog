@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.mixin;
 
-import com.github.rcubedev.example.config.WrappedConfigAccessor;
+import com.github.rcubedev.utils.config.WrappedConfigAccessor;
 import folk.sisby.kaleido.lib.quiltconfig.api.Config;
 import folk.sisby.kaleido.lib.quiltconfig.api.WrappedConfig;
 import org.spongepowered.asm.mixin.Mixin;

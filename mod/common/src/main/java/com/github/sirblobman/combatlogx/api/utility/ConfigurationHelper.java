@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.api.utility;
 
-import com.github.rcubedev.example.StringOrList;
+import com.github.rcubedev.utils.config.elements.StringOrList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

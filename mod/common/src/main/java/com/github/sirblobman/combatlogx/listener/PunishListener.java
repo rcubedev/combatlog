@@ -1,9 +1,8 @@
 package com.github.sirblobman.combatlogx.listener;
 
-import com.github.rcubedev.example.event.api.Priority;
-import com.github.rcubedev.example.event.api.SubscribeEvent;
+import com.github.rcubedev.utils.event.api.Priority;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
-
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.PunishConfiguration;

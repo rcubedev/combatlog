@@ -1,7 +1,7 @@
 package com.github.rcubedev.example.fabric;
 
-import com.github.rcubedev.example.config.WrappedConfigAccessor;
 import com.github.rcubedev.example.platform.IConfigurationHandler;
+import com.github.rcubedev.utils.config.WrappedConfigAccessor;
 import com.github.sirblobman.combatlogx.mixin.WrappedConfigAccessorImpl;
 import folk.sisby.kaleido.api.WrappedConfig;
 

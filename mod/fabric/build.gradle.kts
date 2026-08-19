@@ -21,8 +21,8 @@ dependencies {
         }
     })
 
-    api("com.github.rcubedev:java_utils")
-    include("com.github.rcubedev:java_utils")
+    api("com.github.rcubedev:java-utils:0.1.0")
+    include("com.github.rcubedev:java-utils:0.1.0")
 
     modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")

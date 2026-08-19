@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.api.bukkiteventcompat;
 
-import com.github.rcubedev.example.event.api.Event;
+import com.github.rcubedev.utils.event.api.Event;
 
 public abstract class BukkitEvent extends Event {
 }

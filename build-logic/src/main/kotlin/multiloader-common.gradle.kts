@@ -56,6 +56,7 @@ repositories {
     }
     maven("https://repo.sleeping.town")  // kaleido-config
     maven("https://maven.nucleoid.xyz") { name = "Nucleoid" } // text placeholder api
+    maven("https://jitpack.io") { name = "JitPack" }
 }
 
 tasks {

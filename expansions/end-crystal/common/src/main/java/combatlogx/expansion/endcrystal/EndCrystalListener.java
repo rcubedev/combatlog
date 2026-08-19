@@ -1,7 +1,7 @@
 package combatlogx.expansion.endcrystal;
 
-import com.github.rcubedev.example.event.api.Priority;
-import com.github.rcubedev.example.event.api.SubscribeEvent;
+import com.github.rcubedev.utils.event.api.Priority;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.entity.EntityPlaceEvent;
 import com.github.sirblobman.combatlogx.api.configuration.MainConfiguration;

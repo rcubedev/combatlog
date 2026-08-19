@@ -3,7 +3,7 @@ package com.github.sirblobman.combatlogx.mixin;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 
-import com.github.rcubedev.example.event.api.Event;
+import com.github.rcubedev.utils.event.api.Event;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.EntityExplodeEvent;
 //? if >=1.21.10
 /*import net.minecraft.world.level.ServerExplosion;*/

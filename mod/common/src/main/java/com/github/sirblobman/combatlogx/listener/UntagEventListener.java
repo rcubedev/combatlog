@@ -11,8 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 
-import com.github.rcubedev.example.event.api.Priority;
-import com.github.rcubedev.example.event.api.SubscribeEvent;
+import com.github.rcubedev.utils.event.api.Priority;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import com.github.sirblobman.combatlogx.CombatLogX;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerKickEvent;

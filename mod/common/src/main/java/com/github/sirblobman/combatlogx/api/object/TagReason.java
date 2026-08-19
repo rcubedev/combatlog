@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.api.object;
 
-import com.github.rcubedev.example.ISerializableEnum;
+import com.github.rcubedev.utils.config.serialization.ISerializableEnum;
 
 /**
  * The reason for putting a player into combat.

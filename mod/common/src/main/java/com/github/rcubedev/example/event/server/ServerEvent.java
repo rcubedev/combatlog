@@ -1,6 +1,6 @@
 package com.github.rcubedev.example.event.server;
 
-import com.github.rcubedev.example.event.api.Event;
+import com.github.rcubedev.utils.event.api.Event;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 

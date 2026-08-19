@@ -1,7 +1,7 @@
 package com.github.sirblobman.combatlogx.platform;
 
-import com.github.rcubedev.example.services.api.spi.Eager;
 import com.github.rcubedev.example.util.IService;
+import com.github.rcubedev.utils.services.api.spi.Eager;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;

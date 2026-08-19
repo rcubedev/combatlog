@@ -1,6 +1,6 @@
 package com.github.sirblobman.combatlogx.api.object;
 
-import com.github.rcubedev.example.ISerializableEnum;
+import com.github.rcubedev.utils.config.serialization.ISerializableEnum;
 
 /**
  * The type of timer that will be used by CombatLogX

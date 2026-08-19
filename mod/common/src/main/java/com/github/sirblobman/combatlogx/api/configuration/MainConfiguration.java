@@ -1,8 +1,8 @@
 package com.github.sirblobman.combatlogx.api.configuration;
 
-import com.github.rcubedev.example.EnumOrList;
-import com.github.rcubedev.example.StringOrList;
-import com.github.rcubedev.example.reflect.TypedClass;
+import com.github.rcubedev.utils.config.elements.EnumOrList;
+import com.github.rcubedev.utils.config.elements.StringOrList;
+import com.github.rcubedev.utils.reflect.TypedClass;
 import com.github.sirblobman.combatlogx.api.object.TagReason;
 import com.github.sirblobman.combatlogx.api.object.TimerType;
 import folk.sisby.kaleido.api.WrappedConfig;

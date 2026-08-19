@@ -13,11 +13,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import com.github.rcubedev.example.event.api.Identity;
-import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.permission.node.PermissionNode;
 import com.github.rcubedev.example.platform.IAdventure;
 import com.github.rcubedev.example.platform.IPlatformHelper;
+import com.github.rcubedev.utils.event.api.Identity;
+import com.github.rcubedev.utils.event.api.buses.MainBus;
 import com.github.sirblobman.combatlogx.VersionUtil;
 import com.github.sirblobman.combatlogx.api.language.listener.LanguageListener;
 import com.github.sirblobman.combatlogx.platform.IPlaceholderAPI;
@@ -181,7 +181,7 @@ public final class LanguageManager<T extends WrappedConfig & ILanguage> {
     public void onEnable() {
         this.printDebug("Detected onEnable...");
         Identity id = Identity.of(MethodHandles.lookup());
-        MainBus.BUS.register(new LanguageListener<>(mod, this), id);
+        MainBus.get().register(new LanguageListener<>(mod, this), id);
     }
 
     public void loadDefaultLanguageFiles(Path configDir, String family, String languageDir) {

@@ -1,6 +1,6 @@
 package combatlogx.expansion.bossbar;
 
-import com.github.rcubedev.example.ISerializableEnum;
+import com.github.rcubedev.utils.config.serialization.ISerializableEnum;
 import net.kyori.adventure.bossbar.BossBar;
 import org.jetbrains.annotations.NotNull;
 

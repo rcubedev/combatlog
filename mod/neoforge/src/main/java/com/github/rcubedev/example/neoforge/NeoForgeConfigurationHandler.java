@@ -1,7 +1,7 @@
 package com.github.rcubedev.example.neoforge;
 
-import com.github.rcubedev.example.config.WrappedConfigAccessor;
 import com.github.rcubedev.example.platform.IConfigurationHandler;
+import com.github.rcubedev.utils.config.WrappedConfigAccessor;
 import folk.sisby.kaleido.api.WrappedConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.Config;
 

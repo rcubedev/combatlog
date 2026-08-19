@@ -53,7 +53,7 @@ dependencies {
     compileOnly("org.spongepowered:mixin:0.8.5")
     modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
 
-    api("com.github.rcubedev:java_utils")
+    api("com.github.rcubedev:java-utils:0.1.0")
 
     // make sure to provide in :mod:common impls like :mod:fabric
 //    compileOnly("net.kyori:adventure-platform-mod-shared-fabric-repack:${commonMod.dep("adventure-platform")}")

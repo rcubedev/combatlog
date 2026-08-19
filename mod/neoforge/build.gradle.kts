@@ -16,8 +16,8 @@ neoForge {
 }
 
 dependencies {
-    api(injectModType("com.github.rcubedev:java_utils"))
-    jarJar("com.github.rcubedev:java_utils")
+    api(injectModType("com.github.rcubedev:java-utils:0.1.0"))
+    jarJar("com.github.rcubedev:java-utils:0.1.0")
     compileOnly("net.luckperms:api:${commonMod.dep("luckperms-api")}")
 
     // PaperMC/adventure-platform-mod#255 (https://github.com/PaperMC/adventure-platform-mod/issues/255),
@@ -42,7 +42,6 @@ dependencies {
     if (stonecutter.eval(project.name, "<=1.21.1")) {
         "additionalRuntimeClasspath"("org.jetbrains:annotations:24.1.0")
         //"additionalRuntimeClasspath"("folk.sisby:kaleido-config:0.3.3+1.3.2")
-        "additionalRuntimeClasspath"("com.github.rcubedev:java_utils")
     }
 }
 

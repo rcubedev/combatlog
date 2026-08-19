@@ -1,5 +1,3 @@
-import me.modmuss50.mpp.ReleaseType
-import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.Copy
 

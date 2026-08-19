@@ -1,8 +1,8 @@
 package combatlogx.expansion.bossbar;
 
-import com.github.rcubedev.example.event.api.Identity;
-import com.github.rcubedev.example.event.api.buses.MainBus;
 import com.github.rcubedev.example.platform.IPlatformHelper;
+import com.github.rcubedev.utils.event.api.Identity;
+import com.github.rcubedev.utils.event.api.buses.MainBus;
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
@@ -58,7 +58,7 @@ public final class BossBarExpansion extends Expansion {
         reloadConfig();
 
         BossBarUpdater bossBarUpdater = new BossBarUpdater(this);
-        MainBus.BUS.register(bossBarUpdater, Identity.of(MethodHandles.lookup()));
+        MainBus.get().register(bossBarUpdater, Identity.of(MethodHandles.lookup()));
         ITimerManager timerManager = combatLogX.getTimerManager();
         timerManager.addUpdaterTask(bossBarUpdater);
     }

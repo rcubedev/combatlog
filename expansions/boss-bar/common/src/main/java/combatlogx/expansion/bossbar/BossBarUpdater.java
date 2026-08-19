@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import com.github.rcubedev.example.event.api.SubscribeEvent;
 import com.github.rcubedev.example.platform.IAdventure;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerJoinEvent;
 import com.github.sirblobman.combatlogx.api.configuration.LanguageFileConfiguration;
 import com.github.sirblobman.combatlogx.api.configuration.PlayerData;

@@ -16,11 +16,11 @@ import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-import com.github.rcubedev.example.event.api.Priority;
-import com.github.rcubedev.example.event.api.SubscribeEvent;
 import com.github.rcubedev.example.task.api.TaskScheduler;
 import com.github.rcubedev.example.task.api.TaskType;
 import com.github.rcubedev.example.task.api.details.RunnableTaskDetails;
+import com.github.rcubedev.utils.event.api.Priority;
+import com.github.rcubedev.utils.event.api.annotation.SubscribeEvent;
 import com.github.sirblobman.combatlogx.CombatLogX;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerDeathEvent;
 import com.github.sirblobman.combatlogx.api.bukkiteventcompat.PlayerJoinEvent;

@@ -1,18 +1,18 @@
 package com.github.sirblobman.combatlogx;
 
-import com.github.rcubedev.example.event.api.Identity;
-import com.github.rcubedev.example.event.api.buses.MainBus;
-import com.github.rcubedev.example.config.WrappedConfigAccessor;
-import com.github.rcubedev.example.event.api.spi.Subscription;
 import com.github.rcubedev.example.event.server.lifecycle.ServerStartingEvent;
 import com.github.rcubedev.example.event.server.lifecycle.ServerStoppingEvent;
 import com.github.rcubedev.example.platform.IConfigurationHandler;
 import com.github.rcubedev.example.platform.IPlatformHelper;
-import com.github.rcubedev.example.services.api.ServiceBootstrap;
-import com.github.rcubedev.example.services.api.ServiceRegistry;
-import com.github.rcubedev.example.services.impl.layer.ClassLoaderServiceLayer;
-import com.github.rcubedev.example.services.impl.layer.ModuleLayerServiceLayer;
 import com.github.rcubedev.example.task.impl.ModdedTaskScheduler;
+import com.github.rcubedev.utils.config.WrappedConfigAccessor;
+import com.github.rcubedev.utils.event.api.Identity;
+import com.github.rcubedev.utils.event.api.buses.MainBus;
+import com.github.rcubedev.utils.event.api.spi.Subscription;
+import com.github.rcubedev.utils.services.api.ServiceBootstrap;
+import com.github.rcubedev.utils.services.api.ServiceRegistry;
+import com.github.rcubedev.utils.services.impl.layer.ClassLoaderServiceLayer;
+import com.github.rcubedev.utils.services.impl.layer.ModuleLayerServiceLayer;
 import com.github.sirblobman.combatlogx.api.expansion.ExpansionFactory;
 import com.github.sirblobman.combatlogx.api.expansion.ExpansionManager;
 import com.github.sirblobman.combatlogx.api.object.UntagReason;
@@ -111,9 +111,9 @@ public class CombatLogX implements ICombatLogX {
         registry.registerExpansions(modLoadedFactories);
 
         //fixme
-        this.startingSubscription = MainBus.BUS.register(ServerStartingEvent.class,
+        this.startingSubscription = MainBus.get().register(ServerStartingEvent.class,
                 e -> this.onEnable(e.getServer()), Identity.ofPublic());
-        this.stoppingSubscription = MainBus.BUS.register(ServerStoppingEvent.class,
+        this.stoppingSubscription = MainBus.get().register(ServerStoppingEvent.class,
                 e -> this.onDisable(e.getServer()), Identity.ofPublic());
 
         //fixme early publication as needed for builtinregmixin?
@@ -315,13 +315,13 @@ public class CombatLogX implements ICombatLogX {
 
     private void registerListeners() {
         Identity id = Identity.of(MethodHandles.lookup());
-        MainBus.BUS.register(new ConfigurationListener(this), id);
-        MainBus.BUS.register(new DamageEventListener(this), id);
-        MainBus.BUS.register(new PunishListener(this), id);
-        MainBus.BUS.register(new UntagEventListener(this), id);
-        MainBus.BUS.register(new DeathListener(this), id);
-        // MainBus.BUS.register(new InvulnerableListener(this), id); todo bring back potentially
-        MainBus.BUS.register(new EndCrystalListener(this), id);
+        MainBus.get().register(new ConfigurationListener(this), id);
+        MainBus.get().register(new DamageEventListener(this), id);
+        MainBus.get().register(new PunishListener(this), id);
+        MainBus.get().register(new UntagEventListener(this), id);
+        MainBus.get().register(new DeathListener(this), id);
+        // MainBus.get().register(new InvulnerableListener(this), id); todo bring back potentially
+        MainBus.get().register(new EndCrystalListener(this), id);
     }
 
     private void registerTasks() {

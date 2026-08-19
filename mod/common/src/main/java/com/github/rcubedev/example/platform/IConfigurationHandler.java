@@ -1,6 +1,6 @@
 package com.github.rcubedev.example.platform;
 
-import com.github.rcubedev.example.config.WrappedConfigAccessor;
+import com.github.rcubedev.utils.config.WrappedConfigAccessor;
 import com.github.rcubedev.example.util.IService;
 import folk.sisby.kaleido.api.WrappedConfig;
 
