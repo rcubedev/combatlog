@@ -42,8 +42,8 @@ dependencies {
     // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.0.1")
     // modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.2.0")}
 
-    modImplementation("eu.pb4:placeholder-api:2.4.2+1.21")
-    include("eu.pb4:placeholder-api:2.4.2+1.21")
+    modImplementation("eu.pb4:placeholder-api:${commonMod.dep("placeholder-api")}")
+    include("eu.pb4:placeholder-api:${commonMod.dep("placeholder-api")}")
 
     implementation("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
     include("net.kyori:adventure-text-minimessage:${commonMod.dep("adventure-api")}")
