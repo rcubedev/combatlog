@@ -4,6 +4,8 @@ A port of [CombatLogX](https://github.com/SirBlobman/CombatLogX) for Fabric/NeoF
 
 CombatLogX helps prevent players from avoiding combat by disconnecting while fighting. This project ports CombatLogX to Fabric and NeoForge, bringing the same combat logging prevention to modded Minecraft servers.
 
+https://github.com/user-attachments/assets/66b2c50e-2dd0-40db-b81a-da7a47cdb777
+
 ## Features
 * Combat tagging system
 * Punish players that disconnect in combat (e.g. kill on combat log, keep NPC body online after combat logging)
@@ -21,14 +23,14 @@ CombatLogX helps prevent players from avoiding combat by disconnecting while fig
 ## Expansions
 CombatLogX has an expansion system that allows additional features to be added independently.
 
-Official expansions:
-**Action Bar**
+### Official expansions:
+[**Action Bar**](https://modrinth.com/mod/clx-port-actionbar)<br>
 Displays combat timer information above the player's hotbar
 
-**Boss Bar**
+[**Boss Bar**](https://modrinth.com/mod/clx-port-bossbar)<br>
 Displays combat timer information on the top of the player's screen
 
-**End Crystal**
+[**End Crystal**](https://modrinth.com/mod/clx-port-endcrystal)<br>
 Links End Crystal entities to their placer
 
 ## Installation
@@ -36,7 +38,7 @@ Links End Crystal entities to their placer
 This mod is intended for dedicated servers only.
 
 1. Install Fabric or NeoForge for a supported Minecraft version on your server
-2. Download the latest release from the [Releases](https://github.com/rcubedev/combatlog/releases/latest) page
+2. Download the latest release from the [Modrinth](https://modrinth.com/mod/combatlogx-port) page
 3. Place the JAR into your server's `mods` folder
 4. Start the server
 
@@ -58,7 +60,7 @@ Open your IDE and import the folder
 3. Build the project or run a test environment
 
 Run a test environment:
-**In IntelliJ:**
+**In IntelliJ:**<br>
 Run via run configs
 
 **Via terminal:**
