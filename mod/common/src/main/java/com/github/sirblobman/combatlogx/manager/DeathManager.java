@@ -26,10 +26,11 @@ public final class DeathManager extends Manager implements IDeathManager {
     @Override
     public void kill(@NotNull ServerPlayer player, @NotNull List<Entity> enemyList) {
         trackKill(player, enemyList);
-        //fixme on 1.21.10
-        //fixme this didnt work either man
-        // player.die(player.damageSources().genericKill());
-        player.kill(/*? if >= 1.21.10 {*/ /*player.level() *//*?}*/); // death msg changed by DeathListener
+        // workaround as #kill on checks #isInvulnerableTo which checks hasClientLoaded on 1.21.10+
+        // and client has not loaded yet
+        player.setHealth(0);
+        player.die(player.damageSources().generic()); // death msg changed by DeathListener
+        // player.kill(/*? if >= 1.21.10 {*/ /*player.level() *//*?}*/);
     }
 
     @Override
